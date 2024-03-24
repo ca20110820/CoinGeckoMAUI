@@ -61,9 +61,46 @@ namespace CoinGeckoApp.Responses
 
     public class APIExchangeResponseTicker
     {
+        [JsonProperty("base")]
         public string? Base { get; set; }
+
+        [JsonProperty("target")]
         public string? Target { get; set; }
-        public string? coin_id { get; set; }
-        public string? target_coin_id { get; set; }
+
+        [JsonProperty("coin_id")]
+        public string? CoinId { get; set; }
+
+        [JsonProperty("target_coin_id")]
+        public string? TargetCoinId { get; set; }
+
+        [JsonProperty("last")]
+        public double? Last { get; set; }
+
+        [JsonProperty("volume")]
+        public double? Volume { get; set; }
+
+        [JsonProperty("converted_last")]
+        public Dictionary<string, double?>? ConvertedLast { get; set; }
+
+        [JsonProperty("converted_volume")]
+        public Dictionary<string, double?>? ConvertedVolume { get; set; }
+
+        [JsonProperty("bid_ask_spread_percentage")]
+        public double? BidAskSpreadPercentage { get; set; }
+
+        [JsonProperty("timestamp")]
+        public string? TimeStamp { get; set; }
+
+        [JsonProperty("last_traded_at")]
+        public string? LastTradedAt { get; set; }
+
+        [JsonProperty("last_fetch_at")]
+        public string? LastFetchedAt { get; set; }
+
+        [JsonProperty("is_anomaly")]
+        public bool? IsAnomaly { get; set; }
+
+        [JsonProperty("is_stale")]
+        public bool? IsStale { get; set; }
     }
 }
