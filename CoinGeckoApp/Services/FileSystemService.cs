@@ -189,6 +189,17 @@ namespace CoinGeckoApp.Services
             await RemoveDirectoryAsync(dirPath);
         }
 
+        public async Task RemoveDirectoryContentsFromCacheDir(string subDirectory)
+        {
+            string dirPath = Path.Combine(CacheDir, subDirectory);
+            await RemoveDirectoryContentsAsync(dirPath);
+        }
+        public async Task RemoveDirectoryContentsFromAppDataDir(string subDirectory)
+        {
+            string dirPath = Path.Combine(AppDataDir, subDirectory);
+            await RemoveDirectoryContentsAsync(dirPath);
+        }
+
         private async Task RemoveFileAsync(string filePath)
         {
             if (File.Exists(filePath))
