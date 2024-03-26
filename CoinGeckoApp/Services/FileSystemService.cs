@@ -277,5 +277,21 @@ namespace CoinGeckoApp.Services
             }
         }
 
+        public async Task<string[]> SearchForFileInCacheDir(string searchPattern)
+        {
+            return await SearchFilesAsync(CacheDir, searchPattern);
+        }
+        public async Task<string[]> SearchForFileInAppDataDir(string searchPattern)
+        {
+            return await SearchFilesAsync(AppDataDir, searchPattern);
+        }
+
+        public static async Task<string[]> SearchFilesAsync(string directoryPath, string searchPattern)
+        {
+            return await Task.Run(() =>
+            {
+                return Directory.GetFiles(directoryPath, searchPattern);
+            });
+        }
     }
 }
