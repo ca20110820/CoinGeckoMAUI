@@ -32,6 +32,12 @@ namespace CoinGeckoApp.Services
             return Endpoint + requestCategory + "?" + tempParams;
         }
 
+        /// <summary>
+        /// Fetches the Json String Response.
+        /// <para>Warning: The fetched json string could be really large and may be slow when deserializing.</para>
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
         public async Task<string?> GetDataAsStringCustomURLAsync(string url)
         {
             using (HttpClient client = new HttpClient())
