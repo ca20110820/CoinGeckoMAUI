@@ -11,16 +11,13 @@ namespace CoinGeckoApp.Helpers
 {
     public static class CurrencyHelper
     {
+        /// <summary>
+        /// Fetch all the supported currency in CoinGecko API.
+        /// </summary>
+        /// <returns></returns>
         public static async Task<List<string>?> FetchSupportedCurrencies()
         {
-            APIService apiService = new();
-            string? responseString = await apiService.GetDataAsStringCustomURLAsync("https://api.coingecko.com/api/v3/simple/supported_vs_currencies");
-            if (responseString != null)
-            {
-                return await Task.Run(() => JsonConvert.DeserializeObject<List<string>>(responseString));
-            }
-            
-            return null;
+            return await APIService.FetchAndJsonDeserializeAsync<List<string>>("https://api.coingecko.com/api/v3/simple/supported_vs_currencies");
         }
     }
 }
