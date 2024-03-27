@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using JsonFlatFileDataStore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,5 +56,93 @@ namespace CoinGeckoApp.Services
                 await Task.Run(() => serializer.Serialize(writer, data));
             }
         }
+    }
+
+
+    /// <summary>
+    /// Service class for performing CRUD operations on a Json Flat File as a Database. This class depends on JsonFlatFileDataStore package.
+    /// It focuses on performing CRUD operations on individual item in the Json File.
+    /// <para>The Json Flat File as a DB would have the following structure: 
+    /// <code>{"key": {...}, "key": {...}, ...}</code>
+    /// </para>
+    /// <para>Use-cases: Storing different set of configurations, storing properties of special objects, etc.
+    /// </para>
+    /// </summary>
+    public class JsonItemDBService
+    {
+        public string JsonFilePath { get; set; }
+
+        public JsonItemDBService(string jsonFilePath)
+        {
+            JsonFilePath = jsonFilePath;
+            CreateEmptyJson(JsonFilePath).Wait();  // Create a Json File with empty dictionary content, if file does not exist
+        }
+
+        public async static Task CreateEmptyJson(string jsonPath)
+        {
+            await Task.Delay(250);
+            if (!File.Exists(jsonPath))  // If file does not exists, create a Json File with "{}" as an empty dictionary
+            {
+                File.WriteAllText(jsonPath, "{}");
+            }
+            else  // If file exists, make sure it's not an empty file.
+            {
+                string content = File.ReadAllText(jsonPath);
+
+                if (string.IsNullOrWhiteSpace(content))
+                {
+                    File.WriteAllText(jsonPath, "{}");
+                }
+            }
+        }
+
+        public async Task<T> GetObjAsync<T>(string key)
+        {
+            using (var store = await Task.Run(() => new DataStore(JsonFilePath)))
+            {
+                return await Task.Run(() => store.GetItem<T>(key));
+            }
+        }
+
+        public async Task InsertObjAsync<T>(string key, T obj)
+        {
+            using (var store = await Task.Run(() => new DataStore(JsonFilePath)))
+            {
+                await store.InsertItemAsync(key, obj);
+            }
+        }
+
+        public async Task ReplaceObjAsync<T>(string keyToBeReplaced, T newObj)
+        {
+            using (var store = await Task.Run(() => new DataStore(JsonFilePath)))
+            {
+                await store.ReplaceItemAsync(keyToBeReplaced, newObj);
+            }
+        }
+
+        public async Task UpdateObjAsync(string key, object anonymousObjProperties)
+        {
+            /* Example: new {Prty1 = value, Prty2 = value, ...}
+             * 
+             * Warn: Do not use this method for modifying an object. Use ReplaceObjAsync instead.
+             */
+            using (var store = await Task.Run(() => new DataStore(JsonFilePath)))
+            {
+                await store.UpdateItemAsync(key, anonymousObjProperties);
+            }
+        }
+
+        public async Task DeleteObjAsync(string key)
+        {
+            using (var store = await Task.Run(() => new DataStore(JsonFilePath)))
+            {
+                await store.DeleteItemAsync(key);
+            }
+        }
+    }
+
+    public class JsonCollectionDBService
+    {
+
     }
 }
