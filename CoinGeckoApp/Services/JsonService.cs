@@ -104,6 +104,20 @@ namespace CoinGeckoApp.Services
             }
         }
 
+        public async Task<List<T>?> GetItemsAsListAsync<T>()
+        {
+            // Warn: This is assuming that the Json values are of the same type.
+
+            using (StreamReader file = await Task.Run(() => File.OpenText(JsonFilePath)))
+            {
+                // Get the the content of the Json file as string.
+                string jsonString = await file.ReadToEndAsync();
+
+                // Deserialize the Json File as a List<T> and return.
+                return await Task.Run(() => JsonConvert.DeserializeObject<List<T>>(jsonString));
+            }
+        }
+
         public async Task InsertObjAsync<T>(string key, T obj)
         {
             using (var store = await Task.Run(() => new DataStore(JsonFilePath)))
@@ -125,6 +139,7 @@ namespace CoinGeckoApp.Services
             /* Example: new {Prty1 = value, Prty2 = value, ...}
              * 
              * Warn: Do not use this method for modifying an object. Use ReplaceObjAsync instead.
+             * Remark: It's basically adding new properties instead of actually updating.
              */
             using (var store = await Task.Run(() => new DataStore(JsonFilePath)))
             {
