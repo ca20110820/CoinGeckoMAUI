@@ -76,12 +76,11 @@ namespace CoinGeckoApp.Services
         public JsonItemDBService(string jsonFilePath)
         {
             JsonFilePath = jsonFilePath;
-            CreateEmptyJson(JsonFilePath).Wait();  // Create a Json File with empty dictionary content, if file does not exist
+            CreateEmptyJson(JsonFilePath);  // Create a Json File with empty dictionary content, if file does not exist
         }
 
-        public async static Task CreateEmptyJson(string jsonPath)
+        public static void CreateEmptyJson(string jsonPath)
         {
-            await Task.Delay(250);
             if (!File.Exists(jsonPath))  // If file does not exists, create a Json File with "{}" as an empty dictionary
             {
                 File.WriteAllText(jsonPath, "{}");
@@ -151,6 +150,7 @@ namespace CoinGeckoApp.Services
         {
             JsonFilePath = jsonFilePath;
             CollectionName = collectionName;
+            JsonItemDBService.CreateEmptyJson(jsonFilePath);
         }
 
         public async Task<List<T>?> QueryItems<T>(Func<dynamic, bool> filter)
