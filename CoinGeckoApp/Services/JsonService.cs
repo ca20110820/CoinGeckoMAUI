@@ -1,6 +1,7 @@
 ﻿using JsonFlatFileDataStore;
 using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -143,6 +144,104 @@ namespace CoinGeckoApp.Services
 
     public class JsonCollectionDBService
     {
+        public string JsonFilePath { get; set; }
+        public string CollectionName { get; set; }
 
+        public JsonCollectionDBService(string jsonFilePath, string collectionName)
+        {
+            JsonFilePath = jsonFilePath;
+            CollectionName = collectionName;
+        }
+
+        public async Task<List<T>?> QueryItems<T>(Func<dynamic, bool> filter)
+        {
+            using (var store = await Task.Run(() => new DataStore(JsonFilePath)))
+            {
+                var collection = await Task.Run(() => store.GetCollection(CollectionName));
+
+                return collection.AsQueryable().Where(filter).ToList() as List<T>;
+            }
+        }
+
+        public async Task<List<T>> FindItemsFromPatternAsync<T>(string pattern, bool useCaseSensitive = false)
+        {
+            using (var store = await Task.Run(() => new DataStore(JsonFilePath)))
+            {
+                var collection = await Task.Run(() => store.GetCollection(CollectionName));
+
+                var matches = collection.Find(pattern);
+                IEnumerable<dynamic> caseSensitiveMatches = collection.Find(pattern, useCaseSensitive);
+
+                return caseSensitiveMatches.Select(item => (T)item).ToList();
+            }
+        }
+
+        public async Task InsertOneItemAsync<T>(T newItem)
+        {
+            using (var store = await Task.Run(() => new DataStore(JsonFilePath)))
+            {
+                var collection = await Task.Run(() => store.GetCollection(CollectionName));
+
+                await Task.Run(() =>
+                {
+                    collection.InsertOne(newItem);
+                });
+            }
+        }
+
+        public async Task InsertManyItemsAsync<T>(IEnumerable<T> newItems)
+        {
+            using (var store = await Task.Run(() => new DataStore(JsonFilePath)))
+            {
+                var collection = await Task.Run(() => store.GetCollection(CollectionName));
+
+                await collection.InsertManyAsync(newItems as IEnumerable<dynamic>);
+            }
+        }
+
+        public async Task ReplaceItemAsync<T>(Predicate<dynamic> filter, T newItem)
+        {
+            // Note: `key` could be a string or integer, or any hashable object.
+            // Reference: https://ttu.github.io/json-flatfile-datastore/#/2.4.2/?id=replace
+            using (var store = await Task.Run(() => new DataStore(JsonFilePath)))
+            {
+                var collection = await Task.Run(() => store.GetCollection(CollectionName));
+
+                await collection.ReplaceOneAsync(filter, newItem);
+            }
+        }
+
+        public async Task ReplaceItemsByConditionAsync<T>(Predicate<dynamic> filter, dynamic newProperties)
+        {
+            // Reference: https://ttu.github.io/json-flatfile-datastore/#/2.4.2/?id=replace
+            using (var store = await Task.Run(() => new DataStore(JsonFilePath)))
+            {
+                var collection = await Task.Run(() => store.GetCollection(CollectionName));
+
+                await collection.ReplaceManyAsync(filter, newProperties);
+            }
+        }
+
+        public async Task DeleteItemAsync(Predicate<dynamic> filter)
+        {
+            // Reference: https://ttu.github.io/json-flatfile-datastore/#/2.4.2/?id=delete
+            using (var store = await Task.Run(() => new DataStore(JsonFilePath)))
+            {
+                var collection = await Task.Run(() => store.GetCollection(CollectionName));
+
+                await collection.DeleteOneAsync(filter);
+            }
+        }
+
+        public async Task DeleteItemsAsync(Predicate<dynamic> filter)
+        {
+            // Reference: https://ttu.github.io/json-flatfile-datastore/#/2.4.2/?id=delete
+            using (var store = await Task.Run(() => new DataStore(JsonFilePath)))
+            {
+                var collection = await Task.Run(() => store.GetCollection(CollectionName));
+
+                await collection.DeleteManyAsync(filter);
+            }
+        }
     }
 }
