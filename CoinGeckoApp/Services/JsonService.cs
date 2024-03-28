@@ -57,8 +57,24 @@ namespace CoinGeckoApp.Services
                 await Task.Run(() => serializer.Serialize(writer, data));
             }
         }
-    }
 
+        public static void CreateEmptyJson(string jsonPath)
+        {
+            if (!File.Exists(jsonPath))  // If file does not exists, create a Json File with "{}" as an empty dictionary
+            {
+                File.WriteAllText(jsonPath, "{}");
+            }
+            else  // If file exists, make sure it's not an empty file.
+            {
+                string content = File.ReadAllText(jsonPath);
+
+                if (string.IsNullOrWhiteSpace(content))
+                {
+                    File.WriteAllText(jsonPath, "{}");
+                }
+            }
+        }
+    }
 
     /// <summary>
     /// Service class for performing CRUD operations on a Json Flat File as a Database. This class depends on JsonFlatFileDataStore package.
@@ -76,24 +92,7 @@ namespace CoinGeckoApp.Services
         public JsonItemDBService(string jsonFilePath)
         {
             JsonFilePath = jsonFilePath;
-            CreateEmptyJson(JsonFilePath);  // Create a Json File with empty dictionary content, if file does not exist
-        }
-
-        public static void CreateEmptyJson(string jsonPath)
-        {
-            if (!File.Exists(jsonPath))  // If file does not exists, create a Json File with "{}" as an empty dictionary
-            {
-                File.WriteAllText(jsonPath, "{}");
-            }
-            else  // If file exists, make sure it's not an empty file.
-            {
-                string content = File.ReadAllText(jsonPath);
-
-                if (string.IsNullOrWhiteSpace(content))
-                {
-                    File.WriteAllText(jsonPath, "{}");
-                }
-            }
+            JsonService.CreateEmptyJson(JsonFilePath);  // Create a Json File with empty dictionary content, if file does not exist
         }
 
         public async Task<T> GetObjAsync<T>(string key)
@@ -165,7 +164,7 @@ namespace CoinGeckoApp.Services
         {
             JsonFilePath = jsonFilePath;
             CollectionName = collectionName;
-            JsonItemDBService.CreateEmptyJson(jsonFilePath);
+            JsonService.CreateEmptyJson(jsonFilePath);
         }
 
         public async Task<List<T>?> QueryItems<T>(Func<dynamic, bool> filter)
