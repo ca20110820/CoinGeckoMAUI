@@ -89,6 +89,7 @@ namespace CoinGeckoApp.Services
     {
         public string JsonFilePath { get; set; }
 
+        public JsonItemDBService() { }
         public JsonItemDBService(string jsonFilePath)
         {
             JsonFilePath = jsonFilePath;
@@ -116,6 +117,8 @@ namespace CoinGeckoApp.Services
                 return await Task.Run(() => JsonConvert.DeserializeObject<List<T>>(jsonString));
             }
         }
+
+        // TODO: Implement GetItemsAsDictAsync  Dictionary<string, object>
 
         public async Task InsertObjAsync<T>(string key, T obj)
         {
