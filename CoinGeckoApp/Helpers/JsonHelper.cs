@@ -7,14 +7,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CoinGeckoApp.Services
+namespace CoinGeckoApp.Helpers
 {
-    public class JsonService
+    public class JsonHelper
     {
         public string JsonFilePath { get; set; }  // Full Path to the Json File
 
-        public JsonService() { }
-        public JsonService(string jsonFilePath)
+        public JsonHelper() { }
+        public JsonHelper(string jsonFilePath)
         {
             JsonFilePath = jsonFilePath;
         }
@@ -85,15 +85,15 @@ namespace CoinGeckoApp.Services
     /// <para>Use-cases: Storing different set of configurations, storing properties of special objects, etc.
     /// </para>
     /// </summary>
-    public class JsonItemDBService
+    public class JsonItemDBHelper
     {
         public string JsonFilePath { get; set; }
 
-        public JsonItemDBService() { }
-        public JsonItemDBService(string jsonFilePath)
+        public JsonItemDBHelper() { }
+        public JsonItemDBHelper(string jsonFilePath)
         {
             JsonFilePath = jsonFilePath;
-            JsonService.CreateEmptyJson(JsonFilePath);  // Create a Json File with empty dictionary content, if file does not exist
+            JsonHelper.CreateEmptyJson(JsonFilePath);  // Create a Json File with empty dictionary content, if file does not exist
         }
 
         public async Task<T> GetObjAsync<T>(string key)
@@ -158,16 +158,16 @@ namespace CoinGeckoApp.Services
         }
     }
 
-    public class JsonCollectionDBService
+    public class JsonCollectionDBHelper
     {
         public string JsonFilePath { get; set; }
         public string CollectionName { get; set; }
 
-        public JsonCollectionDBService(string jsonFilePath, string collectionName)
+        public JsonCollectionDBHelper(string jsonFilePath, string collectionName)
         {
             JsonFilePath = jsonFilePath;
             CollectionName = collectionName;
-            JsonService.CreateEmptyJson(jsonFilePath);
+            JsonHelper.CreateEmptyJson(jsonFilePath);
         }
 
         public async Task<List<T>?> QueryItems<T>(Func<dynamic, bool> filter)

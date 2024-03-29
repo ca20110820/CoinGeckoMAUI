@@ -5,18 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CoinGeckoApp.Services
+namespace CoinGeckoApp.Helpers
 {
-    public class APIService
+    public class APIHelper
     {
         private const string baseUrl = "https://api.coingecko.com/api/v3/";
         private string endpointFullUrl = string.Empty;
 
         public string Endpoint { get => endpointFullUrl; }
 
-        public APIService() { }
+        public APIHelper() { }
 
-        public APIService(string endpoint)
+        public APIHelper(string endpoint)
         {
             endpointFullUrl = baseUrl + endpoint + "/";  // Example: https://api.coingecko.com/api/v3/simple/ [supported_vs_currencies][?parameters]
         }

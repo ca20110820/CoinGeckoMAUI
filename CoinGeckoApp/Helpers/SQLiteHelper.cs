@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CoinGeckoApp.Services
+namespace CoinGeckoApp.Helpers
 {
-    public class SQLiteService
+    public class SQLiteHelper
     {
         private readonly string _connectionString;
 
-        public SQLiteService(string databaseFilePath)
+        public SQLiteHelper(string databaseFilePath)
         {
             _connectionString = $"Data Source={databaseFilePath}";
         }

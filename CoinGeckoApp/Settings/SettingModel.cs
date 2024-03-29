@@ -5,14 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using CoinGeckoApp.Services;
+using CoinGeckoApp.Helpers;
 
 namespace CoinGeckoApp.Settings
 {
     public class SettingModel
     {
-        private FileSystemService fsService = new();
-        private JsonItemDBService jsonItemDBService = new();
+        private FileSystemHelper fsService = new();
+        private JsonItemDBHelper jsonItemDBService = new();
 
         public bool DarkMode { get; set; }
         public string QuoteCurrency { get; set; }
@@ -35,7 +35,7 @@ namespace CoinGeckoApp.Settings
         public async Task WriteSetting()
         {
             string settingFilePath = Path.Combine(fsService.AppDataDir, "Settings", "config.json");
-            await Task.Run(() => JsonService.CreateEmptyJson(settingFilePath));  // Try and create the Json File if not exists
+            await Task.Run(() => JsonHelper.CreateEmptyJson(settingFilePath));  // Try and create the Json File if not exists
             jsonItemDBService.JsonFilePath = settingFilePath;
 
             /* Example:
@@ -48,7 +48,7 @@ namespace CoinGeckoApp.Settings
         private async Task WriteSettingWithKeyAndObj<T>(string configKey, T obj)
         {
             string settingFilePath = Path.Combine(fsService.AppDataDir, "Settings", "config.json");
-            await Task.Run(() => JsonService.CreateEmptyJson(settingFilePath));  // Try and create the Json File if not exists
+            await Task.Run(() => JsonHelper.CreateEmptyJson(settingFilePath));  // Try and create the Json File if not exists
             jsonItemDBService.JsonFilePath = settingFilePath;
 
             /* Example:
@@ -60,11 +60,11 @@ namespace CoinGeckoApp.Settings
 
         public static async Task<SettingModel> ReadSetting()
         {
-            FileSystemService fsService = new();
-            JsonItemDBService jsonItemDBService = new();
+            FileSystemHelper fsService = new();
+            JsonItemDBHelper jsonItemDBService = new();
 
             string settingFilePath = Path.Combine(fsService.AppDataDir, "Settings", "config.json");
-            await Task.Run(() => JsonService.CreateEmptyJson(settingFilePath));  // Try and create the Json File if not exists
+            await Task.Run(() => JsonHelper.CreateEmptyJson(settingFilePath));  // Try and create the Json File if not exists
             jsonItemDBService.JsonFilePath = settingFilePath;
 
             return await jsonItemDBService.GetObjAsync<SettingModel>("user_setting");
@@ -101,7 +101,7 @@ namespace CoinGeckoApp.Settings
              * - Immediately store in config.json with key "supported_currencies"
              */
 
-            List<string>? supportedCurrencies = await APIService.FetchAndJsonDeserializeAsync<List<string>>("https://api.coingecko.com/api/v3/simple/supported_vs_currencies");
+            List<string>? supportedCurrencies = await APIHelper.FetchAndJsonDeserializeAsync<List<string>>("https://api.coingecko.com/api/v3/simple/supported_vs_currencies");
 
             if (supportedCurrencies == null)
             {

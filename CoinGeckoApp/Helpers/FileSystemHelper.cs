@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Maui.Storage;
 
-namespace CoinGeckoApp.Services
+namespace CoinGeckoApp.Helpers
 {
-    public class FileSystemService
+    public class FileSystemHelper
     {
         private const string applicationName = "CoinGeckoMAUIApp";  // Root directory name for Cache and AppData
 
@@ -29,7 +29,7 @@ namespace CoinGeckoApp.Services
         }
 
         /* Constructors */
-        public FileSystemService() { }
+        public FileSystemHelper() { }
 
         /// <summary>
         /// <para> Read contents from text file asynchronously.</para>
@@ -220,7 +220,7 @@ namespace CoinGeckoApp.Services
             {
                 string[] files = Directory.GetFiles(directoryPath);
                 string[] directories = Directory.GetDirectories(directoryPath);
-                
+
                 // Delete Files Asynchronously
                 foreach (string file in files)
                 {
@@ -263,7 +263,7 @@ namespace CoinGeckoApp.Services
                 }
 
                 // File not found in the directory or its subdirectories
-                return new string[] {};
+                return new string[] { };
             }
             catch (UnauthorizedAccessException)
             {
