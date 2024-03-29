@@ -231,7 +231,8 @@ namespace CoinGeckoApp.Helpers
                 // Delete Subdirectories Asynchronously
                 foreach (string dir in directories)
                 {
-                    await Task.Run(() => Directory.Delete(dir, true));
+                    //await Task.Run(() => Directory.Delete(dir, true));
+                    Directory.Delete(dir, true);
                     Trace.WriteLine($"Directory '{dir}' and its contents removed successfully.");
                 }
             }
