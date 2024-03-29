@@ -242,28 +242,39 @@ namespace CoinGeckoApp.Helpers
         {
             List<string> filePaths = new List<string>();
 
-            try
-            {
-                // Get all files in the current directory
-                string[] files = Directory.GetFiles(directoryPath);
-                filePaths.AddRange(files);
+            // Get all files in the current directory
+            string[] files = Directory.GetFiles(directoryPath);
+            filePaths.AddRange(files);
 
-                // Get all subdirectories
-                string[] subDirectories = Directory.GetDirectories(directoryPath);
+            // Get all subdirectories
+            string[] subDirectories = Directory.GetDirectories(directoryPath);
 
-                // For each subdirectory, recursively call the method
-                foreach (string subDirectory in subDirectories)
-                {
-                    List<string> subDirectoryFiles = await GetAllFilePathsAsync(subDirectory);
-                    filePaths.AddRange(subDirectoryFiles);
-                }
-            }
-            catch (Exception ex)
+            // For each subdirectory, recursively call the method
+            foreach (string subDirectory in subDirectories)
             {
-                Trace.WriteLine($"Error: {ex.Message}");
+                List<string> subDirectoryFiles = await GetAllFilePathsAsync(subDirectory);
+                filePaths.AddRange(subDirectoryFiles);
             }
 
             return filePaths;
+        }
+
+        public async Task<List<string>> GetAllSubdirectoriesAsync(string directoryPath)
+        {
+            var subdirectories = new List<string>();
+
+            // Get all subdirectories in the current directory
+            string[] directories = Directory.GetDirectories(directoryPath);
+            subdirectories.AddRange(directories);
+
+            // For each subdirectory, recursively call the method
+            foreach (string subDirectory in directories)
+            {
+                List<string> subSubdirectories = await GetAllSubdirectoriesAsync(subDirectory);
+                subdirectories.AddRange(subSubdirectories);
+            }
+
+            return subdirectories;
         }
 
         public static string[] SearchForFile(string directoryPath, string fileName)
