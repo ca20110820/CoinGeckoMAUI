@@ -238,6 +238,34 @@ namespace CoinGeckoApp.Helpers
             }
         }
 
+        public async Task<List<string>> GetAllFilePathsAsync(string directoryPath)
+        {
+            List<string> filePaths = new List<string>();
+
+            try
+            {
+                // Get all files in the current directory
+                string[] files = Directory.GetFiles(directoryPath);
+                filePaths.AddRange(files);
+
+                // Get all subdirectories
+                string[] subDirectories = Directory.GetDirectories(directoryPath);
+
+                // For each subdirectory, recursively call the method
+                foreach (string subDirectory in subDirectories)
+                {
+                    List<string> subDirectoryFiles = await GetAllFilePathsAsync(subDirectory);
+                    filePaths.AddRange(subDirectoryFiles);
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine($"Error: {ex.Message}");
+            }
+
+            return filePaths;
+        }
+
         public static string[] SearchForFile(string directoryPath, string fileName)
         {
             try
