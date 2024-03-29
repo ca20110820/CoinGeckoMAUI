@@ -53,6 +53,7 @@ namespace CoinGeckoApp.Helpers
         /// <returns></returns>
         public async Task CopyFileToAppDataDirectory(string filename, string? subDirectoryPath = null)
         {
+            // TODO: Do Unit Test or Manual Test.
             // Open the source file
             using Stream inputStream = await FileSystem.Current.OpenAppPackageFileAsync(filename);
 
@@ -79,6 +80,7 @@ namespace CoinGeckoApp.Helpers
         /// <returns></returns>
         public async Task CopyFileToCacheDirDirectory(string filename, string? subDirectoryPath = null)
         {
+            // TODO: Do Unit Test or Manual Test.
             // Open the source file
             using Stream inputStream = await FileSystem.Current.OpenAppPackageFileAsync(filename);
 
@@ -98,6 +100,35 @@ namespace CoinGeckoApp.Helpers
             await inputStream.CopyToAsync(outputStream);
         }
 
+        public static async Task CopyOverwriteFileAsync(string sourceFilePath, string targetDir, string? newFileName = null)
+        {
+            // Check if source file exists
+            if (!File.Exists(sourceFilePath))
+            {
+                throw new FileNotFoundException($"Source file '{sourceFilePath}' not found.");
+            }
+
+            // Create the target directory if it doesn't exist
+            if (!Directory.Exists(targetDir))
+            {
+                Directory.CreateDirectory(targetDir);
+            }
+
+            // Determine the new file name
+            string fileName = newFileName ?? Path.GetFileName(sourceFilePath);
+
+            // Combine the target directory with the new file name to get the full target path
+            string targetFilePath = Path.Combine(targetDir, fileName);
+
+            // Overwrite to Target File
+            using (FileStream sourceStream = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 4096, useAsync: true))
+            {
+                using (FileStream targetStream = new FileStream(targetFilePath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true))
+                {
+                    await sourceStream.CopyToAsync(targetStream);
+                }
+            }
+        }
 
         public async Task CreateDirectoryInCacheDirAsync(string subDirectoryPath)
         {
@@ -275,63 +306,6 @@ namespace CoinGeckoApp.Helpers
             }
 
             return subdirectories;
-        }
-
-        public static string[] SearchForFile(string directoryPath, string fileName)
-        {
-            try
-            {
-                // Search for the file in the current directory
-                string[] files = Directory.GetFiles(directoryPath, fileName);
-
-                if (files.Length > 0)
-                {
-                    // File found in the current directory
-                    return files;
-                }
-
-                // Search for the file in subdirectories (Recursive)
-                string[] subdirectories = Directory.GetDirectories(directoryPath);
-                foreach (string subdirectory in subdirectories)
-                {
-                    string[] filePaths = SearchForFile(subdirectory, fileName);
-                    if (filePaths.Length > 0)
-                    {
-                        // File found in one of the subdirectories
-                        return filePaths;
-                    }
-                }
-
-                // File not found in the directory or its subdirectories
-                return new string[] { };
-            }
-            catch (UnauthorizedAccessException)
-            {
-                // Ignore unauthorized access to directories
-                return new string[] { };
-            }
-            catch (DirectoryNotFoundException)
-            {
-                // Ignore directories not found
-                return new string[] { };
-            }
-        }
-
-        public async Task<string[]> SearchForFileInCacheDir(string searchPattern)
-        {
-            return await SearchFilesAsync(CacheDir, searchPattern);
-        }
-        public async Task<string[]> SearchForFileInAppDataDir(string searchPattern)
-        {
-            return await SearchFilesAsync(AppDataDir, searchPattern);
-        }
-
-        public static async Task<string[]> SearchFilesAsync(string directoryPath, string searchPattern)
-        {
-            return await Task.Run(() =>
-            {
-                return Directory.GetFiles(directoryPath, searchPattern);
-            });
         }
     }
 }

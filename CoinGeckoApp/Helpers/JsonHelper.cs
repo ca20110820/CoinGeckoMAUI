@@ -139,6 +139,7 @@ namespace CoinGeckoApp.Helpers
 
         public async Task UpdateObjAsync(string key, object anonymousObjProperties)
         {
+            // TODO: Implement this as a method to add new properties to a json object.
             /* Example: new {Prty1 = value, Prty2 = value, ...}
              * 
              * Warn: Do not use this method for modifying an object. Use ReplaceObjAsync instead.
