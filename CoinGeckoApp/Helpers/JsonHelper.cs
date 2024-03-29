@@ -104,21 +104,22 @@ namespace CoinGeckoApp.Helpers
             }
         }
 
-        public async Task<List<T>?> GetItemsAsListAsync<T>()
+        public async Task<Dictionary<string, T>?> GetItemsAsDictAsync<T>()
         {
-            // Warn: This is assuming that the Json values are of the same type.
+            /*
+             * Warn: This is assuming that the Json values are of the same type. If its different types, 
+             * use dynamic, object or custom class similar to the API Reponse classes.
+             */
 
             using (StreamReader file = await Task.Run(() => File.OpenText(JsonFilePath)))
             {
                 // Get the the content of the Json file as string.
                 string jsonString = await file.ReadToEndAsync();
 
-                // Deserialize the Json File as a List<T> and return.
-                return await Task.Run(() => JsonConvert.DeserializeObject<List<T>>(jsonString));
+                // Deserialize the Json String and Return.
+                return await Task.Run(() => JsonConvert.DeserializeObject<Dictionary<string, T>>(jsonString));
             }
         }
-
-        // TODO: Implement GetItemsAsDictAsync  Dictionary<string, object>
 
         public async Task InsertObjAsync<T>(string key, T obj)
         {
