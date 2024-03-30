@@ -58,6 +58,16 @@ namespace CoinGeckoApp.Helpers
             }
         }
 
+        public static async Task<T?> DeserializeStringAsync<T>(string jsonString)
+        {
+            return await Task.Run(() => JsonConvert.DeserializeObject<T>(jsonString));
+        }
+
+        public static async Task<string> SerializeObjectAsync<T>(T obj)
+        {
+            return await Task.Run(() => JsonConvert.SerializeObject(obj));
+        }
+
         public static void CreateEmptyJson(string jsonPath)
         {
             if (!File.Exists(jsonPath))  // If file does not exists, create a Json File with "{}" as an empty dictionary
