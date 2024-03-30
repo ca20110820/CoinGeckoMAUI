@@ -31,19 +31,16 @@ namespace CoinGeckoApp.Helpers
         /* Constructors */
         public FileSystemHelper() { }
 
-        /// <summary>
-        /// <para> Read contents from text file asynchronously.</para>
-        /// <para>This method uses OpenAppPackageFileAsync.</para>
-        /// <para>Files that were added to the project with the Build Action of MauiAsset can be opened with this method. 
-        /// .NET MAUI projects will process any file in the Resources\Raw folder as a MauiAsset.</para>
-        /// </summary>
-        /// <param name="filePath"></param>
-        /// <returns></returns>
-        public async Task<string> ReadTextFile(string filePath)
+        public static async Task<string> ReadTextFileAsync(string filePath)
         {
-            using Stream fileStream = await FileSystem.Current.OpenAppPackageFileAsync(filePath);
-            using StreamReader reader = new StreamReader(fileStream);
-            return await reader.ReadToEndAsync();
+            string content = string.Empty;
+
+            using (StreamReader reader = new StreamReader(filePath))
+            {
+                content = await reader.ReadToEndAsync();  // This could be an issue for large strings!!!
+            }
+
+            return content;
         }
 
         /// <summary>
