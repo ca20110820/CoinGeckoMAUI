@@ -15,6 +15,7 @@ namespace CoinGeckoApp.Services
         private URIHelper uriHelper = new("https://api.coingecko.com");
 
         private string _endpoint = URIHelper.MakeEndpoint("api", "v3", "coins");  // "/api/v3/coins"
+        int maxFreeMarketChart = 365;
 
         public CoinModel Coin { get; set; }
 
@@ -36,6 +37,17 @@ namespace CoinGeckoApp.Services
             if (apiResponse == null) return;
 
             coinIdResponse = apiResponse;
+        }
+
+
+        private async Task<APICoinsMarketChartResponse?> FetchFreeMarketChart(string vsCurrency)
+        {
+            // "Free" meaning max allowed historical data for Market Chart is 365
+
+            string endpoint = _endpoint + $"/{Coin.Id}/market_chart";
+            string parameters = $"vs_currency={vsCurrency}&days={maxFreeMarketChart}&precision=full";
+            string uri = uriHelper.MakeURI(endpoint, parameters);
+            return await APIHelper.FetchAndJsonDeserializeAsync<APICoinsMarketChartResponse>(uri);
         }
 
 
