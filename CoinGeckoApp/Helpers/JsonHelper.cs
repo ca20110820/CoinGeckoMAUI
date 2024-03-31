@@ -70,6 +70,15 @@ namespace CoinGeckoApp.Helpers
 
         public static void CreateEmptyJson(string jsonPath)
         {
+            string? parentDir = Path.GetDirectoryName(jsonPath);
+
+            if (parentDir == null) throw new DirectoryNotFoundException($"Parent Directory does not exists for {jsonPath}");
+
+            if (!Directory.Exists(parentDir))
+            {
+                Directory.CreateDirectory(parentDir);
+            }
+
             if (!File.Exists(jsonPath))  // If file does not exists, create a Json File with "{}" as an empty dictionary
             {
                 File.WriteAllText(jsonPath, "{}");
