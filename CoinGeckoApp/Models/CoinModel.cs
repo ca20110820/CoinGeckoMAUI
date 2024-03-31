@@ -4,6 +4,7 @@ using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -69,6 +70,22 @@ namespace CoinGeckoApp.Models
             if (outCoin.Count != 1) throw new CoinNotFavouriteException($"CoinId={coinId} does not exist in {dbTableName} table!\nQuery is {query}");
 
             return outCoin[0];
+        }
+
+        public async Task<bool> IsFavourite()
+        {
+            try
+            {
+                var coin = await ReadFromFavouritesDB(Id);
+                if (coin is CoinModel) return true;
+
+                return false;
+            }
+            catch (CoinNotFavouriteException ex)
+            {
+                Trace.WriteLine(ex.ToString());
+                return false;
+            }
         }
 
         public async void UpdateFavourite()
