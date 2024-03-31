@@ -14,6 +14,8 @@ namespace CoinGeckoApp.Services
         private APICoinsIdResponse? coinIdResponse = null;
         private URIHelper uriHelper = new("https://api.coingecko.com");
 
+        private string _endpoint = URIHelper.MakeEndpoint("api", "v3", "coins");  // "/api/v3/coins"
+
         public CoinModel Coin { get; set; }
 
         public CoinService() { }
@@ -26,7 +28,7 @@ namespace CoinGeckoApp.Services
         /* ==================== Data Getters ==================== */
         private async Task RefreshCoinIdResponse()
         {
-            string endpoint = URIHelper.MakeEndpoint("api", "v3", Coin.Id);
+            string endpoint = _endpoint + $"/{Coin.Id}";  // "/api/v3/coins/<coin-id>"
             string parameters = "tickers=true&market_data=true&community_data=true&developer_data=true&sparkline=true";
             string uri = uriHelper.MakeURI(endpoint, parameters);
             APICoinsIdResponse? apiResponse = await APIHelper.FetchAndJsonDeserializeAsync<APICoinsIdResponse>(uri);
