@@ -53,7 +53,12 @@ namespace CoinGeckoApp.Models
             List<CoinModel> outCoin = new();
             Action<SqliteDataReader> readerAction = (SqliteDataReader reader) =>
             {
-                CoinModel coin = new(reader.GetString(0), reader.GetBoolean(1));
+                string id = reader.GetString(0);
+                bool isFavourite = reader.GetBoolean(1);
+
+                if (!isFavourite) throw new CoinNotFavouriteException($"{id} has Favourite={isFavourite}!");
+
+                CoinModel coin = new(id, isFavourite);
                 outCoin.Add(coin);
             };
 
@@ -61,7 +66,7 @@ namespace CoinGeckoApp.Models
             await sqlHelper.ExecuteSelectDataReaderAsync(query, readerAction);
 
             // Raise Error if there is no coin from the 
-            if (outCoin.Count != 1) throw new Exception($"CoinId={coinId} does not exist in {dbTableName} table!\nQuery is {query}");
+            if (outCoin.Count != 1) throw new CoinNotFavouriteException($"CoinId={coinId} does not exist in {dbTableName} table!\nQuery is {query}");
 
             return outCoin[0];
         }
@@ -108,5 +113,30 @@ namespace CoinGeckoApp.Models
             string query = $"DELETE FROM {dbTableName} WHERE ID = '{Id}'";
             await sqlHelper.ExecuteNonQueryAsync(query);
         }
+    }
+
+
+    public class CoinException : Exception
+    {
+        // Constructor
+        public CoinException() : base() { }
+
+        // Constructor with message
+        public CoinException(string message) : base(message) { }
+
+        // Constructor with message and inner exception
+        public CoinException(string message, Exception innerException) : base(message, innerException) { }
+    }
+
+    public class CoinNotFavouriteException : CoinException
+    {
+        // Constructor
+        public CoinNotFavouriteException() : base() { }
+
+        // Constructor with message
+        public CoinNotFavouriteException(string message) : base(message) { }
+
+        // Constructor with message and inner exception
+        public CoinNotFavouriteException(string message, Exception innerException) : base(message, innerException) { }
     }
 }
