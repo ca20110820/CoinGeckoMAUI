@@ -31,6 +31,11 @@ namespace CoinGeckoApp.Models
         }
 
         public CoinModel() { }
+        public CoinModel(string id)
+        {
+            Id = id;
+            Favourite = IsFavourite().Result;
+        }
         public CoinModel(string id, bool favourite)
         {
             Id = id;
