@@ -1,4 +1,5 @@
-﻿using CoinGeckoApp.Helpers;
+﻿using AuthenticationServices;
+using CoinGeckoApp.Helpers;
 using CoinGeckoApp.Responses.Coins;
 using Microsoft.Data.Sqlite;
 using System;
@@ -93,7 +94,13 @@ namespace CoinGeckoApp.Models
             }
         }
 
-        public async void UpdateFavourite()
+        public async Task UpdateFavourite()
+        {
+            // This method is useful if we instantiate the CoinModel with only the Id.
+            Favourite = await IsFavourite();
+        }
+
+        public async Task ChangeFavouriteStatus()
         {
             Favourite = !Favourite;
             /* TODO:
