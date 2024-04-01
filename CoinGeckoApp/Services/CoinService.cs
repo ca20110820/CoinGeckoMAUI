@@ -75,6 +75,28 @@ namespace CoinGeckoApp.Services
 
         /* ==================== Data Cleaner Methods ==================== */
 
+        /// <summary>
+        /// Transform a 2-List<double> into a KeyValuePair where the Key is converted from double (Unix TimeStamp)
+        /// into DateTime.
+        /// <para>This will be useful for cleaning data fetched from Market Chart.</para>
+        /// </summary>
+        /// <param name="inputList"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static KeyValuePair<DateTime, double> Convert2ListToKVP(List<double> inputList)
+        {
+            // [double, double] -> KeyValuePair<DateTime, double>
+            if (inputList == null || inputList.Count != 2)
+            {
+                throw new ArgumentException("Input list must contain exactly two elements.");
+            }
+
+            double unixTimestamp = inputList[0];
+            double value = inputList[1];
+
+            DateTime dateTime = DateTimeHelper.UnixTimeStampToDateTime(unixTimestamp);
+            return new KeyValuePair<DateTime, double>(dateTime, value);
+        }
 
     }
 }
