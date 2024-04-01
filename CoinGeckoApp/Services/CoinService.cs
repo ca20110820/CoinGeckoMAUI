@@ -39,7 +39,6 @@ namespace CoinGeckoApp.Services
             coinIdResponse = apiResponse;
         }
 
-
         private async Task<APICoinsMarketChartResponse?> FetchFreeMarketChart(string vsCurrency, int days)
         {
             // "Free" meaning max allowed historical data for Market Chart is 365
@@ -49,6 +48,22 @@ namespace CoinGeckoApp.Services
             string parameters = $"vs_currency={vsCurrency}&days={days}&precision=full";
             string uri = uriHelper.MakeURI(endpoint, parameters);
             return await APIHelper.FetchAndJsonDeserializeAsync<APICoinsMarketChartResponse>(uri);
+        }
+
+        private async Task<List<List<double>>?> FetchOHLC(string vsCurrency, int days)
+        {
+            /* Notes:
+             * The Response would have the following structure/pattern:
+             * [[timestamp, open, high, low, close], [timestamp, open, high, low, close], ...] where
+             * timestamp, open, high, low, and close are double.
+             */
+            if (days >= maxFreeMarketChart) throw new ArgumentOutOfRangeException($"Historical data must be less than {maxFreeMarketChart}");
+
+            // Example: https://api.coingecko.com/api/v3/coins/bitcoin/ohlc?vs_currency=usd&days=365&precision=full
+            string endpoint = _endpoint + URIHelper.MakeEndpoint($"{Coin.Id}", "ohlc");
+            string parameters = $"vs_currency={vsCurrency}&days={days}&precision=full";
+            string uri = uriHelper.MakeURI(endpoint, parameters);
+            return await APIHelper.FetchAndJsonDeserializeAsync<List<List<double>>>(uri);
         }
 
 
