@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -63,15 +64,43 @@ namespace CoinGeckoApp.Services
             return await APIHelper.FetchAndJsonDeserializeAsync<List<List<double>>>(uri);
         }
 
-        public async Task<List<KeyValuePair<DateTime, double>>?> GetPrices(string vsCurrency, int days)
+        /// <summary>
+        /// Returns the Market Chart Data of a Coin with given Quote Currency and Number of Days.
+        /// <para>For the free API, the maximum number of days is 365.</para>
+        /// </summary>
+        /// <param name="vsCurrency"></param>
+        /// <param name="days"></param>
+        /// <returns></returns>
+        public async Task<Dictionary<string, List<KeyValuePair<DateTime, double>>?>?> GetMarketChart(string vsCurrency, int days)
         {
+            /* Notes:
+             * The Market Chart Data will have the following dictionary structure/pattern:
+             * 
+             * "prices" -> List<KeyValuePair<DateTime, double>>?
+             * "marketcaps" -> List<KeyValuePair<DateTime, double>>?
+             * "volumes" -> List<KeyValuePair<DateTime, double>>?
+             */
             APICoinsMarketChartResponse? apiResponse = await FetchFreeMarketChart(vsCurrency, days);
             if (apiResponse == null) return null;
 
-            List<List<double>>? prices = apiResponse.Prices;
-            if (prices == null) return null;
+            Dictionary<string, List<KeyValuePair<DateTime, double>>?> marketChart = new();  // Output
 
-            return await Task.Run(() => prices.Select(price => Convert2ListToKVP(price)).ToList());
+            PropertyInfo[] properties = apiResponse.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            foreach (PropertyInfo property in properties)
+            {
+                object? value = property.GetValue(apiResponse);
+                if (value is List<List<double>> tempSeries && value != null)
+                {
+                    List<KeyValuePair<DateTime, double>>?  tempKVPList = await Task.Run(() => tempSeries.Select(xList => Convert2ListToKVP(xList)).ToList());
+                    marketChart.Add(property.Name.ToLower(), tempKVPList);
+                }
+                else
+                {
+                    marketChart.Add(property.Name.ToLower(), null);
+                }
+            }
+
+            return marketChart;
         }
 
         public async Task GetCoinDetails()
