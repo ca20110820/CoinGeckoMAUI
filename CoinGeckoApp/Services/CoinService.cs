@@ -29,7 +29,7 @@ namespace CoinGeckoApp.Services
 
 
         /* ==================== Data Getters ==================== */
-        private async Task<APICoinsIdResponse?> FetchCoinIdResponse()
+        private async Task<APICoinsIdResponse?> FetchCoinIdResponseAsync()
         {
             string endpoint = _endpoint + $"/{Coin.Id}";  // "/api/v3/coins/<coin-id>"
             string parameters = "tickers=true&market_data=true&community_data=true&developer_data=true&sparkline=true";
@@ -37,7 +37,7 @@ namespace CoinGeckoApp.Services
             return await APIHelper.FetchAndJsonDeserializeAsync<APICoinsIdResponse>(uri);
         }
 
-        private async Task<APICoinsMarketChartResponse?> FetchFreeMarketChart(string vsCurrency, int days)
+        private async Task<APICoinsMarketChartResponse?> FetchFreeMarketChartAsync(string vsCurrency, int days)
         {
             // "Free" meaning max allowed historical data for Market Chart is 365
             if (days >= maxFreeMarketChart) throw new ArgumentOutOfRangeException($"Historical data must be less than {maxFreeMarketChart}");
@@ -48,7 +48,7 @@ namespace CoinGeckoApp.Services
             return await APIHelper.FetchAndJsonDeserializeAsync<APICoinsMarketChartResponse>(uri);
         }
 
-        private async Task<List<List<double>>?> FetchOHLC(string vsCurrency, int days)
+        private async Task<List<List<double>>?> FetchOhlcAsync(string vsCurrency, int days)
         {
             /* Notes:
              * The Response would have the following structure/pattern:
@@ -71,7 +71,7 @@ namespace CoinGeckoApp.Services
         /// <param name="vsCurrency"></param>
         /// <param name="days"></param>
         /// <returns></returns>
-        public async Task<Dictionary<string, List<KeyValuePair<DateTime, double>>?>?> GetMarketChart(string vsCurrency, int days)
+        public async Task<Dictionary<string, List<KeyValuePair<DateTime, double>>?>?> GetMarketChartAsync(string vsCurrency, int days)
         {
             /* Notes:
              * The Market Chart Data will have the following dictionary structure/pattern:
@@ -80,7 +80,7 @@ namespace CoinGeckoApp.Services
              * "marketcaps" -> List<KeyValuePair<DateTime, double>>?
              * "volumes" -> List<KeyValuePair<DateTime, double>>?
              */
-            APICoinsMarketChartResponse? apiResponse = await FetchFreeMarketChart(vsCurrency, days);
+            APICoinsMarketChartResponse? apiResponse = await FetchFreeMarketChartAsync(vsCurrency, days);
             if (apiResponse == null) return null;
 
             Dictionary<string, List<KeyValuePair<DateTime, double>>?> marketChart = new();  // Output
@@ -103,14 +103,14 @@ namespace CoinGeckoApp.Services
             return marketChart;
         }
 
-        public async Task<List<KeyValuePair<DateTime, Tuple<double, double, double, double>>>?> GetOHLC(string vsCurrency, int days)
+        public async Task<List<KeyValuePair<DateTime, Tuple<double, double, double, double>>>?> GetOHLCAsync(string vsCurrency, int days)
         {
             /* Notes:
              * ["<datetime>": Tuple<open, high, low, close>, 
              * "<datetime>": Tuple<open, high, low, close>, 
              * ...]
              */
-            List<List<double>>? apiResponse = await FetchOHLC(vsCurrency, days);
+            List<List<double>>? apiResponse = await FetchOhlcAsync(vsCurrency, days);
             if (apiResponse == null) return null;
 
             return await Task.Run(() => apiResponse.Select(xList => Convert5ListToKVP(xList)).OrderBy(kvp => kvp.Key).ToList());
