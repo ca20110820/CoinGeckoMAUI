@@ -29,7 +29,7 @@ namespace CoinGeckoApp.Services
 
 
         /* ==================== Data Getters ==================== */
-        private async Task<APICoinsIdResponse?> FetchCoinIdResponseAsync()
+        public async Task<APICoinsIdResponse?> FetchCoinIdResponseAsync()
         {
             string endpoint = _endpoint + $"/{Coin.Id}";  // "/api/v3/coins/<coin-id>"
             string parameters = "tickers=true&market_data=true&community_data=true&developer_data=true&sparkline=true";
@@ -37,7 +37,7 @@ namespace CoinGeckoApp.Services
             return await APIHelper.FetchAndJsonDeserializeAsync<APICoinsIdResponse>(uri);
         }
 
-        private async Task<APICoinsMarketChartResponse?> FetchFreeMarketChartAsync(string vsCurrency, int days)
+        public async Task<APICoinsMarketChartResponse?> FetchFreeMarketChartAsync(string vsCurrency, int days)
         {
             // "Free" meaning max allowed historical data for Market Chart is 365
             if (days >= maxFreeMarketChart) throw new ArgumentOutOfRangeException($"Historical data must be less than {maxFreeMarketChart}");
@@ -48,7 +48,7 @@ namespace CoinGeckoApp.Services
             return await APIHelper.FetchAndJsonDeserializeAsync<APICoinsMarketChartResponse>(uri);
         }
 
-        private async Task<List<List<double>>?> FetchOhlcAsync(string vsCurrency, int days)
+        public async Task<List<List<double>>?> FetchOhlcAsync(string vsCurrency, int days)
         {
             /* Notes:
              * The Response would have the following structure/pattern:
