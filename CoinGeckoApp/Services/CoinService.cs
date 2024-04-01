@@ -103,6 +103,19 @@ namespace CoinGeckoApp.Services
             return marketChart;
         }
 
+        public async Task<List<KeyValuePair<DateTime, Tuple<double, double, double, double>>>?> GetOHLC(string vsCurrency, int days)
+        {
+            /* Notes:
+             * ["<datetime>": Tuple<open, high, low, close>, 
+             * "<datetime>": Tuple<open, high, low, close>, 
+             * ...]
+             */
+            List<List<double>>? apiResponse = await FetchOHLC(vsCurrency, days);
+            if (apiResponse == null) return null;
+
+            return await Task.Run(() => apiResponse.Select(xList => Convert5ListToKVP(xList)).OrderBy(kvp => kvp.Key).ToList());
+        }
+
         public async Task GetCoinDetails()
         {
             // Latest and Current Data
@@ -149,5 +162,19 @@ namespace CoinGeckoApp.Services
             return new KeyValuePair<DateTime, double>(dateTime, value);
         }
 
+        public static KeyValuePair<DateTime, Tuple<double, double, double, double>> Convert5ListToKVP(List<double> inputList)
+        {
+            if (inputList == null || inputList.Count != 5)
+            {
+                throw new ArgumentException("Input list must have exactly 5 elements.");
+            }
+
+            double unixTimestamp = inputList[0];
+            DateTime dateTime = DateTimeHelper.UnixTimeStampToDateTime(unixTimestamp);
+
+            var tuple = Tuple.Create(inputList[1], inputList[2], inputList[3], inputList[4]);
+
+            return new KeyValuePair<DateTime, Tuple<double, double, double, double>>(dateTime, tuple);
+        }
     }
 }
