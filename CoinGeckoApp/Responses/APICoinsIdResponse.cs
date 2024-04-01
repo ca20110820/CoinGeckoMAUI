@@ -24,7 +24,11 @@ namespace CoinGeckoApp.Responses.Coins
         [JsonProperty("asset_platform_id")]
         public string? AssetPlatformId { get; set; }
 
+        [JsonProperty("links")]
         public Links? links { get; set;}
+
+        [JsonProperty("image")]
+        public Dictionary<string, string?>? Images { get; set; }
 
         [JsonProperty("genesis_date")]
         public string? GenesisDate { get; set; }
