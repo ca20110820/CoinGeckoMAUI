@@ -40,12 +40,13 @@ namespace CoinGeckoApp.Services
         }
 
 
-        private async Task<APICoinsMarketChartResponse?> FetchFreeMarketChart(string vsCurrency)
+        private async Task<APICoinsMarketChartResponse?> FetchFreeMarketChart(string vsCurrency, int days)
         {
             // "Free" meaning max allowed historical data for Market Chart is 365
+            if (days >= maxFreeMarketChart) throw new ArgumentOutOfRangeException($"Historical data must be less than {maxFreeMarketChart}");
 
             string endpoint = _endpoint + $"/{Coin.Id}/market_chart";
-            string parameters = $"vs_currency={vsCurrency}&days={maxFreeMarketChart}&precision=full";
+            string parameters = $"vs_currency={vsCurrency}&days={days}&precision=full";
             string uri = uriHelper.MakeURI(endpoint, parameters);
             return await APIHelper.FetchAndJsonDeserializeAsync<APICoinsMarketChartResponse>(uri);
         }
