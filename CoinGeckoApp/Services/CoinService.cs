@@ -2,7 +2,9 @@
 using CoinGeckoApp.Models;
 using CoinGeckoApp.Responses.Coins;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -66,6 +68,16 @@ namespace CoinGeckoApp.Services
             return await APIHelper.FetchAndJsonDeserializeAsync<List<List<double>>>(uri);
         }
 
+        public async Task<List<KeyValuePair<DateTime, double>>?> GetPrices(string vsCurrency, int days)
+        {
+            APICoinsMarketChartResponse? apiResponse = await FetchFreeMarketChart(vsCurrency, days);
+            if (apiResponse == null) return null;
+
+            List<List<double>>? prices = apiResponse.Prices;
+            if (prices == null) return null;
+
+            return await Task.Run(() => prices.Select(price => Convert2ListToKVP(price)).ToList());
+        }
 
         public async Task GetCoinDetails()
         {
