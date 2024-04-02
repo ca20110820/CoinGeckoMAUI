@@ -116,7 +116,13 @@ namespace CoinGeckoApp.Services
             return await Task.Run(() => apiResponse.Select(xList => Convert5ListToKVP(xList)).OrderBy(kvp => kvp.Key).ToList());
         }
 
-        public List<double>? GetSparkLine(APICoinsIdResponse apiResponse)
+        public static Dictionary<string, string?>? GetImages(APICoinsIdResponse apiResponse)
+        {
+            if (apiResponse.Images == null) return null;
+            return apiResponse.Images;
+        }
+
+        public static List<double>? GetSparkLine(APICoinsIdResponse apiResponse)
         {
             if (apiResponse.market_data == null) return null;
 
