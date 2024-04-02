@@ -84,6 +84,12 @@ namespace CoinGeckoApp.Settings
             MaxFavourites = 15;
             ExchangeId = "binance";
 
+            Preferences.Set("darkmode", DarkMode);
+            Preferences.Set("quotecurrency", QuoteCurrency);
+            Preferences.Set("maxfavourites", MaxFavourites);
+            Preferences.Set("exchangeid", ExchangeId);
+            //Preferences.Set("maxdays", 365);  // This should be done in App.xaml.cs
+
             await WriteAsync();  // Write immediately
         }
 
@@ -105,6 +111,7 @@ namespace CoinGeckoApp.Settings
         public async Task SwitchDarkMode()
         {
             DarkMode = !DarkMode;
+            Preferences.Set("darkmode", DarkMode);
             await UpdateAsync();
         }
 
@@ -112,7 +119,7 @@ namespace CoinGeckoApp.Settings
         {
             // TODO: Validate from Web Server.
             QuoteCurrency = newQuoteCurrency;
-            
+            Preferences.Set("quotecurrency", QuoteCurrency);
             await UpdateAsync();
         }
 
@@ -120,7 +127,7 @@ namespace CoinGeckoApp.Settings
         {
             // TODO: Validate from Web Server.
             ExchangeId = newExhangeId;
-            
+            Preferences.Set("exchangeid", ExchangeId);
             await UpdateAsync();
         }
     }
