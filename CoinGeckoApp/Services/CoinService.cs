@@ -116,26 +116,14 @@ namespace CoinGeckoApp.Services
             return await Task.Run(() => apiResponse.Select(xList => Convert5ListToKVP(xList)).OrderBy(kvp => kvp.Key).ToList());
         }
 
-        public async Task GetCoinDetails()
+        public List<double>? GetSparkLine(APICoinsIdResponse apiResponse)
         {
-            // Latest and Current Data
+            if (apiResponse.market_data == null) return null;
+
+            if (apiResponse.market_data.sparkline_7d == null) return null;
+
+            return apiResponse.market_data.sparkline_7d["price"];
         }
-
-        public async Task GetSparkLine()
-        {
-
-        }
-
-        public async Task GetHistoricalPrice()
-        {
-
-        }
-
-        public async Task GetCoinOHLCV()
-        {
-
-        }
-
 
         /* ==================== Data Cleaner Methods ==================== */
 
