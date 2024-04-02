@@ -55,7 +55,7 @@ namespace CoinGeckoApp.ViewModels
             {
                 if (value != null)
                 {
-                    MarketChart = value;
+                    _marketChart = value;
                     OnPropertyChanged(nameof(MarketChart));
                 }
             }
@@ -69,7 +69,8 @@ namespace CoinGeckoApp.ViewModels
         /* =========== Setters */
         public async Task SetCoin(CoinModel newCoin)
         {
-            Coin = newCoin;  // Set the new Coin
+            _coin = newCoin;  // Set the new Coin
+            OnPropertyChanged(nameof(Coin));  // Manually notify observers
             coinService = new(newCoin);  // Pass the new Coin to CoinService object
             CoinsIdAPIResponse = await coinService.FetchCoinIdResponseAsync();  // Set the new (if it is) CoinsIdAPIResponse
 
