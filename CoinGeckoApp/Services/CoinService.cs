@@ -131,6 +131,48 @@ namespace CoinGeckoApp.Services
             return apiResponse.market_data.sparkline_7d["price"];
         }
 
+        public static Dictionary<string, dynamic?>? GetCurrentData(APICoinsIdResponse apiResponse, string quoteCurrency)
+        {
+            // User of this method should convert the key's value outside.
+            Dictionary<string, dynamic?>? outDict = new();
+
+            if (apiResponse.links != null)
+            {
+                outDict.Add("homepage", apiResponse.links.homepage);  // List<string>?
+            }
+            else
+            {
+                outDict.Add("homepage", apiResponse.links);  // null
+            }
+
+            outDict.Add("sentiment_votes_up_percentage", apiResponse.SentimentVotesUpPerc);  // double?
+            outDict.Add("sentiment_votes_down_percentage", apiResponse.SentimentVotesDownPerc);  // double?
+
+            if (apiResponse.market_data != null)
+            {
+                var marketData = apiResponse.market_data;
+
+                outDict.Add("current_price", marketData.current_price != null ? marketData.current_price[quoteCurrency] : null);
+                outDict.Add("market_cap_fdv_ratio", marketData.market_cap_fdv_ratio);
+                outDict.Add("total_volume", marketData.total_volume != null ? marketData.total_volume[quoteCurrency] : null);
+                outDict.Add("high_24h", marketData.high_24h != null ? marketData.high_24h[quoteCurrency] : null);
+                outDict.Add("low_24h", marketData.low_24h != null ? marketData.low_24h[quoteCurrency] : null);
+                outDict.Add("price_change_percentage_24h", marketData.price_change_percentage_24h);
+                outDict.Add("price_change_percentage_7d", marketData.price_change_percentage_7d);
+                outDict.Add("price_change_percentage_30d", marketData.price_change_percentage_30d);
+                outDict.Add("total_supply", marketData.total_supply);
+                outDict.Add("max_supply", marketData.max_supply);
+                outDict.Add("circulating_supply", marketData.circulating_supply);
+            }
+
+            outDict.Add("last_updated", apiResponse.last_updated != null ? 
+                DateTime.ParseExact(apiResponse.last_updated, 
+                "yyyy-MM-ddTHH:mm:ss.fffZ", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.RoundtripKind) 
+                : null);  // e.g. 2024-04-02T05:44:13.549Z
+
+            return outDict;
+        }
+
         /* ==================== Data Cleaner Methods ==================== */
 
         /// <summary>

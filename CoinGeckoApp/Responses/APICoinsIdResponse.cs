@@ -113,6 +113,7 @@ namespace CoinGeckoApp.Responses.Coins
         public Dictionary<string, double?>? market_cap_change_percentage_24h_in_currency { get; set; }
         public double? total_supply { get; set; }
         public double? max_supply { get; set; }
+        public double? circulating_supply { get; set; }
         public Dictionary<string, List<double>?>? sparkline_7d { get; set; }
         public string? last_updated { get; set; }
     }
