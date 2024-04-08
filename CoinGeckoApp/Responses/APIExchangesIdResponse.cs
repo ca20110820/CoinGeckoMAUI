@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace CoinGeckoApp.Responses
+namespace CoinGeckoApp.Responses.Exchanges
 {
     public class APIExchangesIdResponse
     {
@@ -33,6 +33,18 @@ namespace CoinGeckoApp.Responses
         [JsonProperty("reddit_url")]
         public string? RedditUrl { get; set; }
 
+        [JsonProperty("telegram_url")]
+        public string? TelegramUrl { get; set; }
+
+        [JsonProperty("slack_url")]
+        public string? SlackUrl { get; set; }
+
+        [JsonProperty("other_url_1")]
+        public string? OtherUrl1 { get; set; }
+
+        [JsonProperty("other_url_2")]
+        public string? OtherUrl2 { get; set; }
+
         [JsonProperty("twitter_handle")]
         public string? TwitterHandle { get; set; }
 
@@ -41,6 +53,12 @@ namespace CoinGeckoApp.Responses
 
         [JsonProperty("centralized")]
         public bool? Centralized { get; set; }
+
+        [JsonProperty("public_notice")]
+        public string? PublicNotice { get; set; }
+
+        [JsonProperty("alert_notice")]
+        public string? AlertNotice { get; set; }
 
         [JsonProperty("trust_score")]
         public int? TrustScore { get; set; }
@@ -55,11 +73,37 @@ namespace CoinGeckoApp.Responses
         public double? TradeVolume24hBtcNormalized { get; set; }
 
         [JsonProperty("tickers")]
-        public List<APIExchangeResponseTicker>? Tickers { get; set; }
+        public List<APIExchangesIdResponse>? Tickers { get; set; }
+
+        [JsonProperty("status_updates")]
+        public List<StatusUpdate>? StatusUpdates { get; set; }
     }
 
+    public class StatusUpdate
+    {
+        [JsonProperty("description")]
+        public string? Description { get; set; }
 
-    public class APIExchangeResponseTicker
+        [JsonProperty("category")]
+        public string? Category { get; set; }
+
+        [JsonProperty("created_at")]
+        public DateTime? CreatedAt { get; set; }
+
+        [JsonProperty("user")]
+        public string? User { get; set; }
+
+        [JsonProperty("user_title")]
+        public string? UserTitle { get; set; }
+
+        [JsonProperty("pin")]
+        public bool? Pin { get; set; }
+
+        [JsonProperty("project")]
+        public Project? Project { get; set; }
+    }
+
+    public class APIExchangesIdResponseTicker
     {
         [JsonProperty("base")]
         public string? Base { get; set; }
@@ -67,11 +111,8 @@ namespace CoinGeckoApp.Responses
         [JsonProperty("target")]
         public string? Target { get; set; }
 
-        [JsonProperty("coin_id")]
-        public string? CoinId { get; set; }
-
-        [JsonProperty("target_coin_id")]
-        public string? TargetCoinId { get; set; }
+        [JsonProperty("market")]
+        public APIExchangesIdResponseMarket? Market { get; set; }
 
         [JsonProperty("last")]
         public double? Last { get; set; }
@@ -85,22 +126,64 @@ namespace CoinGeckoApp.Responses
         [JsonProperty("converted_volume")]
         public Dictionary<string, double?>? ConvertedVolume { get; set; }
 
+        [JsonProperty("trust_score")]
+        public string? TrustScore { get; set; }
+
         [JsonProperty("bid_ask_spread_percentage")]
         public double? BidAskSpreadPercentage { get; set; }
 
         [JsonProperty("timestamp")]
-        public string? TimeStamp { get; set; }
+        public DateTime? Timestamp { get; set; }
 
         [JsonProperty("last_traded_at")]
-        public string? LastTradedAt { get; set; }
+        public DateTime? LastTradedAt { get; set; }
 
         [JsonProperty("last_fetch_at")]
-        public string? LastFetchedAt { get; set; }
+        public DateTime? LastFetchAt { get; set; }
 
         [JsonProperty("is_anomaly")]
         public bool? IsAnomaly { get; set; }
 
         [JsonProperty("is_stale")]
         public bool? IsStale { get; set; }
+
+        [JsonProperty("trade_url")]
+        public string? TradeUrl { get; set; }
+
+        [JsonProperty("token_info_url")]
+        public string? TokenInfoUrl { get; set; }
+
+        [JsonProperty("coin_id")]
+        public string? CoinId { get; set; }
+
+        [JsonProperty("target_coin_id")]
+        public string? TargetCoinId { get; set; }
+    }
+
+    public class APIExchangesIdResponseMarket
+    {
+        [JsonProperty("name")]
+        public string? Name { get; set; }
+
+        [JsonProperty("identifier")]
+        public string? Identifier { get; set; }
+
+        [JsonProperty("has_trading_incentive")]
+        public bool? HasTradingIncentive { get; set; }
+    }
+
+    public class Project
+    {
+        [JsonProperty("type")]
+        public string? Type { get; set; }
+
+        [JsonProperty("id")]
+        public string? Id { get; set; }
+
+        [JsonProperty("name")]
+        public string? Name { get; set; }
+
+        [JsonProperty("image")]
+        public Dictionary<string, string>? Image { get; set; }
     }
 }
