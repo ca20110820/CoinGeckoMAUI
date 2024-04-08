@@ -24,12 +24,8 @@ namespace CoinGeckoApp.ViewModels
             get => _coin;
             set
             {
-                // We notify if Coin in context changed (i.e. Id) or if the state of "Favourite" changed.
-                if ((_coin.Id != value.Id) || (_coin.Id == value.Id && _coin.Favourite != value.Favourite))
-                {
-                    _coin = value;
-                    OnPropertyChanged(nameof(Coin));
-                }
+                _coin = value;
+                OnPropertyChanged(nameof(Coin));
             }
         }
 
@@ -69,16 +65,13 @@ namespace CoinGeckoApp.ViewModels
         /* =========== Setters */
         public async Task SetCoin(CoinModel newCoin)
         {
-            _coin = newCoin;  // Set the new Coin
-            OnPropertyChanged(nameof(Coin));  // Manually notify observers
-            coinService = new(newCoin);  // Pass the new Coin to CoinService object
+            Coin = newCoin;
+            coinService = new(Coin);  // Pass the new Coin to CoinService object
             CoinsIdAPIResponse = await coinService.FetchCoinIdResponseAsync();  // Set the new (if it is) CoinsIdAPIResponse
 
             string vsCurrency = Preferences.Get("quotecurrency", "usd");  // TODO: Set this in App.xaml.cs
             int maxDays = Preferences.Get("maxdays", 365);  // TODO: Set this in App.xaml.cs
             MarketChart = await coinService.FetchFreeMarketChartAsync(vsCurrency, maxDays);
-
-
         }
 
         /* =========== View Updaters */
