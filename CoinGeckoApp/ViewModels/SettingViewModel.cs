@@ -1,4 +1,5 @@
 ﻿using CoinGeckoApp.Helpers;
+using CoinGeckoApp.Models;
 using CoinGeckoApp.Settings;
 using System;
 using System.Collections.Generic;
@@ -68,7 +69,16 @@ namespace CoinGeckoApp.ViewModels
             // TODO: if key does not exist, write by insert. Catch the raised error.
         }
 
-
+        /// <summary>
+        /// Fetches the latest list of all Exchange Ids from CoinGecko.
+        /// </summary>
+        /// <returns></returns>
+        public async Task RefreshExchangeIdsAsync()
+        {
+            List<string>? newExchangeIds = await ExchangeModel.GetExchangeIds();
+            if (newExchangeIds == null) return;
+            ExchangeIds = newExchangeIds;
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
