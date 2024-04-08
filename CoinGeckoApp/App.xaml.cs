@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
 using CoinGeckoApp.Helpers;
+using CoinGeckoApp.Models;
+using CoinGeckoApp.Settings;
 
 namespace CoinGeckoApp
 {
@@ -7,6 +9,9 @@ namespace CoinGeckoApp
     {
         FileSystemHelper fsHelper = new();
         JsonHelper jsonHelper = new();
+
+        public List<string>? ExchangeIds { get; set; }
+        public List<string>? SupportedCurrencies { get; set; }
 
         public App()
         {
@@ -23,14 +28,24 @@ namespace CoinGeckoApp
 
         private async Task InitSettings()
         {
+            // Set ExchangeIds and SupportedCurrencies properties to be accessible to other Pages.
+            SupportedCurrencies = await SettingBase.FetchSupportedCurrenciesAsync();
+            ExchangeIds = await ExchangeModel.GetExchangeIds();
+
+            // TODO: Catch error if key exists
+            await SettingBase.WriteSettingAsync("supported_currencies", SupportedCurrencies);
+            await SettingBase.WriteSettingAsync("exchangeids", ExchangeIds);
+
+            // TODO: Catch errors when key does not exist; set to default if there are error
             // Try and Read the Settings from config.json, if exist and available
-            // ...
+            UserSettingModel userSetting = new();
+            userSetting = await userSetting.ReadAsync();  // Try and read the settings from config.json
 
             // If not exist or available, then set the default and write to file
             // ...
 
-            // Set the settings
-            // ...
+            // Set the settings to Preferences
+            userSetting.SetCurrentUserSettings();
         }
         private async Task InitFileStructure()
         {

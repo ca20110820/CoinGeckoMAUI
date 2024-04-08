@@ -54,10 +54,7 @@ namespace CoinGeckoApp.ViewModels
         /// <returns></returns>
         public async Task RefreshSupportedCurrenciesAsync()
         {
-            // Fetch the List of Supported Currencies from CoinGecko
-            // https://api.coingecko.com/api/v3/simple/supported_vs_currencies
-            string url = "https://api.coingecko.com/api/v3/simple/supported_vs_currencies";
-            List<string>? supportedCurrencies = await APIHelper.FetchAndJsonDeserializeAsync<List<string>>(url);
+            List<string>? supportedCurrencies = await SettingBase.FetchSupportedCurrenciesAsync();
 
             if (supportedCurrencies == null) return;
             SupportedCurrencies = supportedCurrencies;  // Update the Observable Property

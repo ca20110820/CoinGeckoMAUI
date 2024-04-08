@@ -59,6 +59,13 @@ namespace CoinGeckoApp.Settings
 
             return await jsonItemDBHelper.GetObjAsync<SettingT>(settingKey);
         }
+
+        public static async Task<List<string>?> FetchSupportedCurrenciesAsync()
+        {
+            // Fetch the List of Supported Currencies from CoinGecko
+            string url = "https://api.coingecko.com/api/v3/simple/supported_vs_currencies";
+            return await APIHelper.FetchAndJsonDeserializeAsync<List<string>>(url);
+        }
     }
 
     public class UserSettingModel : SettingBase
@@ -77,6 +84,11 @@ namespace CoinGeckoApp.Settings
             Preferences.Set("quotecurrency", quoteCurrency);
             Preferences.Set("maxfavourites", maxFavourites);
             Preferences.Set("exchangeid", exchangeId);
+        }
+
+        public void SetCurrentUserSettings()
+        {
+            SetPreferences(DarkMode, QuoteCurrency, MaxFavourites, ExchangeId);
         }
 
         public override async Task ResetSettingAsync()
