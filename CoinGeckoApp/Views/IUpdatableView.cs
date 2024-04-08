@@ -17,7 +17,9 @@ namespace CoinGeckoApp.Views
         /// <summary>
         /// Manually sets a new model in context inside a View (i.e. Page) or outside the View (e.g. Controller or ViewModel classes).
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="model"></param>
-        Task SetModelAsync(object model);
+        /// <returns></returns>
+        Task SetModelAsync<T>(T model);
     }
 }
