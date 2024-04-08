@@ -35,5 +35,36 @@ namespace CoinGeckoApp.Services
             string uri = $"https://api.coingecko.com/api/v3/exchanges/{Exchange.Id}/tickers?include_exchange_logo=true&page={page}&depth=true&order=trust_score_desc";
             return await APIHelper.FetchAndJsonDeserializeAsync<APIExchangeIdTickersResponse>(uri);
         }
+
+        public async Task<List<string>> GetCoinIds()
+        {
+            List<string> outList = new();
+
+            int i = 1;
+            while (true)
+            {
+                // Fetch the APIExchangeIdTickersResponse
+                APIExchangeIdTickersResponse? apiReponse = await FetchExchangeTickers(page: i);
+
+                if (apiReponse == null)
+                {
+                    return outList;
+                }
+                else
+                {
+                    if (apiReponse.Tickers == null)
+                    {
+                        return outList;
+                    }
+                    else
+                    {
+                        // Extract the Coin Ids
+                        List<string> coinIds = apiReponse.Tickers.Select(ticker => ticker.CoinId).Distinct().ToList();
+                        outList.AddRange(coinIds);
+                    }
+                }
+                i++;
+            }
+        }
     }
 }
