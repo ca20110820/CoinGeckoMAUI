@@ -1,5 +1,4 @@
-﻿using AuthenticationServices;
-using CoinGeckoApp.Helpers;
+﻿using CoinGeckoApp.Helpers;
 using CoinGeckoApp.Responses.Coins;
 using Microsoft.Data.Sqlite;
 using System;

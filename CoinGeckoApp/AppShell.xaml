@@ -6,6 +6,28 @@
     xmlns:local="clr-namespace:CoinGeckoApp"
     Title="CoinGecko MAUI App">
 
-    <ShellContent ContentTemplate="{DataTemplate local:MainPage}" Route="MainPage" />
+    <FlyoutItem FlyoutDisplayOptions="AsMultipleItems">
+        <Tab Title="Home">
+            <ShellContent ContentTemplate="{DataTemplate local:MainPage}" Route="MainPage" Shell.NavBarIsVisible="False"/>
+        </Tab>
+
+        <Tab Title="Exchange">
+            <ShellContent ContentTemplate="{DataTemplate local:ExchangePage}" Route="ExchangePage" Shell.NavBarIsVisible="False"/>
+        </Tab>
+
+        <Tab Title="Favourites">
+            <ShellContent ContentTemplate="{DataTemplate local:FavouritesPage}" Route="FavouritesPage" Shell.NavBarIsVisible="False"/>
+        </Tab>
+
+        <Tab Title="Coin Stats">
+            <ShellContent ContentTemplate="{DataTemplate local:CoinPage}" Route="CoinPage" Shell.NavBarIsVisible="False"/>
+        </Tab>
+    </FlyoutItem>
+
+    <FlyoutItem Title="Settings">
+        <Tab>
+            <ShellContent ContentTemplate="{DataTemplate local:SettingsPage}" Route="SettingsPage" Shell.NavBarIsVisible="False"/>
+        </Tab>
+    </FlyoutItem>
 
 </Shell>
