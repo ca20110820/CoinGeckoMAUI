@@ -76,7 +76,7 @@ namespace CoinGeckoApp.ViewModels
 
             // Set MarketChart Property
             string vsCurrency = Preferences.Get("quotecurrency", "usd");  // TODO: Set this in App.xaml.cs
-            int maxDays = Preferences.Get("maxdays", 365);  // TODO: Set this in App.xaml.cs
+            int maxDays = Preferences.Get("maxdays", 360);  // TODO: Set this in App.xaml.cs
             MarketChart = await coinService.FetchFreeMarketChartAsync(vsCurrency, maxDays);
 
             // Set SparkLine Property

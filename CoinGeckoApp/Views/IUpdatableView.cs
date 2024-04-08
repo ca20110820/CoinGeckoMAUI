@@ -20,6 +20,6 @@ namespace CoinGeckoApp.Views
         /// <typeparam name="T"></typeparam>
         /// <param name="model"></param>
         /// <returns></returns>
-        Task SetModelAsync<T>(T model);
+        Task SetModelAsync(object model);
     }
 }
