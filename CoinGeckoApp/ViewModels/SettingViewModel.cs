@@ -1,4 +1,5 @@
-﻿using CoinGeckoApp.Settings;
+﻿using CoinGeckoApp.Helpers;
+using CoinGeckoApp.Settings;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -43,6 +44,28 @@ namespace CoinGeckoApp.ViewModels
                 _exchangeIds = value;
                 OnPropertyChanged(nameof(ExchangeIds));
             }
+        }
+
+
+        /// <summary>
+        /// Fetches the latest supported list of currencies from CoinGecko.
+        /// </summary>
+        /// <returns></returns>
+        public async Task RefreshSupportedCurrenciesAsync()
+        {
+            // Fetch the List of Supported Currencies from CoinGecko
+            // https://api.coingecko.com/api/v3/simple/supported_vs_currencies
+            string url = "https://api.coingecko.com/api/v3/simple/supported_vs_currencies";
+            List<string>? supportedCurrencies = await APIHelper.FetchAndJsonDeserializeAsync<List<string>>(url);
+
+            if (supportedCurrencies == null) return;
+            SupportedCurrencies = supportedCurrencies;  // Update the Observable Property
+
+            // If fetched data is valid, write to config.json with "supported_currencies" key as List of string
+            // if key exists, write by replacement
+            await SettingBase.WriteUpdateSettingAsync("supported_currencies", supportedCurrencies);
+
+            // TODO: if key does not exist, write by insert. Catch the raised error.
         }
 
 
