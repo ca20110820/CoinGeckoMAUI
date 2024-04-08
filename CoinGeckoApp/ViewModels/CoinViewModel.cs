@@ -57,7 +57,19 @@ namespace CoinGeckoApp.ViewModels
             }
         }
 
-        
+
+        private List<double>? _sparkLine = null;
+        public List<double>? SparkLine
+        {
+            get => _sparkLine;
+            set
+            {
+                _sparkLine = value;
+                OnPropertyChanged(nameof(SparkLine));
+            }
+        }
+
+
         /* =========== Constructors */
         public CoinViewModel() { }
 
@@ -69,9 +81,13 @@ namespace CoinGeckoApp.ViewModels
             coinService = new(Coin);  // Pass the new Coin to CoinService object
             CoinsIdAPIResponse = await coinService.FetchCoinIdResponseAsync();  // Set the new (if it is) CoinsIdAPIResponse
 
+            // Set MarketChart Property
             string vsCurrency = Preferences.Get("quotecurrency", "usd");  // TODO: Set this in App.xaml.cs
             int maxDays = Preferences.Get("maxdays", 365);  // TODO: Set this in App.xaml.cs
             MarketChart = await coinService.FetchFreeMarketChartAsync(vsCurrency, maxDays);
+
+            // Set SparkLine Property
+            SparkLine = CoinsIdAPIResponse != null ? CoinService.GetSparkLine(CoinsIdAPIResponse) : null;
         }
 
         /* =========== View Updaters */
