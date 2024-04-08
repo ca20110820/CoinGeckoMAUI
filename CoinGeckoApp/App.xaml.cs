@@ -28,25 +28,69 @@ namespace CoinGeckoApp
 
         private async Task InitSettings()
         {
-            // Set ExchangeIds and SupportedCurrencies properties to be accessible to other Pages.
-            SupportedCurrencies = await SettingBase.FetchSupportedCurrenciesAsync();
-            ExchangeIds = await ExchangeModel.GetExchangeIds();
+            // Initialize Supported Currencies
+            await InitSupportedCurrencies();
 
-            // TODO: Catch error if key exists
-            await SettingBase.WriteSettingAsync("supported_currencies", SupportedCurrencies);
-            await SettingBase.WriteSettingAsync("exchangeids", ExchangeIds);
+            // Initialize Exchange Ids
+            await InitExchangeIds();
 
-            // TODO: Catch errors when key does not exist; set to default if there are error
+            // Initialize User Settings
+            await InitUserSetting();
+
+            // Initialize other Default Preferences not from config.json
+            Preferences.Set("application_name", "CoinGeckoMAUIApp");
+            Preferences.Set("maxdays", 360);  // max historical data from CoinGecko for free API
+        }
+        public async Task InitUserSetting()
+        {
             // Try and Read the Settings from config.json, if exist and available
             UserSettingModel userSetting = new();
-            userSetting = await userSetting.ReadAsync();  // Try and read the settings from config.json
-
-            // If not exist or available, then set the default and write to file
-            // ...
+            try
+            {
+                // Try and read the settings from config.json
+                userSetting = await userSetting.ReadAsync();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                // Set the User Settings to Default and then Write to config.json
+                await userSetting.ResetSettingAsync();
+            }
 
             // Set the settings to Preferences
             userSetting.SetCurrentUserSettings();
         }
+        private async Task InitSupportedCurrencies()
+        {
+            // Get Supported Currencies
+            SupportedCurrencies = await SettingBase.FetchSupportedCurrenciesAsync();
+
+            // Write to config.json
+            try
+            {
+                await SettingBase.WriteSettingAsync("supported_currencies", SupportedCurrencies);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                await SettingBase.WriteUpdateSettingAsync("supported_currencies", SupportedCurrencies);
+            }
+        }
+        private async Task InitExchangeIds()
+        {
+            // Get Exhange Ids
+            ExchangeIds = await ExchangeModel.GetExchangeIds();
+
+            // Write to config.json
+            try
+            {
+                await SettingBase.WriteSettingAsync("exchangeids", ExchangeIds);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                await SettingBase.WriteUpdateSettingAsync("exchangeids", ExchangeIds);
+            }
+        }
+
+
         private async Task InitFileStructure()
         {
             Trace.WriteLine("Initializing CoinGecko MAUI App File Structure ...");
