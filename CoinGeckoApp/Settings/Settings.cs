@@ -16,12 +16,6 @@ namespace CoinGeckoApp.Settings
         protected JsonItemDBHelper jsonItemDBHelper = new();
 
         protected static string configFileName = "config.json";
-        //protected string settingKey;
-
-        //public SettingBase(string settingKey)
-        //{
-        //    this.settingKey = settingKey;
-        //}
 
         public abstract Task ResetSettingAsync();
         public abstract Task ReadAsync();
@@ -67,7 +61,7 @@ namespace CoinGeckoApp.Settings
         }
     }
 
-    public class UserSetting : SettingBase
+    public class UserSettingModel : SettingBase
     {
         public bool DarkMode { get; set; }
         public string QuoteCurrency { get; set; }
@@ -77,6 +71,14 @@ namespace CoinGeckoApp.Settings
 
         private string settingKey = "user_setting";
 
+        public static void SetPreferences(bool darkMode, string quoteCurrency, int maxFavourites, string exchangeId)
+        {
+            Preferences.Set("darkmode", darkMode);
+            Preferences.Set("quotecurrency", quoteCurrency);
+            Preferences.Set("maxfavourites", maxFavourites);
+            Preferences.Set("exchangeid", exchangeId);
+        }
+
         public override async Task ResetSettingAsync()
         {
             DarkMode = false;
@@ -84,18 +86,14 @@ namespace CoinGeckoApp.Settings
             MaxFavourites = 15;
             ExchangeId = "binance";
 
-            Preferences.Set("darkmode", DarkMode);
-            Preferences.Set("quotecurrency", QuoteCurrency);
-            Preferences.Set("maxfavourites", MaxFavourites);
-            Preferences.Set("exchangeid", ExchangeId);
-            //Preferences.Set("maxdays", 365);  // This should be done in App.xaml.cs
+            SetPreferences(DarkMode, QuoteCurrency, MaxFavourites, ExchangeId);
 
             await WriteAsync();  // Write immediately
         }
 
-        public override async Task<UserSetting> ReadAsync()
+        public override async Task<UserSettingModel> ReadAsync()
         {
-            return await ReadSettingAsync<UserSetting>(settingKey);
+            return await ReadSettingAsync<UserSettingModel>(settingKey);
         }
 
         public override async Task WriteAsync()
