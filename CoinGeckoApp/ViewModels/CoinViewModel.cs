@@ -35,11 +35,8 @@ namespace CoinGeckoApp.ViewModels
             get => _coinsIdApiResponse;
             set
             {
-                if (value != null)
-                {
-                    _coinsIdApiResponse = value;
-                    OnPropertyChanged(nameof(CoinsIdAPIResponse));
-                }
+                _coinsIdApiResponse = value;
+                OnPropertyChanged(nameof(CoinsIdAPIResponse));
             }
         }
 
@@ -49,14 +46,10 @@ namespace CoinGeckoApp.ViewModels
             get => _marketChart;
             set
             {
-                if (value != null)
-                {
-                    _marketChart = value;
-                    OnPropertyChanged(nameof(MarketChart));
-                }
+                _marketChart = value;
+                OnPropertyChanged(nameof(MarketChart));
             }
         }
-
 
         private List<double>? _sparkLine = null;
         public List<double>? SparkLine
