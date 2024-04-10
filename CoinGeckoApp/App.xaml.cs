@@ -62,7 +62,7 @@ namespace CoinGeckoApp
         private async Task InitSupportedCurrencies()
         {
             // Get Supported Currencies
-            SupportedCurrencies = await SettingBase.FetchSupportedCurrenciesAsync();
+            SupportedCurrencies = await Task.Run(() => SettingBase.FetchSupportedCurrenciesAsync());
 
             // Write to config.json
             try
