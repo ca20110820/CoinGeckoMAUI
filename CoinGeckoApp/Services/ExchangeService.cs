@@ -93,7 +93,7 @@ namespace CoinGeckoApp.Services
 
             Trace.Assert(tickers.Count > 0);
 
-            await SaveTickersFromDBAsync(tickers);
+            await SaveTickersToDBAsync(tickers);
         }
 
         /* CRUD Operations for Tickers (Cache Data) */
@@ -102,7 +102,7 @@ namespace CoinGeckoApp.Services
             return await jsonDbHelper.GetObjAsync<List<Ticker>>(Exchange.Id);
         }
 
-        public async Task SaveTickersFromDBAsync(List<Ticker> tickers)
+        public async Task SaveTickersToDBAsync(List<Ticker> tickers)
         {
             if (tickers.Count == 0) throw new ArgumentException("The given list of ticker cannot be empty!");
 
