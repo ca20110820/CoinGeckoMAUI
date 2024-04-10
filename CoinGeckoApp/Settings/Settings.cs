@@ -135,7 +135,6 @@ namespace CoinGeckoApp.Settings
 
         public async Task ChangeExchangeIdTo(string newExhangeId)
         {
-            // TODO: Validate from Web Server.
             ExchangeId = newExhangeId;
             Preferences.Set("exchangeid", ExchangeId);
             await UpdateAsync();

@@ -2,6 +2,8 @@ using CoinGeckoApp.Settings;
 using CoinGeckoApp.Models;
 using CoinGeckoApp.ViewModels;
 using System.Diagnostics;
+using CoinGeckoApp.Responses.Exchanges;
+using CoinGeckoApp.Services;
 
 namespace CoinGeckoApp;
 
@@ -122,6 +124,44 @@ public partial class SettingsPage : ContentPage
 
         await userSetting.ReadAsync();
         await userSetting.ChangeExchangeIdTo(selectedExchangeId);
+        
+        await UpdateAppExchangeTickers(selectedExchangeId);
+    }
+
+    private async Task UpdateAppExchangeTickers(string newExhangeId)
+    {
+        // Update the ExchangeTickers property of App singleton
+        App theApp = (App)Application.Current;
+
+        // Fetch the Exchange Ids from CoinGecko
+        if (theApp.ExchangeIds == null)
+        {
+            try
+            {
+                theApp.ExchangeIds = await ExchangeModel.GetExchangeIds();
+            }
+            catch (HttpRequestException ex)
+            {
+                await DisplayAlert("Warning", ex.Message, "Ok");
+                return;
+            }
+        }
+
+        //if (theApp.ExchangeIds == null) throw new Exception("The refreshed ExchangeIds is null");
+        //if (!theApp.ExchangeIds.Contains(newExhangeId)) throw new ArgumentException("The Given Exchange Id is Not Valid!");
+
+        ExchangeService exchangeService = new(new ExchangeModel(newExhangeId));  // Instantiate ExchangeService with given exchange id
+        APIExchangeIdTickersResponse? apiResponse = new();
+        try
+        {
+            apiResponse = await Task.Run(() => exchangeService.FetchExchangeTickers());  // Fetch the APIExchangeIdTickersResponse
+            if (apiResponse != null) { theApp.ExchangeTickers = apiResponse.Tickers; }  // Update App.ExchangeTickers
+        }
+        catch (HttpRequestException ex)
+        {
+            await DisplayAlert("Warning", ex.Message, "Ok");
+            return;
+        }
     }
 
     private async void imagebtnRefreshExchangeIds_Clicked(object sender, EventArgs e)

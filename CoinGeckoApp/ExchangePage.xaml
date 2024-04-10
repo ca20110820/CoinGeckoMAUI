@@ -2,11 +2,95 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="CoinGeckoApp.ExchangePage"
-             Title="ExchangePage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             >
+
+    <ScrollView Orientation="Both">
+        <StackLayout Orientation="Vertical">
+
+            <Label x:Name="labelExchangeId"
+                   VerticalOptions="Start" HorizontalOptions="Center"
+                   FontAttributes="Bold" FontSize="20"/>
+
+            <CollectionView x:Name="collectionviewTickers" SelectionMode="Single"
+                            VerticalOptions="Center" HorizontalOptions="CenterAndExpand" Margin="4,0" >
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="3" />
+                </CollectionView.ItemsLayout>
+
+                <CollectionView.ItemTemplate Padding="5" HorizontalOptions="FillAndExpand">
+                    <DataTemplate>
+                        <!--Add border around-->
+                        <Frame BorderColor="#8728B6" CornerRadius="5" Padding="5">
+                            <HorizontalStackLayout>
+
+                                <!--Exchange Logo-->
+                                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Padding="5">
+                                    <Image Source="{Binding Market.Logo}" MaximumWidthRequest="60" MaximumHeightRequest="60" Margin="3"
+                                           VerticalOptions="Center" HorizontalOptions="CenterAndExpand"/>
+                                </VerticalStackLayout>
+
+                                <!--Details 1-->
+                                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="CenterAndExpand" Padding="5">
+                                    <!--Coin ID-->
+                                    <Label Text="{Binding TargetCoinId, StringFormat='{0}'}" Margin="3" VerticalOptions="Center" HorizontalOptions="CenterAndExpand"
+                                           FontSize="Micro" FontAttributes="Bold"/>
+
+                                    <!--Last Price-->
+                                    <Label Text="{Binding Last, StringFormat='Last: {0}'}" VerticalOptions="Center" HorizontalOptions="CenterAndExpand" Margin="3"
+                                           FontSize="10"/>
+
+                                    <!--Volume-->
+                                    <Label Text="{Binding Volume, StringFormat='Volume: {0}'}" VerticalOptions="Center" HorizontalOptions="CenterAndExpand" Margin="3"
+                                           FontSize="10"/>
+
+                                    <!--Trust Score-->
+                                    <Label Text="{Binding TrustScore, StringFormat='Trust Score: {0}'}" VerticalOptions="Center" HorizontalOptions="CenterAndExpand" Margin="3"
+                                           FontSize="10"/>
+
+                                    <!--Trust Score-->
+                                    <Label Text="{Binding BidAskSpreadPercentage, StringFormat='Bid-Ask Spread: {0:P2}'}" VerticalOptions="Center" HorizontalOptions="CenterAndExpand" Margin="3"
+                                           FontSize="10"/>
+                                </VerticalStackLayout>
+
+                                <!--Details 2-->
+                                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="EndAndExpand" Padding="5">
+                                    <!--Timestamp-->
+                                    <Label Text="{Binding Timestamp, StringFormat='Timestamp: {0:HH:mm:ss}'}" 
+                                           VerticalOptions="Center" HorizontalOptions="EndAndExpand" Margin="3"
+                                           FontSize="10"/>
+
+                                    <!--LastTradedAt-->
+                                    <Label Text="{Binding LastTradedAt, StringFormat='Last Traded At: {0:HH:mm:ss}'}" 
+                                           VerticalOptions="Center" HorizontalOptions="EndAndExpand" Margin="3"
+                                           FontSize="10"/>
+
+                                    <!--LastFetchAt-->
+                                    <Label Text="{Binding LastFetchAt, StringFormat='Last Fetch At: {0:HH:mm:ss}'}" 
+                                           VerticalOptions="Center" HorizontalOptions="EndAndExpand" Margin="3"
+                                           FontSize="10"/>
+
+                                    <!--IsAnomaly-->
+                                    <Label Text="{Binding IsAnomaly, StringFormat='Anomaly? {0}'}" 
+                                           VerticalOptions="Center" HorizontalOptions="EndAndExpand" Margin="3"
+                                           FontSize="10"/>
+
+                                    <!--IsStale-->
+                                    <Label Text="{Binding IsStale, StringFormat='Stale? {0}'}" 
+                                           VerticalOptions="Center" HorizontalOptions="EndAndExpand" Margin="3"
+                                           FontSize="10"/>
+                                </VerticalStackLayout>
+
+                            </HorizontalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+                <CollectionView.EmptyView>
+                    <!-- What to Display when the Collection is Empty -->
+                    <Label Text="There are no Tickers."/>
+                </CollectionView.EmptyView>
+            </CollectionView>
+            
+        </StackLayout>
+    </ScrollView>
 </ContentPage>

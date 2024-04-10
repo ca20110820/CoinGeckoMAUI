@@ -2,6 +2,7 @@
 using CoinGeckoApp.Helpers;
 using CoinGeckoApp.Models;
 using CoinGeckoApp.Settings;
+using CoinGeckoApp.Responses.Exchanges;
 
 namespace CoinGeckoApp
 {
@@ -12,6 +13,7 @@ namespace CoinGeckoApp
 
         public List<string>? ExchangeIds { get; set; }
         public List<string>? SupportedCurrencies { get; set; }
+        public List<Ticker>? ExchangeTickers { get; set; }
 
         public App()
         {
@@ -22,16 +24,31 @@ namespace CoinGeckoApp
 
         protected override async void OnStart()
         {
-            //await CleanUpTesting();
-            await InitFileStructure();
-            await InitSettings();
+            try
+            {
+                //await CleanUpTesting();
+                await InitFileStructure();
+                await Task.Delay(1000);
+                await InitSettings();
+            }
+            catch (HttpRequestException ex)
+            {
+                Trace.WriteLine(ex.ToString());
+            }
         }
 
         private async Task CleanUpTesting()
         {
-            /* Remove Directories and Files for testing.
-             */
-            await fsHelper.RemoveDirectoryContentsFromAppDataDir("Settings");  // Cleanup AppDirectory for Testing
+            /* Remove Directories and Files for testing. */
+
+            // Cleanup AppData Subdirectories for Testing
+            await fsHelper.RemoveDirectoryContentsFromAppDataDir("Settings");
+            await fsHelper.RemoveDirectoryContentsFromAppDataDir("Databases");
+            await fsHelper.RemoveDirectoryContentsFromAppDataDir("Logs");
+            await fsHelper.RemoveDirectoryContentsFromAppDataDir("Caches");
+
+            // Cleanup Cache Subdirectories for Testing
+            //await fsHelper.RemoveDirectoryContentsFromCacheDir("ExchangeTickers");
         }
 
         private async Task InitSettings()
@@ -107,11 +124,17 @@ namespace CoinGeckoApp
             await fsHelper.CreateDirectoryInAppDataDirAsync("Settings");  // Try to create the "Settings Subdirectory"
             await fsHelper.CreateDirectoryInAppDataDirAsync("Databases");  // Try to create the "Database Subdirectory"
             await fsHelper.CreateDirectoryInAppDataDirAsync("Logs");  // Try to create the "Logs Subdirectory"
+            await fsHelper.CreateDirectoryInAppDataDirAsync("Caches");  // Try to create the "Caches Subdirectory"
 
             // Create Subdirectories in Cache
-            // ...
+            //await fsHelper.CreateDirectoryInCacheDirAsync("ExchangeTickers");
 
-            
+            // Initialize Caches/exchange_tickers.json
+            string exchangeTickersPath = Path.Combine(fsHelper.AppDataDir, "Caches", "exchange_tickers.json");
+            await Task.Run(() => {
+                JsonHelper.CreateEmptyJson(exchangeTickersPath);
+            });
+
             // Initialize config.json
             string configJsonPath = Path.Combine(fsHelper.AppDataDir, "Settings", "config.json");
             await Task.Run(() => {
