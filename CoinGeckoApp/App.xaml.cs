@@ -22,8 +22,16 @@ namespace CoinGeckoApp
 
         protected override async void OnStart()
         {
+            //await CleanUpTesting();
             await InitFileStructure();
             await InitSettings();
+        }
+
+        private async Task CleanUpTesting()
+        {
+            /* Remove Directories and Files for testing.
+             */
+            await fsHelper.RemoveDirectoryContentsFromAppDataDir("Settings");  // Cleanup AppDirectory for Testing
         }
 
         private async Task InitSettings()

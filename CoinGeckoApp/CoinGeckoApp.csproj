@@ -57,6 +57,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Resources\Images\refresh_button.svg" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="7.0.1" />
 		<PackageReference Include="JsonFlatFileDataStore" Version="2.4.2" />
 		<PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.0-preview.2.24128.4" />

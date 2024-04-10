@@ -1,12 +1,75 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="CoinGeckoApp.SettingsPage"
-             Title="SettingsPage">
+             x:Class="CoinGeckoApp.SettingsPage">
+    
     <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+        <Label Text="User Preferences" TextType="Text" VerticalOptions="Start" HorizontalOptions="StartAndExpand"
+               FontSize="18" FontAttributes="Bold"
+               />
+
+        <Grid VerticalOptions="Start" HorizontalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <!--<RowDefinition Height="1*"/>-->
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+            <BoxView BackgroundColor="Black" Grid.Row="0" Grid.ColumnSpan="2" HeightRequest="1" VerticalOptions="Start" HorizontalOptions="FillAndExpand" />
+
+            <!--User Setting - Dark Mode-->
+            <Label Text="Dark Mode" Grid.Row="0" Grid.Column="0" 
+                   VerticalOptions="Center" HorizontalOptions="Start"/>
+            <Switch x:Name="switchDarkMode" IsToggled="False" Grid.Row="0" Grid.Column="1" Toggled="switchDarkMode_Toggled"/>
+
+            <BoxView BackgroundColor="Black" Grid.Row="0" Grid.ColumnSpan="2" HeightRequest="1" VerticalOptions="End" HorizontalOptions="FillAndExpand" />
+
+            <!--User Setting - Quote Currencies -->
+            <Label Text="Quote Currency" Grid.Row="1" Grid.Column="0" VerticalOptions="Center" HorizontalOptions="Start"/>
+            <HorizontalStackLayout Grid.Row="1" Grid.Column="1">
+                <!--Refresh Button to Fetch Quote Currencies from CoinGecko-->
+                <ImageButton x:Name="imagebtnRefreshQuoteCurrency" Source="refresh_button.png" VerticalOptions="Center" HorizontalOptions="End" Aspect="AspectFit" 
+                             Clicked="imagebtnRefreshQuoteCurrency_Clicked"/>
+                <Picker x:Name="pickerQuoteCurrency" VerticalOptions="Center" HorizontalOptions="End" 
+                        Title="Quote Currency" SelectedIndexChanged="pickerQuoteCurrency_SelectedIndexChanged"/>
+            </HorizontalStackLayout>
+
+            <BoxView BackgroundColor="Black" Grid.Row="1" Grid.ColumnSpan="2" HeightRequest="1" VerticalOptions="End" HorizontalOptions="FillAndExpand" />
+
+            <!--User Setting - Max Favourites-->
+            <!--<Label Text="Max. Favourites" Grid.Row="2" Grid.Column="0" VerticalOptions="Center" HorizontalOptions="Start"/>
+            <ContentView Grid.Row="2" Grid.Column="1" VerticalOptions="Center" HorizontalOptions="End" Padding="3">
+                <HorizontalStackLayout>
+                    <Button x:Name="btnMaxFavourites_Down" Text="-" Clicked="OnButtonClicked"/>
+                    <Label x:Name="labelMaxFavourites_Value" Margin="10,0" VerticalTextAlignment="Center"/>
+                    <Button x:Name="btnMaxFavourites_Up" Text="+" Clicked="OnButtonClicked"/>
+                </HorizontalStackLayout>
+            </ContentView>-->
+            <!--<BoxView BackgroundColor="Black" Grid.Row="2" Grid.ColumnSpan="2" HeightRequest="1" VerticalOptions="End" HorizontalOptions="FillAndExpand" />-->
+
+            <!--User Setting - Exchange ID-->
+            <Label Text="Exchange ID" Grid.Row="2" Grid.Column="0" VerticalOptions="Center" HorizontalOptions="Start"/>
+            <HorizontalStackLayout Grid.Row="2" Grid.Column="1">
+                <ImageButton x:Name="imagebtnRefreshExchangeIds" Source="refresh_button.png" VerticalOptions="Center" HorizontalOptions="End" Aspect="AspectFit" 
+                             Clicked="imagebtnRefreshExchangeIds_Clicked"/>
+                <Picker x:Name="pickerExchangeID" VerticalOptions="Center" HorizontalOptions="End" 
+                        Title="Exchange ID" SelectedIndexChanged="pickerExchangeID_SelectedIndexChanged"/>
+            </HorizontalStackLayout>
+
+            <BoxView BackgroundColor="Black" Grid.Row="2" Grid.ColumnSpan="2" HeightRequest="1" VerticalOptions="End" HorizontalOptions="FillAndExpand" />
+
+        </Grid>
+        
+        <!--Reset Button for all User Settings-->
+        <Button x:Name="btnResetUserSettings" Text="Reset User Settings" 
+                HorizontalOptions="Center" VerticalOptions="Center" Margin="0,10" MaximumWidthRequest="300" 
+                Clicked="btnResetUserSettings_Clicked"/>
+        
     </VerticalStackLayout>
 </ContentPage>
