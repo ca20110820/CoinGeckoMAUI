@@ -124,27 +124,6 @@ public partial class SettingsPage : ContentPage
 
         await userSetting.ReadAsync();
         await userSetting.ChangeExchangeIdTo(selectedExchangeId);
-        
-        await UpdateAppExchangeTickers(selectedExchangeId);
-    }
-
-    private async Task UpdateAppExchangeTickers(string newExhangeId)
-    {
-        // Update the ExchangeTickers property of App singleton
-        App theApp = (App)Application.Current;
-
-        ExchangeService exchangeService = new(new ExchangeModel(newExhangeId));  // Instantiate ExchangeService with given exchange id
-        APIExchangeIdTickersResponse? apiResponse = new();
-        try
-        {
-            apiResponse = await Task.Run(() => exchangeService.FetchExchangeTickers());  // Fetch the APIExchangeIdTickersResponse
-            if (apiResponse != null && apiResponse.Tickers != null) { theApp.ExchangeTickers = apiResponse.Tickers; }  // Update App.ExchangeTickers
-        }
-        catch (HttpRequestException ex)
-        {
-            await DisplayAlert("Warning", ex.Message, "Ok");
-            return;
-        }
     }
 
     private async void imagebtnRefreshExchangeIds_Clicked(object sender, EventArgs e)
