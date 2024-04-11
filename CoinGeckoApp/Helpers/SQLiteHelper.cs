@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -140,6 +141,26 @@ namespace CoinGeckoApp.Helpers
         public async Task RemoveAllDataFromTableAsync(string tableName)
         {
             await ExecuteNonQueryAsync($"DELETE FROM {tableName}");
+        }
+
+
+        /* Converting between Object and byte[] */
+        public static async Task<byte[]> ConvertObjectToByte<T>(T obj)
+        {
+            // Serialize the object into JSON string
+            string jsonData = await Task.Run(() => JsonConvert.SerializeObject(obj));
+
+            // Convert JSON string to byte array using UTF-8 encoding
+            return Encoding.UTF8.GetBytes(jsonData);
+        }
+
+        public static async Task<T?> ConvertByteToObject<T>(byte[] blob)
+        {
+            // Convert byte array to JSON string using UTF-8 encoding
+            string jsonData = Encoding.UTF8.GetString(blob);
+
+            // Deserialize JSON string to object
+            return await Task.Run(() => JsonConvert.DeserializeObject<T>(jsonData));
         }
     }
 }

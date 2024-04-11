@@ -147,6 +147,13 @@ namespace CoinGeckoApp
             await sqlHelper.CreateTableAsync("favourites",
                 "id TEXT PRIMARY KEY NOT NULL UNIQUE",
                 "favourite INTEGER NOT NULL CHECK (favourite IN (0, 1))");
+
+            // Initialize Caches/exchange_tickers.db
+            // Create arbitrary table to initialize the whole database
+            string tickersDbPath = Path.Combine(fsHelper.AppDataDir, "Caches", "exchange_tickers.db");
+            sqlHelper = new(tickersDbPath);
+            await sqlHelper.CreateTableAsync("dummy_table", 
+                "id TEXT PRIMARY KEY NOT NULL UNIQUE");
         }
 
         protected override async void OnSleep()

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using Microsoft.Data.Sqlite;
 
 namespace CoinGeckoApp.Services
 {
@@ -21,16 +22,21 @@ namespace CoinGeckoApp.Services
         private JsonHelper jsonHelper;
         private JsonItemDBHelper jsonDbHelper;
 
+        private SQLiteHelper sqlHelper;
+        private string sqliteFilePath;
+
         public ExchangeModel Exchange {  get; set; }
 
         public ExchangeService()
         {
             InitJsonDB();
+            InitSQlite();
         }
         public ExchangeService(ExchangeModel exchange)
         {
             Exchange = exchange;
             InitJsonDB();
+            InitSQlite();
         }
         private void InitJsonDB()
         {
@@ -38,6 +44,12 @@ namespace CoinGeckoApp.Services
             jsonHelper = new(jsonFilePath);
             jsonDbHelper = new(jsonFilePath);
         }
+        private void InitSQlite()
+        {
+            sqliteFilePath = Path.Combine(fsHelper.AppDataDir, "Caches", "exchange_tickers.db");
+            sqlHelper = new(sqliteFilePath);
+        }
+
 
         public async Task<APIExchangesIdResponse?> FetchExchangeIdResponseAsync()
         {
@@ -115,6 +127,80 @@ namespace CoinGeckoApp.Services
                 // This will happen when the exchange_id does not exists in "ExchangeTickers/exchange_tickers.json"
                 await jsonDbHelper.InsertObjAsync(Exchange.Id, tickers);
             }
+        }
+
+
+        /* SQLite - CRUD Operations for Tickers */
+        public async Task CreateSQLTableAsync()
+        {
+            await sqlHelper.CreateTableAsync(Exchange.Id,
+                "coin_id TEXT PRIMARY KEY NOT NULL UNIQUE",
+                "blob_data BLOB");
+        }
+
+        public async Task InsertTickersToSQLAsync(List<Ticker> tickers)
+        {
+            /* References:
+             * - https://stackoverflow.com/questions/65017136/c-sharp-sqlite-retrieve-complete-blob-and-insert-complete-blob
+             */
+            await CreateSQLTableAsync();
+            string dbFilePath = Path.Combine(fsHelper.AppDataDir, "Caches", "exchange_tickers.db");
+            string connectionString = $"Data Source={dbFilePath}";
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                await connection.OpenAsync();
+
+                foreach (Ticker ticker in tickers)
+                {
+                    byte[] blob = await SQLiteHelper.ConvertObjectToByte(ticker);
+
+
+                    using (var command = connection.CreateCommand())
+                    {
+                        command.CommandText = $"INSERT OR REPLACE INTO `{Exchange.Id}` (coin_id, blob_data) VALUES ('{ticker.CoinId}', @blob_data)";
+                        command.Parameters.Add(new SqliteParameter()
+                        {
+                            ParameterName = "@blob_data",
+                            Value = blob,
+                            DbType = System.Data.DbType.Binary
+                        });
+
+                        await command.ExecuteNonQueryAsync();
+                    }
+                }
+            }
+        }
+
+        public async Task<List<Ticker>> GetTickersFromSQLAsync()
+        {
+            List<Ticker> tickers = new List<Ticker>();
+            string dbFilePath = Path.Combine(fsHelper.AppDataDir, "Caches", "exchange_tickers.db");
+            string connectionString = $"Data Source={dbFilePath}";
+
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                await connection.OpenAsync(); // Open the connection
+
+                // Construct SQL command with necessary columns
+                string query = $"SELECT blob_data FROM `{Exchange.Id}`";
+
+                // Execute the query
+                using (var command = new SqliteCommand(query, connection))
+                {
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        // Read data in batches
+                        while (await reader.ReadAsync())
+                        {
+                            byte[] blob = (byte[])reader["blob_data"];
+                            Ticker? ticker = await SQLiteHelper.ConvertByteToObject<Ticker>(blob);
+                            if (ticker != null)
+                                tickers.Add(ticker);
+                        }
+                    }
+                }
+            }
+            return tickers;
         }
     }
 }

@@ -133,29 +133,12 @@ public partial class SettingsPage : ContentPage
         // Update the ExchangeTickers property of App singleton
         App theApp = (App)Application.Current;
 
-        // Fetch the Exchange Ids from CoinGecko
-        if (theApp.ExchangeIds == null)
-        {
-            try
-            {
-                theApp.ExchangeIds = await ExchangeModel.GetExchangeIds();
-            }
-            catch (HttpRequestException ex)
-            {
-                await DisplayAlert("Warning", ex.Message, "Ok");
-                return;
-            }
-        }
-
-        //if (theApp.ExchangeIds == null) throw new Exception("The refreshed ExchangeIds is null");
-        //if (!theApp.ExchangeIds.Contains(newExhangeId)) throw new ArgumentException("The Given Exchange Id is Not Valid!");
-
         ExchangeService exchangeService = new(new ExchangeModel(newExhangeId));  // Instantiate ExchangeService with given exchange id
         APIExchangeIdTickersResponse? apiResponse = new();
         try
         {
             apiResponse = await Task.Run(() => exchangeService.FetchExchangeTickers());  // Fetch the APIExchangeIdTickersResponse
-            if (apiResponse != null) { theApp.ExchangeTickers = apiResponse.Tickers; }  // Update App.ExchangeTickers
+            if (apiResponse != null && apiResponse.Tickers != null) { theApp.ExchangeTickers = apiResponse.Tickers; }  // Update App.ExchangeTickers
         }
         catch (HttpRequestException ex)
         {
