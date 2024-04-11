@@ -46,6 +46,7 @@ namespace CoinGeckoApp
             await fsHelper.RemoveDirectoryContentsFromAppDataDir("Databases");
             await fsHelper.RemoveDirectoryContentsFromAppDataDir("Logs");
             await fsHelper.RemoveDirectoryContentsFromAppDataDir("Caches");
+            await fsHelper.RemoveDirectoryContentsFromAppDataDir("CoinResponses");
 
             // Cleanup Cache Subdirectories for Testing
             //await fsHelper.RemoveDirectoryContentsFromCacheDir("ExchangeTickers");
@@ -125,6 +126,7 @@ namespace CoinGeckoApp
             await fsHelper.CreateDirectoryInAppDataDirAsync("Databases");  // Try to create the "Database Subdirectory"
             await fsHelper.CreateDirectoryInAppDataDirAsync("Logs");  // Try to create the "Logs Subdirectory"
             await fsHelper.CreateDirectoryInAppDataDirAsync("Caches");  // Try to create the "Caches Subdirectory"
+            await fsHelper.CreateDirectoryInAppDataDirAsync("CoinResponses");  // Try to create the "Caches Subdirectory"
 
             // Create Subdirectories in Cache
             //await fsHelper.CreateDirectoryInCacheDirAsync("ExchangeTickers");
@@ -137,6 +139,12 @@ namespace CoinGeckoApp
 
             // Initialize config.json
             string configJsonPath = Path.Combine(fsHelper.AppDataDir, "Settings", "config.json");
+            await Task.Run(() => {
+                JsonHelper.CreateEmptyJson(configJsonPath);
+            });
+
+            // Initialize CoinResponses/coin_response.json
+            configJsonPath = Path.Combine(fsHelper.AppDataDir, "CoinResponses", "coin_response.json");
             await Task.Run(() => {
                 JsonHelper.CreateEmptyJson(configJsonPath);
             });
