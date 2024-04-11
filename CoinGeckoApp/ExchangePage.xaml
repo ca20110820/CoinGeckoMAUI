@@ -4,14 +4,15 @@
              x:Class="CoinGeckoApp.ExchangePage"
              >
 
-    <ScrollView Orientation="Both">
-        <StackLayout Orientation="Vertical">
+    <ScrollView Orientation="Vertical">
+        <VerticalStackLayout>
 
-            <Label x:Name="labelExchangeId"
+            <Label x:Name="labelExchangeId" x:FieldModifier="public"
                    VerticalOptions="Start" HorizontalOptions="Center"
                    FontAttributes="Bold" FontSize="20"/>
 
-            <CollectionView x:Name="collectionviewTickers" SelectionMode="Single"
+            <CollectionView x:Name="collectionviewTickers" x:FieldModifier="public" SelectionMode="Single"
+                            ItemsSource="{Binding Tickers}"
                             VerticalOptions="Center" HorizontalOptions="CenterAndExpand" Margin="4,0" >
                 <CollectionView.ItemsLayout>
                     <LinearItemsLayout Orientation="Vertical" ItemSpacing="3" />
@@ -91,6 +92,6 @@
                 </CollectionView.EmptyView>
             </CollectionView>
             
-        </StackLayout>
+        </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

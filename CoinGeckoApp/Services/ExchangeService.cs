@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using Microsoft.Data.Sqlite;
+using JsonFlatFileDataStore;
 
 namespace CoinGeckoApp.Services
 {
@@ -36,7 +37,7 @@ namespace CoinGeckoApp.Services
         {
             Exchange = exchange;
             InitJsonDB();
-            InitSQlite();
+            //InitSQlite();
         }
         private void InitJsonDB()
         {
@@ -201,6 +202,47 @@ namespace CoinGeckoApp.Services
                 }
             }
             return tickers;
+        }
+
+
+        /* Json Collection DB - CRUD for json file containing exchanges and their tickers
+         * 
+         * Json File - Form
+         * ----------------
+         * {
+         *     "<exchange_id>": [{...}, {...}, ...],
+         *     "<exchange_id>": [{...}, {...}, ...],
+         *     ...
+         * }
+         * 
+         * Directory:
+         * ----------
+         * This file will be stored in AppData: "<...>/CoinGeckoMAUIApp/Caches/exchange_tickers.json"
+         * 
+         * Notes:
+         * - Faster than
+         */
+        public async Task InsertTickersToJsonAsync(Ticker[] tickers)
+        {
+            using (DataStore store = await Task.Run(() => new DataStore(jsonHelper.JsonFilePath)))
+            {
+                var collection = store.GetCollection<Ticker>(Exchange.Id);  // Lazy reference to the data is created
+
+                // Delete the Old Tickers
+                await collection.DeleteManyAsync(x => x is Ticker);
+
+                // Insert the New Tickers
+                await collection.InsertManyAsync(tickers);
+            }
+        }
+
+        public async Task<Ticker[]> GetTickersFromJsonAsync()
+        {
+            using (var store = await Task.Run(() => new DataStore(jsonHelper.JsonFilePath)))
+            {
+                var collection = store.GetCollection<Ticker>(Exchange.Id);  // Lazy reference to the data is created
+                return collection.AsQueryable().ToArray();
+            }
         }
     }
 }
