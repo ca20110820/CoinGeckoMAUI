@@ -33,7 +33,7 @@
                                 <!--Details 1-->
                                 <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="CenterAndExpand" Padding="5">
                                     <!--Coin ID-->
-                                    <Label Text="{Binding TargetCoinId, StringFormat='{0}'}" Margin="3" VerticalOptions="Center" HorizontalOptions="CenterAndExpand"
+                                    <Label Text="{Binding CoinId, StringFormat='{0}'}" Margin="3" VerticalOptions="Center" HorizontalOptions="CenterAndExpand"
                                            FontSize="Micro" FontAttributes="Bold"/>
 
                                     <!--Last Price-->
