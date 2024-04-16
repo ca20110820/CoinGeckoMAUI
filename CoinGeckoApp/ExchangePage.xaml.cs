@@ -24,7 +24,16 @@ public partial class ExchangePage : ContentPage
     {
         base.OnAppearing();
 
-        await viewModel.ShowTickers();
+        try
+        {
+            await viewModel.ShowTickers();
+        }
+        catch (HttpRequestException ex)
+        {
+            // No Internet Connection error
+            await DisplayAlert("Warn", "No Internet Connection!", "Ok");
+            await Shell.Current.GoToAsync("//MainPage");  // Route to Home Page
+        }
     }
 
     protected override async void OnDisappearing()
