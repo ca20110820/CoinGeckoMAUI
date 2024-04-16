@@ -70,8 +70,16 @@ public partial class SettingsPage : ContentPage
     {
         bool newValue = e.Value;
 
-        await userSetting.ReadAsync();
-        await userSetting.SwitchDarkMode();
+        try
+        {
+            await userSetting.ReadAsync();
+            await userSetting.SwitchDarkMode();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            Trace.WriteLine(ex);
+            return;
+        }
 
         //Trace.WriteLine($"Persistent DarkMode Value: {userSetting.DarkMode}");
         //Trace.WriteLine($"Current DarkMode Value: {newValue}");
@@ -167,10 +175,19 @@ public partial class SettingsPage : ContentPage
 
     private async Task ResetUserSettings()
     {
-        // Try and Read the Settings from config.json, if exist and available
         UserSettingModel userSetting = new();
 
-        userSetting = await userSetting.ReadAsync();
+        // Try and Read the Settings from config.json, if exist and available
+        try
+        {
+            userSetting = await userSetting.ReadAsync();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            Trace.WriteLine($"We failed to initialized or set the settings due to connection failure!\n{ex}");
+            return;
+        }
+
         await userSetting.ResetSettingAsync();
 
         // Reset Widget Values

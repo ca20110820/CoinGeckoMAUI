@@ -26,7 +26,7 @@ namespace CoinGeckoApp
         {
             try
             {
-                //await CleanUpTesting();
+                await CleanUpTesting();
                 await InitFileStructure();
                 await Task.Delay(1000);
                 await InitSettings();
