@@ -4,29 +4,45 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:CoinGeckoApp"
-    Title="CoinGecko MAUI App">
+    Title="CoinGecko MAUI App"
+    Shell.ForegroundColor="Black"
+    Shell.BackgroundColor="MediumPurple"
+    >
+
+    <Shell.TitleView BackgroundColor="MediumPurple">
+        <HorizontalStackLayout HorizontalOptions="FillAndExpand">
+            <Label Text="CoinGecko MAUI"
+                   TextColor="White"
+                   VerticalTextAlignment="Center"
+                   VerticalOptions="Center"
+                   HorizontalTextAlignment="Center"
+                   HorizontalOptions="Center"
+                   HeightRequest="50"
+                   FontSize="Medium" />
+        </HorizontalStackLayout>
+    </Shell.TitleView>
 
     <FlyoutItem FlyoutDisplayOptions="AsMultipleItems">
         <Tab Title="Home">
-            <ShellContent ContentTemplate="{DataTemplate local:MainPage}" Route="MainPage" Shell.NavBarIsVisible="False"/>
+            <ShellContent ContentTemplate="{DataTemplate local:MainPage}" Route="MainPage" Shell.NavBarIsVisible="True"/>
         </Tab>
 
         <Tab Title="Exchange">
-            <ShellContent ContentTemplate="{DataTemplate local:ExchangePage}" Route="ExchangePage" Shell.NavBarIsVisible="False"/>
+            <ShellContent ContentTemplate="{DataTemplate local:ExchangePage}" Route="ExchangePage" Shell.NavBarIsVisible="True"/>
         </Tab>
 
         <Tab Title="Favourites">
-            <ShellContent ContentTemplate="{DataTemplate local:FavouritesPage}" Route="FavouritesPage" Shell.NavBarIsVisible="False"/>
+            <ShellContent ContentTemplate="{DataTemplate local:FavouritesPage}" Route="FavouritesPage" Shell.NavBarIsVisible="True"/>
         </Tab>
 
         <Tab Title="Coin Stats">
-            <ShellContent ContentTemplate="{DataTemplate local:CoinPage}" Route="CoinPage" Shell.NavBarIsVisible="False"/>
+            <ShellContent ContentTemplate="{DataTemplate local:CoinPage}" Route="CoinPage" Shell.NavBarIsVisible="True"/>
         </Tab>
     </FlyoutItem>
 
     <FlyoutItem Title="Settings">
         <Tab>
-            <ShellContent ContentTemplate="{DataTemplate local:SettingsPage}" Route="SettingsPage" Shell.NavBarIsVisible="False"/>
+            <ShellContent ContentTemplate="{DataTemplate local:SettingsPage}" Route="SettingsPage" Shell.NavBarIsVisible="True"/>
         </Tab>
     </FlyoutItem>
 
