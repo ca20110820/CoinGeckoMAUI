@@ -27,14 +27,22 @@
                                 <!--Exchange Logo-->
                                 <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Padding="5">
                                     <Image Source="{Binding Market.Logo}" MaximumWidthRequest="60" MaximumHeightRequest="60" Margin="3"
-                                           VerticalOptions="Center" HorizontalOptions="CenterAndExpand"/>
+                                           VerticalOptions="Center" HorizontalOptions="CenterAndExpand">
+                                        <Image.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnCoinTapped" NumberOfTapsRequired="1" />
+                                        </Image.GestureRecognizers>
+                                    </Image>
                                 </VerticalStackLayout>
 
                                 <!--Details 1-->
                                 <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="CenterAndExpand" Padding="5">
                                     <!--Coin ID-->
                                     <Label Text="{Binding CoinId, StringFormat='{0}'}" Margin="3" VerticalOptions="Center" HorizontalOptions="CenterAndExpand"
-                                           FontSize="Micro" FontAttributes="Bold"/>
+                                           FontSize="Micro" FontAttributes="Bold">
+                                        <Label.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnCoinTapped" NumberOfTapsRequired="1" />
+                                        </Label.GestureRecognizers>
+                                    </Label>
 
                                     <!--Last Price-->
                                     <Label Text="{Binding Last, StringFormat='Last: {0}'}" VerticalOptions="Center" HorizontalOptions="CenterAndExpand" Margin="3"

@@ -58,6 +58,10 @@
 
 	<ItemGroup>
 	  <None Remove="Resources\Images\refresh_button.svg" />
+	  <None Remove="Resources\Images\star_favourite.png" />
+	  <None Remove="Resources\Images\star_unfavourite.png" />
+	  <None Remove="Resources\Images\triangle_down.png" />
+	  <None Remove="Resources\Images\triangle_up.png" />
 	</ItemGroup>
 
 	<ItemGroup>

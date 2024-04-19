@@ -26,7 +26,7 @@ public partial class ExchangePage : ContentPage
 
         try
         {
-            await viewModel.ShowTickers();
+            await Task.Run(() => viewModel.ShowTickers());
         }
         catch (HttpRequestException ex)
         {
@@ -39,5 +39,29 @@ public partial class ExchangePage : ContentPage
     protected override async void OnDisappearing()
     {
         base.OnDisappearing();
+    }
+
+    private async void OnCoinTapped(object sender, TappedEventArgs e)
+    {
+        Ticker selectedTicker;
+        if (sender is Image)
+        {
+            Image widget = (Image)sender;
+            selectedTicker = (Ticker)widget.BindingContext;
+        }
+        else
+        {
+            Label widget = (Label)sender;
+            selectedTicker = (Ticker)widget.BindingContext;
+        }
+
+        if (selectedTicker == null) return;
+
+        await Shell.Current.GoToAsync($"//CoinPage",
+            new Dictionary<string, object>
+            {
+                ["ParamCoinId"] = selectedTicker.CoinId,
+            }
+            );
     }
 }

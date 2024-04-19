@@ -29,6 +29,17 @@ namespace CoinGeckoApp.ViewModels
             }
         }
 
+        private string _isFavouriteImage;
+        public string IsFavouriteImage
+        {
+            get => _isFavouriteImage;
+            set
+            {
+                _isFavouriteImage = value;
+                OnPropertyChanged(nameof(IsFavouriteImage));
+            }
+        }
+
         private APICoinsIdResponse? _coinsIdApiResponse = null;
         public APICoinsIdResponse? CoinsIdAPIResponse
         {
@@ -63,6 +74,18 @@ namespace CoinGeckoApp.ViewModels
         }
 
 
+        private double? _currentPrice = null;
+        public double? CurrentPrice
+        {
+            get => _currentPrice;
+            set
+            {
+                _currentPrice = value;
+                OnPropertyChanged(nameof(CurrentPrice));
+            }
+        }
+
+
         /* =========== Constructors */
         public CoinViewModel() { }
 
@@ -72,15 +95,33 @@ namespace CoinGeckoApp.ViewModels
         {
             Coin = newCoin;
             coinService = new(Coin);  // Pass the new Coin to CoinService object
-            CoinsIdAPIResponse = await coinService.FetchCoinIdResponseAsync();  // Set the new (if it is) CoinsIdAPIResponse
+            CoinsIdAPIResponse = await Task.Run(() => coinService.FetchCoinIdResponseAsync());  // Set the new (if it is) CoinsIdAPIResponse
 
             // Set MarketChart Property
             string vsCurrency = Preferences.Get("quotecurrency", "usd");  // TODO: Set this in App.xaml.cs
             int maxDays = Preferences.Get("maxdays", 360);  // TODO: Set this in App.xaml.cs
-            MarketChart = await coinService.FetchFreeMarketChartAsync(vsCurrency, maxDays);
+            MarketChart = await Task.Run(() => coinService.FetchFreeMarketChartAsync(vsCurrency, maxDays));
 
             // Set SparkLine Property
             SparkLine = CoinsIdAPIResponse != null ? CoinService.GetSparkLine(CoinsIdAPIResponse) : null;
+
+            // Set the CurrentPrice Property
+            CurrentPrice = CoinsIdAPIResponse.market_data.current_price[Preferences.Get("quotecurrency", "usd")];
+
+            // Set IsFavouriteImage Property
+            SetIsFavouriteImage();
+        }
+
+        private void SetIsFavouriteImage()
+        {
+            if (Coin.Favourite)
+            {
+                IsFavouriteImage = "star_favourite.png";
+            }
+            else
+            {
+                IsFavouriteImage = "star_unfavourite.png";
+            }
         }
 
         /* =========== View Updaters */
@@ -92,10 +133,25 @@ namespace CoinGeckoApp.ViewModels
         /* =========== Actions and Commands */
         public async Task ChangeFavouriteState()
         {
-            CoinModel updatedCoin = Coin;
-            await updatedCoin.ChangeFavouriteStatus();  // This will write the changed Coin state to SQLite DB for persistence.
+            CoinModel updatedCoin = new CoinModel(Coin.Id, Coin.Favourite);
+
+            if (updatedCoin.Favourite)  // Current State is Favourite
+            {
+                await updatedCoin.RemoveFromFavouritesAsync();
+            }
+            else  // Current State is Not Favourite
+            {
+                await updatedCoin.AddToFavouritesAsync();
+            }
+
             Coin = updatedCoin;
+            
+            // Set the path to star image, depending on favourite status
+            SetIsFavouriteImage();
         }
+
+        
+
 
 
 

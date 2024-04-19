@@ -149,17 +149,16 @@ namespace CoinGeckoApp
                 JsonHelper.CreateEmptyJson(configJsonPath);
             });
 
-            // Initialize favourites.db
-            string favouritesDbPath = Path.Combine(fsHelper.AppDataDir, "Databases", "favourites.db");
-            SQLiteHelper sqlHelper = new(favouritesDbPath);
-            await sqlHelper.CreateTableAsync("favourites",
-                "id TEXT PRIMARY KEY NOT NULL UNIQUE",
-                "favourite INTEGER NOT NULL CHECK (favourite IN (0, 1))");
+            // Initialize favourites.json
+            string dataJsonPath = Path.Combine(fsHelper.AppDataDir, "Databases", "favourites.json");
+            await Task.Run(() => {
+                JsonHelper.CreateEmptyJson(dataJsonPath);
+            });
 
             // Initialize Caches/exchange_tickers.db
             // Create arbitrary table to initialize the whole database
             string tickersDbPath = Path.Combine(fsHelper.AppDataDir, "Caches", "exchange_tickers.db");
-            sqlHelper = new(tickersDbPath);
+            SQLiteHelper sqlHelper = new(tickersDbPath);
             await sqlHelper.CreateTableAsync("dummy_table", 
                 "id TEXT PRIMARY KEY NOT NULL UNIQUE");
         }

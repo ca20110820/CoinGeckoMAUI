@@ -1,5 +1,4 @@
-﻿using Android.Media.TV;
-using CoinGeckoApp.Helpers;
+﻿using CoinGeckoApp.Helpers;
 using CoinGeckoApp.Models;
 using CoinGeckoApp.Responses.Coins;
 using JsonFlatFileDataStore;
@@ -190,51 +189,6 @@ namespace CoinGeckoApp.Services
 
             return outDict;
         }
-
-
-
-        /* ==================== CRUD for Persistent Favourites ==================== */
-        /* This will be important for storing the last state of the favourite coin to present in the View.
-         * 
-         */
-        public async Task UpdateFavouriteCoinIdResponseAsync()
-        {
-            await Coin.UpdateFavourite();  // Update the Favourite Status of the Coin from Local SQLite DB.
-            if (!Coin.Favourite) return;  // Skip this method if its not a favourite
-
-            // Fetch the latest APICoinsIdResponse
-            APICoinsIdResponse? apiResponse = await Task.Run(() => FetchCoinIdResponseAsync());
-
-            // Skip when null and dont try to update
-            if (apiResponse == null) return;
-
-            using (var store = await Task.Run(() => new DataStore(jsonHelper.JsonFilePath)))
-            {
-                await store.ReplaceItemAsync(Coin.Id, apiResponse, true);  // Upsert mode (i.e. insert if not exists)
-            }
-        }
-
-        public async Task<APICoinsIdResponse?> GetFavouriteCoinIdResponseAsync()
-        {
-            await Coin.UpdateFavourite();  // Update the Favourite Status of the Coin from Local SQLite DB.
-            if (!Coin.Favourite) return null;  // Return null if its not a favourite
-
-            using (var store = await Task.Run(() => new DataStore(jsonHelper.JsonFilePath)))
-            {
-                try
-                {
-                    return store.GetItem<APICoinsIdResponse>(Coin.Id);
-                }
-                catch (KeyNotFoundException ex)
-                {
-                    return null;
-                }
-            }
-        }
-
-
-
-
 
         /* ==================== Data Cleaner Methods ==================== */
 

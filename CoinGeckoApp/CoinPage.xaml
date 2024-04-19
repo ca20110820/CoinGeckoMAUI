@@ -2,10 +2,56 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="CoinGeckoApp.CoinPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+
+    <ScrollView Orientation="Vertical">
+        <VerticalStackLayout HorizontalOptions="Center">
+
+            <!--Coin Name, Current Price, Data Refresh Button, and Price Change Indicator-->
+            <HorizontalStackLayout 
+                HorizontalOptions="FillAndExpand" VerticalOptions="Start"
+                Padding="5">
+                <VerticalStackLayout Spacing="10" HorizontalOptions="CenterAndExpand" VerticalOptions="Center" Margin="10">
+                    <!--Coin name-->
+                    <Label x:Name="labelCoinName" Text="{Binding CoinsIdAPIResponse.Symbol, StringFormat='{0}', FallbackValue='-na-'}"
+                           VerticalOptions="Center" HorizontalOptions="CenterAndExpand"
+                           FontSize="30" FontAttributes="Bold"
+                           />
+                    
+                    <!--Current Price and Price Change Indicator-->
+                    <HorizontalStackLayout
+                        VerticalOptions="Center" HorizontalOptions="Center">
+                        
+                        <!--Current Price-->
+                        <Label x:Name="labelCurrentPrice"  
+                               Text="{Binding CurrentPrice, StringFormat='{0:F5}', FallbackValue='-na-', TargetNullValue='-na-'}"
+                               VerticalOptions="Center" HorizontalOptions="Center"
+                               FontSize="30"/>
+                        
+                        <!--Price Change Indicator-->
+                        <Image x:Name="triangleIndicator" x:FieldModifier="public"
+                               MaximumWidthRequest="30" MaximumHeightRequest="30" Margin="3"
+                               VerticalOptions="Center" HorizontalOptions="Center"/>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="10" HorizontalOptions="Center" VerticalOptions="Center" Margin="10">
+                    <!--Star Favourite Button-->
+                    <ImageButton x:Name="imagebtnStar" x:FieldModifier="public"
+                                 Source="{Binding IsFavouriteImage, FallbackValue='star_unfavourite.png', TargetNullValue='star_unfavourite.png'}"
+                                 VerticalOptions="Center" HorizontalOptions="Center"
+                                 MaximumWidthRequest="30" MaximumHeightRequest="30" Margin="3"
+                                 Aspect="AspectFit"
+                                 Clicked="imagebtnStar_Clicked">
+                    </ImageButton>
+
+                    <!--Data Refresh Image-->
+                    <ImageButton x:Name="imagebtnRefreshCoinData" Source="refresh_button.png"
+                                 VerticalOptions="Center" HorizontalOptions="End"
+                                 Aspect="AspectFit" Clicked="imagebtnRefreshCoinData_Clicked"/>
+                </VerticalStackLayout>
+            </HorizontalStackLayout>
+            
+            
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

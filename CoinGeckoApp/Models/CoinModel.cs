@@ -1,5 +1,6 @@
 ﻿using CoinGeckoApp.Helpers;
 using CoinGeckoApp.Responses.Coins;
+using JsonFlatFileDataStore;
 using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
@@ -14,9 +15,6 @@ namespace CoinGeckoApp.Models
 {
     public class CoinModel
     {
-        private static string dbPath = Path.Combine("Databases","favourites.db");  // File Path in App Data Directory;
-        private static string dbTableName = "favourites";  // Table[ID: string, Favourite: bool]
-
         /* Public Properties */
         public string Id { get; set; }
 
@@ -34,7 +32,6 @@ namespace CoinGeckoApp.Models
         public CoinModel(string id)
         {
             Id = id;
-            Favourite = IsFavourite().Result;
         }
         public CoinModel(string id, bool favourite)
         {
@@ -44,102 +41,47 @@ namespace CoinGeckoApp.Models
 
 
         /* ==================== Methods ==================== */
-        /// <summary>
-        /// Instantiating CoinModel from the Favourites SQLite Database.
-        /// </summary>
-        /// <param name="coinId"></param>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
-        public async static Task<CoinModel> ReadFromFavouritesDB(string coinId)
+        private static string GetJsonPath()
         {
             FileSystemHelper fsHelper = new();
-            SQLiteHelper sqlHelper = new(Path.Combine(fsHelper.AppDataDir, dbPath));
-
-            // Assume that the Database and Table is created already.
-            List<CoinModel> outCoin = new();
-            Action<SqliteDataReader> readerAction = (SqliteDataReader reader) =>
-            {
-                string id = reader.GetString(0);
-                bool isFavourite = reader.GetBoolean(1);
-
-                if (!isFavourite) throw new CoinNotFavouriteException($"{id} has Favourite={isFavourite}!");
-
-                CoinModel coin = new(id, isFavourite);
-                outCoin.Add(coin);
-            };
-
-            string query = $"select * from {dbTableName} where id='{coinId}'";
-            await sqlHelper.ExecuteSelectDataReaderAsync(query, readerAction);
-
-            // Raise Error if there is no coin from the 
-            if (outCoin.Count != 1) throw new CoinNotFavouriteException($"CoinId={coinId} does not exist in {dbTableName} table!\nQuery is {query}");
-
-            return outCoin[0];
+            return Path.Combine(fsHelper.AppDataDir, "Databases", "favourites.json");
         }
 
-        public async Task<bool> IsFavourite()
+        public async Task<bool> IsFavouriteAsync()
         {
             try
             {
-                var coin = await ReadFromFavouritesDB(Id);
-                if (coin is CoinModel) return true;
-
-                return false;
+                using (var store = new DataStore(GetJsonPath()))
+                {
+                    CoinModel coin = await Task.Run(() => store.GetItem<CoinModel>(Id));
+                    Favourite = coin.Favourite; // Set the Favourite Property automatically
+                    if (!Favourite) throw new CoinNotFavouriteException($"Coin {Id} is not a favourite!");
+                }
+                return true;
             }
-            catch (CoinNotFavouriteException ex)
+            catch (KeyNotFoundException ex)
             {
-                Trace.WriteLine(ex.ToString());
-                return false;
+                Favourite = false;
+                return Favourite;
             }
         }
 
-        public async Task UpdateFavourite()
+        public async Task AddToFavouritesAsync()
         {
-            // This method is useful if we instantiate the CoinModel with only the Id.
-            Favourite = await IsFavourite();
-        }
-
-        public async Task ChangeFavouriteStatus()
-        {
-            Favourite = !Favourite;
-            /* TODO:
-             * If Favourite = true, then Insert to Database.
-             * If Favourite = false, then Remove from Database.
-             */
-            if (Favourite)
+            using (var store = new DataStore(GetJsonPath()))
             {
-                // Add to DB
-                await AddToFavouritesDB();
-            }
-            else
-            {
-                // Remove from DB
-                await RemoveFromFavouritesDB();
+                Favourite = true;
+                await store.ReplaceItemAsync(Id, this, true);
             }
         }
-        public async Task AddToFavouritesDB()
-        {
 
-            if (!Favourite)  // i.e. Favourite == False
+        public async Task<bool> RemoveFromFavouritesAsync()
+        {
+            using (var store = new DataStore(GetJsonPath()))
             {
-                throw new Exception($"Adding {Id} to {dbTableName} when Favourite={Favourite}!");
+                Favourite = false;
+                return await store.DeleteItemAsync(Id);
             }
-
-            FileSystemHelper fsHelper = new();
-            SQLiteHelper sqlHelper = new(Path.Combine(fsHelper.AppDataDir, dbPath));
-
-            // Assume that the Database and Table is created already.
-            string query = $"INSERT INTO {dbTableName} (id, favourite) VALUES ('{Id}', {Favourite})";
-            await sqlHelper.ExecuteNonQueryAsync(query);
-        }
-        public async Task RemoveFromFavouritesDB()
-        {
-            FileSystemHelper fsHelper = new();
-            SQLiteHelper sqlHelper = new(Path.Combine(fsHelper.AppDataDir, dbPath));
-
-            // Assume that the Database and Table is created already.
-            string query = $"DELETE FROM {dbTableName} WHERE ID = '{Id}'";
-            await sqlHelper.ExecuteNonQueryAsync(query);
         }
     }
 
