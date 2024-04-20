@@ -1,6 +1,7 @@
 ﻿using CoinGeckoApp.Models;
 using CoinGeckoApp.Responses.Coins;
 using CoinGeckoApp.Services;
+using CoinGeckoApp.DataVisuals;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,12 +9,16 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
+using Newtonsoft.Json.Linq;
 
 namespace CoinGeckoApp.ViewModels
 {
     public class CoinViewModel : INotifyPropertyChanged
     {
+        private static int maxDataQuickChart = 230;
         private CoinService coinService = new();
+        private QuickChartVisuals qcVisuals = new();
 
         /* =========== Observable Properties */
         // Note: Useful for updating simple scalar data.
@@ -37,6 +42,17 @@ namespace CoinGeckoApp.ViewModels
             {
                 _isFavouriteImage = value;
                 OnPropertyChanged(nameof(IsFavouriteImage));
+            }
+        }
+
+        private string _priceChangeIndicator;
+        public string PriceChangeIndicator
+        {
+            get => _priceChangeIndicator;
+            set
+            {
+                _priceChangeIndicator = value;
+                OnPropertyChanged(nameof(PriceChangeIndicator));
             }
         }
 
@@ -85,6 +101,50 @@ namespace CoinGeckoApp.ViewModels
             }
         }
 
+        private ImageSource _candlestickChartImageSource;
+        public ImageSource CandlestickChartImageSource
+        {
+            get => _candlestickChartImageSource;
+            set
+            {
+                _candlestickChartImageSource = value;
+                OnPropertyChanged(nameof(CandlestickChartImageSource));
+            }
+        }
+
+        private ImageSource _volumeChartImageSource;
+        public ImageSource VolumeChartImageSource
+        {
+            get => _volumeChartImageSource;
+            set
+            {
+                _volumeChartImageSource = value;
+                OnPropertyChanged(nameof(VolumeChartImageSource));
+            }
+        }
+
+        private ImageSource _priceChangesMultiPeriodImageSource;
+        public ImageSource PriceChangesMultiPeriodImageSource
+        {
+            get => _priceChangesMultiPeriodImageSource;
+            set
+            {
+                _priceChangesMultiPeriodImageSource = value;
+                OnPropertyChanged(nameof(PriceChangesMultiPeriodImageSource));
+            }
+        }
+
+        private List<KeyValuePair<string, object?>> _dataKeyValuePairs;
+        public List<KeyValuePair<string, object?>> DataKeyValuePairs
+        {
+            get => _dataKeyValuePairs;
+            set
+            {
+                _dataKeyValuePairs = value;
+                OnPropertyChanged(nameof(DataKeyValuePairs));
+            }
+        }
+
 
         /* =========== Constructors */
         public CoinViewModel() { }
@@ -98,9 +158,8 @@ namespace CoinGeckoApp.ViewModels
             CoinsIdAPIResponse = await Task.Run(() => coinService.FetchCoinIdResponseAsync());  // Set the new (if it is) CoinsIdAPIResponse
 
             // Set MarketChart Property
-            string vsCurrency = Preferences.Get("quotecurrency", "usd");  // TODO: Set this in App.xaml.cs
-            int maxDays = Preferences.Get("maxdays", 360);  // TODO: Set this in App.xaml.cs
-            MarketChart = await Task.Run(() => coinService.FetchFreeMarketChartAsync(vsCurrency, maxDays));
+            string vsCurrency = Preferences.Get("quotecurrency", "usd");
+            MarketChart = await Task.Run(() => coinService.FetchFreeMarketChartAsync(vsCurrency, maxDataQuickChart));  // Use max data from QuickChart
 
             // Set SparkLine Property
             SparkLine = CoinsIdAPIResponse != null ? CoinService.GetSparkLine(CoinsIdAPIResponse) : null;
@@ -110,6 +169,12 @@ namespace CoinGeckoApp.ViewModels
 
             // Set IsFavouriteImage Property
             SetIsFavouriteImage();
+
+            // Set PriceChangeIndicator Property
+            SetPriceChangeIndicator();
+
+            // Set DataKeyValuePairs
+            DataKeyValuePairs = coinService.GetDataKeyValuePairs(CoinsIdAPIResponse);
         }
 
         private void SetIsFavouriteImage()
@@ -122,6 +187,40 @@ namespace CoinGeckoApp.ViewModels
             {
                 IsFavouriteImage = "star_unfavourite.png";
             }
+        }
+
+        private void SetPriceChangeIndicator()
+        {
+            if (MarketChart == null) return;
+
+            try
+            {
+                if (CoinsIdAPIResponse.market_data.price_change_24h > 0)
+                {
+                    PriceChangeIndicator = "triangle_up.png";
+                }
+                else if (CoinsIdAPIResponse.market_data.price_change_24h < 0)
+                {
+                    PriceChangeIndicator = "triangle_down.png";
+                }
+            }
+            catch(NullReferenceException ex)
+            {
+                Trace.WriteLine(ex);
+            }
+        }
+
+        public async Task SetImages()
+        {
+            //// Set CandlestickChartImageSource
+            //List<List<double>>? dohlc = await coinService.FetchOhlcAsync(Preferences.Get("quotecurrency", "usd"), maxDataQuickChart);
+            //CandlestickChartImageSource = await coinService.GetCandlestickChartImageSource(dohlc);
+
+            // Set VolumeChartImageSource
+            VolumeChartImageSource = await coinService.GetVolumeChartImageSource(MarketChart);
+
+            // Set PriceChangesMultiPeriodImageSource
+            PriceChangesMultiPeriodImageSource = await coinService.GetPriceChangesMultiPeriodImageSource(CoinsIdAPIResponse);
         }
 
         /* =========== View Updaters */
@@ -150,7 +249,34 @@ namespace CoinGeckoApp.ViewModels
             SetIsFavouriteImage();
         }
 
-        
+
+
+
+        /* =========== Helpers */
+        /// <summary>
+        /// Resets all the public properties.
+        /// <para>Particularly important when there's too many https requests in other not to mix the data presentation with
+        /// the previous coin viewed.
+        /// </para>
+        /// </summary>
+        public void ResetProperties()
+        {
+            PropertyInfo[] properties = GetType().GetProperties();
+
+            foreach (PropertyInfo property in properties)
+            {
+                // Check if the property is writable and not an indexer
+                if (property.CanWrite && property.GetIndexParameters().Length == 0)
+                {
+                    // Set the property value to its default
+                    property.SetValue(this, GetDefaultValue(property.PropertyType));
+                }
+            }
+        }
+        private object GetDefaultValue(Type type)
+        {
+            return type.IsValueType ? Activator.CreateInstance(type) : null;
+        }
 
 
 

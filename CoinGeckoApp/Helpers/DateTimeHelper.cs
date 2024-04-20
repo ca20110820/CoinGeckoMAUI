@@ -17,7 +17,14 @@ namespace CoinGeckoApp.Helpers
         {
             // Unix timestamp is seconds past epoch
             DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+            if (unixTimeStamp > 9999999999)
+            {
+                unixTimeStamp /= 1000; // Convert milliseconds to seconds
+            }
+
             dateTime = dateTime.AddSeconds(unixTimeStamp).ToLocalTime();
+
             return dateTime;
         }
 

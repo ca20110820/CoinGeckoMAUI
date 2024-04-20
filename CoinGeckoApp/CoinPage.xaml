@@ -28,7 +28,7 @@
                                FontSize="30"/>
                         
                         <!--Price Change Indicator-->
-                        <Image x:Name="triangleIndicator" x:FieldModifier="public"
+                        <Image x:Name="triangleIndicator" x:FieldModifier="public" Source="{Binding PriceChangeIndicator, FallbackValue='-na-', TargetNullValue='-na-'}"
                                MaximumWidthRequest="30" MaximumHeightRequest="30" Margin="3"
                                VerticalOptions="Center" HorizontalOptions="Center"/>
                     </HorizontalStackLayout>
@@ -51,7 +51,59 @@
                 </VerticalStackLayout>
             </HorizontalStackLayout>
             
-            
+            <!--Candlestick Chart-->
+            <Image x:Name="imageCandlestickChart" x:FieldModifier="public" Source="{Binding CandlestickChartImageSource}"
+                   MaximumWidthRequest="800" MaximumHeightRequest="800" 
+                   VerticalOptions="Center" HorizontalOptions="Center" Margin="0,10"
+                   />
+
+            <!--Key-Value Pairs of Current Data-->
+            <CollectionView x:Name="collectionviewCurrentData" x:FieldModifier="public"
+                            ItemsSource="{Binding DataKeyValuePairs}"
+                            HorizontalOptions="CenterAndExpand" VerticalOptions="Center">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" SnapPointsAlignment="Center" ItemSpacing="5" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="1*" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Key -->
+                            <Label Text="{Binding Key}" 
+                                   Grid.Row="0" Grid.Column="0" HorizontalOptions="Center" VerticalOptions="Center" />
+
+                            <!-- Value -->
+                            <Label Text="{Binding Value}" 
+                                   Grid.Row="0" Grid.Column="1" HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.EmptyView>
+                    <Label Text="-na-"/>
+                </CollectionView.EmptyView>
+
+            </CollectionView>
+
+
+            <!--Volume Chart-->
+            <Image x:Name="imageVolumeChart" x:FieldModifier="public" Source="{Binding VolumeChartImageSource}"
+                   MaximumWidthRequest="800" MaximumHeightRequest="800" 
+                   VerticalOptions="Center" HorizontalOptions="Center" Margin="0,10"
+                   />
+
+            <!--Bar Chart - Price Changes in different period-->
+            <Image x:Name="imagePriceChangesMultiPeriods" x:FieldModifier="public" Source="{Binding PriceChangesMultiPeriodImageSource}"
+                   MaximumWidthRequest="800" MaximumHeightRequest="800" 
+                   VerticalOptions="Center" HorizontalOptions="Center" Margin="0,10"
+                   />
+
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

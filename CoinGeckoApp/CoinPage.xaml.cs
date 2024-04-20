@@ -47,6 +47,7 @@ public partial class CoinPage : ContentPage, IQueryAttributable
         catch (HttpRequestException tooManyRequestError)
         {
             await DisplayAlert("Warn", "Too many requests! Please wait for few seconds!", "Ok");
+            viewModel.ResetProperties();
             await Shell.Current.GoToAsync("//MainPage");  // Route to Home Page
         }
     }
@@ -56,6 +57,23 @@ public partial class CoinPage : ContentPage, IQueryAttributable
         // Rotate the image
         await imagebtnRefreshCoinData.RotateTo(360, 1000); // Rotate to 360 degrees in 1 second
         imagebtnRefreshCoinData.Rotation = 0; // Reset rotation
+
+        // Refresh ImageSources
+        try
+        {
+            await viewModel.SetImages();
+        }
+        catch (NullReferenceException)
+        {
+            await DisplayAlert("Error", "There is no selected coin!", "Ok");
+        }
+        catch (HttpRequestException ex)
+        {
+            if (ex.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+            {
+                await DisplayAlert("Warn", "Too many http requests!", "Ok");
+            }
+        }
     }
 
     private async void imagebtnStar_Clicked(object sender, EventArgs e)

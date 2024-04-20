@@ -1,4 +1,5 @@
-﻿using CoinGeckoApp.Helpers;
+﻿using CoinGeckoApp.DataVisuals;
+using CoinGeckoApp.Helpers;
 using CoinGeckoApp.Models;
 using CoinGeckoApp.Responses.Coins;
 using JsonFlatFileDataStore;
@@ -6,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -190,6 +192,161 @@ namespace CoinGeckoApp.Services
             return outDict;
         }
 
+        /* ==================== QuickChart Methods ==================== */
+        public async Task<ImageSource> GetVolumeChartImageSource(APICoinsMarketChartResponse apiResponse, string chartLabel = "Volume")
+        {
+            List<List<double>> volumes = apiResponse.Volumes;  // List of 2-Lists
+
+            // Construct a list of KeyValuePair of DateTime and Volume
+            List<KeyValuePair<DateTime, double>> kvps = new();
+
+            // Populate the list with DateTime and Volume pairs
+            foreach (List<double> ls in volumes)
+            {
+                try
+                {
+                    DateTime dt = DateTimeHelper.UnixTimeStampToDateTime(ls[0]);
+                    double v = ls[1];
+                    kvps.Add(new KeyValuePair<DateTime, double>(dt, v));
+                }
+                catch(ArgumentOutOfRangeException ex)
+                {
+                    Trace.WriteLine(ex);
+                }
+            }
+
+            // Extract the arrays of DateTime and Volume
+            DateTime[] dateArray = kvps.Select(pair => pair.Key).ToArray();
+            double[] volumeArray = kvps.Select(pair => pair.Value).ToArray();
+
+            QuickChartVisuals qcVisuals = new();
+            string url = qcVisuals.CreateLineChartURL(dateArray, volumeArray, chartLabel, Preferences.Get("quotecurrency", "usd"));
+
+            return await VisualUtility.GetImageSourceAsync(url);
+        }
+
+        public async Task<ImageSource> GetPriceChangesMultiPeriodImageSource(APICoinsIdResponse apiResponse)
+        {
+            Dictionary<string, double> priceChanges = new();
+
+            var marketData = apiResponse.market_data;
+            // Iterate over public properties
+            foreach (var property in marketData.GetType().GetProperties())
+            {
+                // Get property name (key)
+                string propertyName = property.Name;
+
+                if (!propertyName.StartsWith("price_change_percentage_")) continue;
+
+                // Get property value
+                double propertyValue = 0; 
+                double.TryParse(property.GetValue(marketData).ToString(), out propertyValue);
+
+                // Clean the Property Name
+                string cleanedString = propertyName.Replace("_", " ");
+                string[] words = cleanedString.Split(' ');
+                for (int i = 0; i < words.Length; i++)
+                {
+                    words[i] = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(words[i]);
+                }
+                string cleanKey = string.Join(" ", words);
+
+                priceChanges[cleanKey] = propertyValue;
+            }
+
+
+            QuickChartVisuals qcVisuals = new();
+            string url = qcVisuals.CreateHorizontalBarChartURL(priceChanges, "Price Changes (%)", "PctChg");
+
+            return await VisualUtility.GetImageSourceAsync(url);
+        }
+
+        public async Task<ImageSource> GetCandlestickChartImageSource(List<List<double>> dohlc)
+        {
+            // List<KeyValuePair<DateTime, Tuple<double, double, double, double>>>
+            DateTime[] dateArray = dohlc.Select(ls => DateTimeHelper.UnixTimeStampToDateTime(ls[0])).ToArray();
+
+            Tuple<double, double, double, double>[] ohlcArray =
+                dohlc.Select(ls => new Tuple<double, double, double, double>(ls[1], ls[2], ls[3], ls[4]))
+                .ToArray();
+
+            List<KeyValuePair<DateTime, Tuple<double, double, double, double>>> zippedList =
+                dateArray.Zip(ohlcArray, (date, ohlc) => new KeyValuePair<DateTime, Tuple<double, double, double, double>>(date, ohlc))
+                     .ToList();
+
+            QuickChartVisuals qcVisuals = new();
+            string url = qcVisuals.CreateCandleStickChartURL(zippedList, Coin.Id);
+
+            return await VisualUtility.GetImageSourceAsync(url);
+        }
+
+        public List<KeyValuePair<string, object?>> GetDataKeyValuePairs(APICoinsIdResponse apiResponse)
+        {
+            List<KeyValuePair<string, object?>> outList = new();
+
+            // SentimentVotesUpPerc
+            double? sentimentVotesUpPerc = apiResponse?.SentimentVotesUpPerc ?? null;
+            outList.Add(new KeyValuePair<string, object?>("Sentiment Votes Up %", sentimentVotesUpPerc));  // Append to List
+
+            // SentimentVotesDownPerc
+            double? sentimentVotesDownPerc = apiResponse?.SentimentVotesDownPerc ?? null;
+            outList.Add(new KeyValuePair<string, object?>("Sentiment Votes Down %", sentimentVotesDownPerc));  // Append to List
+
+            // MarketCapRank
+            int? marketCapRank = apiResponse?.MarketCapRank ?? null;
+            outList.Add(new KeyValuePair<string, object?>("Market Cap Rank", marketCapRank));  // Append to List
+
+            // WatchlistPortfolioUsers
+            int? watchlistPortfolioUsers = apiResponse?.WatchlistPortfolioUsers ?? null;
+            outList.Add(new KeyValuePair<string, object?>("Watchlist Portfolio Users", watchlistPortfolioUsers));  // Append to List
+
+            // last_updated
+            string? lastUpdated = apiResponse?.last_updated?? null;
+            if (lastUpdated != null)
+                outList.Add(new KeyValuePair<string, object?>("Last Updated", DateTime.Parse(lastUpdated).ToString("MMM dd HH:mm")));  // Append to List
+
+
+            return outList;
+        }
+
+
+        /* ==================== Persistent Coin Responses Data ==================== */
+        private string GetJsonPath()
+        {
+            return Path.Combine(fsHelper.AppDataDir, "CoinResponses", "coin_response.json");
+        }
+
+        public async Task<CoinResponses?> GetCoinResponsesFromJson()
+        {
+            try
+            {
+                using (var store = await Task.Run(() => new DataStore(GetJsonPath())))
+                {
+                    return await Task.Run(() => store.GetItem<CoinResponses>(Coin.Id));
+                }
+            }
+            catch (KeyNotFoundException)
+            {
+                return null;
+            }
+        }
+
+        public async Task SaveCoinResponsesToJson(APICoinsIdResponse apiCoinsIdResponse, APICoinsMarketChartResponse apiCoinsMarketChartResponse)
+        {
+            CoinResponses coinResponses = new CoinResponses
+            {
+                ApiCoinIdResponse = apiCoinsIdResponse,
+                ApiCoinsMarketChartResponse = apiCoinsMarketChartResponse
+            };
+
+            using (var store = await Task.Run(() => new DataStore(GetJsonPath())))
+            {
+                await store.ReplaceItemAsync(Coin.Id, coinResponses, true);
+            }
+        }
+
+
+
         /* ==================== Data Cleaner Methods ==================== */
 
         /// <summary>
@@ -229,5 +386,11 @@ namespace CoinGeckoApp.Services
 
             return new KeyValuePair<DateTime, Tuple<double, double, double, double>>(dateTime, tuple);
         }
+    }
+
+    public class CoinResponses
+    {
+        public APICoinsIdResponse? ApiCoinIdResponse { get; set; }
+        public APICoinsMarketChartResponse? ApiCoinsMarketChartResponse { get; set; }
     }
 }
