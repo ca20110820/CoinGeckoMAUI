@@ -61,7 +61,8 @@ public partial class CoinPage : ContentPage, IQueryAttributable
         // Refresh ImageSources
         try
         {
-            await viewModel.SetImages();
+            await viewModel.SetImages();  // Load QuickCharts
+            
         }
         catch (NullReferenceException)
         {

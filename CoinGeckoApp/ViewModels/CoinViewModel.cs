@@ -161,6 +161,12 @@ namespace CoinGeckoApp.ViewModels
             string vsCurrency = Preferences.Get("quotecurrency", "usd");
             MarketChart = await Task.Run(() => coinService.FetchFreeMarketChartAsync(vsCurrency, maxDataQuickChart));  // Use max data from QuickChart
 
+            // Save SaveCoinResponsesToJson to CoinResponses/coin_response.json
+            if (CoinsIdAPIResponse != null && MarketChart != null)
+            {
+                await coinService.SaveCoinResponsesToJson(CoinsIdAPIResponse, MarketChart);
+            }
+
             // Set SparkLine Property
             SparkLine = CoinsIdAPIResponse != null ? CoinService.GetSparkLine(CoinsIdAPIResponse) : null;
 

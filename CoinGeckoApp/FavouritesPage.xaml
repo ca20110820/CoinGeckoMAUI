@@ -1,11 +1,56 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:CoinGeckoApp.Models"
              x:Class="CoinGeckoApp.FavouritesPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+
+
+    <ScrollView Orientation="Vertical" HorizontalOptions="FillAndExpand">
+        <VerticalStackLayout HorizontalOptions="FillAndExpand">
+
+            <!--CollectionView of Favourite Coins and some of their stats-->
+            <CollectionView ItemsSource="{Binding FavouriteCoins}" SelectionMode="Single">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" SnapPointsAlignment="Center" ItemSpacing="2" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate Padding="5">
+                    <DataTemplate>
+                        <Frame BorderColor="#8728B6" CornerRadius="5" Margin="5">
+                            <HorizontalStackLayout HorizontalOptions="CenterAndExpand">
+                                <!--Coin Logo and Coin name-->
+                                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="StartAndExpand">
+                                    <ImageButton x:Name="imagebuttonCoinLogo" Source="{Binding ApiCoinsIdResponse.Images[large]}" 
+                                           MaximumWidthRequest="60" MaximumHeightRequest="60" Margin="3"
+                                           VerticalOptions="Start" HorizontalOptions="StartAndExpand" Clicked="imagebuttonCoinLogo_Clicked"/>
+
+                                    <Label Text="{Binding ApiCoinsIdResponse.Name}" Margin="3" 
+                                           VerticalOptions="End" HorizontalOptions="StartAndExpand"
+                                           FontSize="Micro" FontAttributes="Bold" 
+                                           LineBreakMode="WordWrap" MaxLines="3"/>
+                                </VerticalStackLayout>
+
+                                <!--Sparkline-->
+                                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="CenterAndExpand">
+                                    <Image Source="{Binding SparklineImageSource}" 
+                                           MaximumWidthRequest="110" MaximumHeightRequest="60" Margin="3"
+                                           VerticalOptions="Center" HorizontalOptions="Center"/>
+                                </VerticalStackLayout>
+
+                                <!--Start Button for Unfavouriting the Favourite Coin-->
+                                <ImageButton x:Name="imagebtnStar" x:FieldModifier="public" Source="star_favourite.png"
+                                             VerticalOptions="Center" HorizontalOptions="EndAndExpand"
+                                             MaximumWidthRequest="30" MaximumHeightRequest="30" Margin="3"
+                                             Aspect="AspectFit" Clicked="imagebtnStar_Clicked"/>
+                            </HorizontalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.EmptyView>
+                    <!-- What to Display when the Collection is Empty -->
+                    <Label Text="There are no favourite coins."/>
+                </CollectionView.EmptyView>
+            </CollectionView>
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>
