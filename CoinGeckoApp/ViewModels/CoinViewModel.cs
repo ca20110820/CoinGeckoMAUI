@@ -183,7 +183,7 @@ namespace CoinGeckoApp.ViewModels
             DataKeyValuePairs = coinService.GetDataKeyValuePairs(CoinsIdAPIResponse);
         }
 
-        private void SetIsFavouriteImage()
+        public void SetIsFavouriteImage()
         {
             if (Coin.Favourite)
             {

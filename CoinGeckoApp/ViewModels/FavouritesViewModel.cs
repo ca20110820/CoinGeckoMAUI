@@ -40,6 +40,7 @@ namespace CoinGeckoApp.ViewModels
             Dictionary<string, CoinModel>? favouritesDict = await jsonHelper.ReadFromFileAsync<Dictionary<string, CoinModel>>();
 
             List<FavouriteCoinModel> tempFavourites = new();
+            FavouriteCoins = default;
             if (favouritesDict != null)
             {
                 foreach (var kvp in favouritesDict)

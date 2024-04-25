@@ -17,6 +17,8 @@ public partial class CoinPage : ContentPage, IQueryAttributable
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+
+        await UpdateCoinFavouriteState();
     }
     protected override async void OnNavigatedFrom(NavigatedFromEventArgs args)
     {
@@ -27,6 +29,18 @@ public partial class CoinPage : ContentPage, IQueryAttributable
     {
         // When this ContentPage is the Target
         base.OnNavigatedTo(args);
+    }
+
+    private async Task UpdateCoinFavouriteState()
+    {
+        // Note: This is a very important method when navigating from Pages by tapping or clicking the Tab.
+
+        // Check and Update View State - Coin's Favourite State
+        if (viewModel.Coin != null)
+        {
+            await viewModel.Coin.IsFavouriteAsync();
+            viewModel.SetIsFavouriteImage();
+        }
     }
 
     public async void ApplyQueryAttributes(IDictionary<string, object> query)
