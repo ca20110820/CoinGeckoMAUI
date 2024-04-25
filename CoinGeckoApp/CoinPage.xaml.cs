@@ -18,7 +18,7 @@ public partial class CoinPage : ContentPage, IQueryAttributable
     {
         base.OnAppearing();
 
-        await UpdateCoinFavouriteState();
+        await UpdateWhenTabNavigation();
     }
     protected override async void OnNavigatedFrom(NavigatedFromEventArgs args)
     {
@@ -31,7 +31,7 @@ public partial class CoinPage : ContentPage, IQueryAttributable
         base.OnNavigatedTo(args);
     }
 
-    private async Task UpdateCoinFavouriteState()
+    private async Task UpdateWhenTabNavigation()
     {
         // Note: This is a very important method when navigating from Pages by tapping or clicking the Tab.
 
@@ -40,6 +40,9 @@ public partial class CoinPage : ContentPage, IQueryAttributable
         {
             await viewModel.Coin.IsFavouriteAsync();
             viewModel.SetIsFavouriteImage();
+
+            // Update QuickCharts
+            await RefreshQuickCharts();
         }
     }
 
@@ -57,12 +60,13 @@ public partial class CoinPage : ContentPage, IQueryAttributable
         {
             // Set the selected CoinModel in CoinViewModel
             await Task.Run(() => viewModel.SetCoin(coin));
+
+            await RefreshQuickCharts();  // Update QuickCharts UI
         }
         catch (HttpRequestException tooManyRequestError)
         {
             await DisplayAlert("Warn", "Too many requests! Please wait for few seconds!", "Ok");
             viewModel.ResetProperties();
-            await Shell.Current.GoToAsync("//MainPage");  // Route to Home Page
         }
     }
 
@@ -72,11 +76,16 @@ public partial class CoinPage : ContentPage, IQueryAttributable
         await imagebtnRefreshCoinData.RotateTo(360, 1000); // Rotate to 360 degrees in 1 second
         imagebtnRefreshCoinData.Rotation = 0; // Reset rotation
 
-        // Refresh ImageSources
+        await RefreshQuickCharts();
+    }
+
+    private async Task RefreshQuickCharts()
+    {
+        // Refresh ImageSources for QuickCharts UI
         try
         {
             await viewModel.SetImages();  // Load QuickCharts
-            
+
         }
         catch (NullReferenceException)
         {
