@@ -5,7 +5,18 @@
 
     <ScrollView Orientation="Vertical">
         <VerticalStackLayout HorizontalOptions="Center">
-
+            <SearchBar x:Name="searchbarCoin" Placeholder="Search Coin by Id" 
+                       IsTextPredictionEnabled="True"
+                       VerticalTextAlignment="Center" HorizontalTextAlignment="Center"
+                       VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" 
+                       PlaceholderColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+                       BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource SecondaryDarkText}}"
+                       TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+                       SearchButtonPressed="searchbarCoin_Pressed" TextChanged="searchbarCoin_TextChanged"
+                       >
+            </SearchBar>
+            <ListView x:Name="searchResults"
+                      VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" />
             <!--Coin Name, Current Price, Data Refresh Button, and Price Change Indicator-->
             <HorizontalStackLayout 
                 HorizontalOptions="FillAndExpand" VerticalOptions="Start"

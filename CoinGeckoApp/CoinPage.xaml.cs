@@ -114,4 +114,42 @@ public partial class CoinPage : ContentPage, IQueryAttributable
         {
         }
     }
+
+    private async void searchbarCoin_Pressed(object sender, EventArgs e)
+    {
+        searchResults.ItemsSource = null;  // Clear Search Results
+        string coinId = searchbarCoin.Text.Trim();  // Get SearchBar Coin Id
+
+        // Create a Coin
+        CoinModel searchCoin = new(coinId);
+        await searchCoin.IsFavouriteAsync();
+        
+        try
+        {
+            await viewModel.SetCoin(searchCoin);
+        }
+        catch (HttpRequestException ex)
+        {
+            if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                await DisplayAlert("Warn", "The Coin Id you are searching does not exist.", "Ok");
+            }
+            if (ex.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+            {
+                await DisplayAlert("Warn", "Too many requests. Please wait for few seconds.", "Ok");
+            }
+        }
+        finally
+        {
+            searchbarCoin.Text = string.Empty;
+        }
+    }
+
+    private async void searchbarCoin_TextChanged(object sender, EventArgs e)
+    {
+        string currentTextState = searchbarCoin.Text;
+
+        //searchResults.ItemsSource = null;
+        //searchResults.ItemsSource = new string[] { "A", "B", "C" };
+    }
 }

@@ -181,6 +181,9 @@ namespace CoinGeckoApp.ViewModels
 
             // Set DataKeyValuePairs
             DataKeyValuePairs = coinService.GetDataKeyValuePairs(CoinsIdAPIResponse);
+
+            // Set the QuickChart Images
+            await SetImages();
         }
 
         public void SetIsFavouriteImage()
