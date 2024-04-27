@@ -74,6 +74,17 @@ public partial class SettingsPage : ContentPage
         {
             await userSetting.ReadAsync();
             await userSetting.SwitchDarkMode();
+
+            App theApp = (App)Application.Current;
+            if (userSetting.DarkMode)
+            {
+                theApp.UserAppTheme = AppTheme.Dark;
+            }
+            else
+            {
+                theApp.UserAppTheme = AppTheme.Light;
+            }
+
         }
         catch (KeyNotFoundException ex)
         {

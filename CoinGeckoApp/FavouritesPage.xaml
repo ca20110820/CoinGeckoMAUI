@@ -4,33 +4,54 @@
              xmlns:local="clr-namespace:CoinGeckoApp.Models"
              x:Class="CoinGeckoApp.FavouritesPage">
 
+    <ContentPage.Resources>
+        <!-- Light colors -->
+        <Color x:Key="LightPrimaryColor">WhiteSmoke</Color>
+        <Color x:Key="LightSecondaryColor">Black</Color>
 
-    <ScrollView Orientation="Vertical" HorizontalOptions="FillAndExpand">
-        <VerticalStackLayout HorizontalOptions="FillAndExpand">
+        <!-- Dark colors -->
+        <Color x:Key="DarkPrimaryColor">Teal</Color>
+        <Color x:Key="DarkSecondaryColor">White</Color>
+        <Color x:Key="BackgroundDarkColor">#e066ff</Color>
+
+        <Style x:Key="LabelStyle" TargetType="Label">
+            <Setter Property="TextColor" 
+                Value="{AppThemeBinding Light={StaticResource LightSecondaryColor}, Dark={StaticResource LightPrimaryColor}}" />
+        </Style>
+
+        <Style x:Key="HorizontalStackLayoutStyle" TargetType="HorizontalStackLayout">
+            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource LightPrimaryColor}, Dark={StaticResource BackgroundDarkColor}}"/>
+        </Style>
+    </ContentPage.Resources>
+
+    <ScrollView Orientation="Vertical">
+        <VerticalStackLayout>
 
             <!--CollectionView of Favourite Coins and some of their stats-->
-            <CollectionView ItemsSource="{Binding FavouriteCoins}" SelectionMode="Single">
+            <CollectionView ItemsSource="{Binding FavouriteCoins}" SelectionMode="Single" 
+                            VerticalOptions="Center" HorizontalOptions="CenterAndExpand" Margin="4,0">
                 <CollectionView.ItemsLayout>
-                    <LinearItemsLayout Orientation="Vertical" SnapPointsAlignment="Center" ItemSpacing="2" />
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="2" />
                 </CollectionView.ItemsLayout>
-                <CollectionView.ItemTemplate Padding="5">
+                <CollectionView.ItemTemplate Padding="5" HorizontalOptions="CenterAndExpand">
                     <DataTemplate>
                         <Frame BorderColor="#8728B6" CornerRadius="5" Margin="5">
-                            <HorizontalStackLayout HorizontalOptions="CenterAndExpand">
+                            <HorizontalStackLayout Style="{StaticResource HorizontalStackLayoutStyle}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
                                 <!--Coin Logo and Coin name-->
-                                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="StartAndExpand">
+                                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Start">
                                     <ImageButton x:Name="imagebuttonCoinLogo" Source="{Binding ApiCoinsIdResponse.Images[large]}" 
                                            MaximumWidthRequest="60" MaximumHeightRequest="60" Margin="3"
-                                           VerticalOptions="Start" HorizontalOptions="StartAndExpand" Clicked="imagebuttonCoinLogo_Clicked"/>
+                                           VerticalOptions="Center" HorizontalOptions="Start" Clicked="imagebuttonCoinLogo_Clicked"/>
 
                                     <Label Text="{Binding ApiCoinsIdResponse.Name}" Margin="3" 
-                                           VerticalOptions="End" HorizontalOptions="StartAndExpand"
+                                           VerticalOptions="Center" HorizontalOptions="Start"
                                            FontSize="Micro" FontAttributes="Bold" 
-                                           LineBreakMode="WordWrap" MaxLines="3"/>
+                                           LineBreakMode="WordWrap" MaxLines="3"
+                                           Style="{StaticResource LabelStyle}"/>
                                 </VerticalStackLayout>
 
                                 <!--Sparkline-->
-                                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="CenterAndExpand">
+                                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
                                     <Image Source="{Binding SparklineImageSource}" 
                                            MaximumWidthRequest="110" MaximumHeightRequest="60" Margin="3"
                                            VerticalOptions="Center" HorizontalOptions="Center"/>
@@ -47,7 +68,7 @@
                 </CollectionView.ItemTemplate>
                 <CollectionView.EmptyView>
                     <!-- What to Display when the Collection is Empty -->
-                    <Label Text="There are no favourite coins."/>
+                    <Label Text="There are no favourite coins." Style="{StaticResource LabelStyle}"/>
                 </CollectionView.EmptyView>
             </CollectionView>
 

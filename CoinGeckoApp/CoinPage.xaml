@@ -47,7 +47,8 @@
                     <!--Data Refresh Image-->
                     <ImageButton x:Name="imagebtnRefreshCoinData" Source="refresh_button.png"
                                  VerticalOptions="Center" HorizontalOptions="End"
-                                 Aspect="AspectFit" Clicked="imagebtnRefreshCoinData_Clicked"/>
+                                 Aspect="AspectFit" Clicked="imagebtnRefreshCoinData_Clicked" 
+                                 MaximumWidthRequest="40" MaximumHeightRequest="40"/>
                 </VerticalStackLayout>
             </HorizontalStackLayout>
             

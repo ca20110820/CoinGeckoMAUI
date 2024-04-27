@@ -4,6 +4,27 @@
              x:Class="CoinGeckoApp.ExchangePage"
              >
 
+    <ContentPage.Resources>
+        <!-- Light colors -->
+        <Color x:Key="LightPrimaryColor">WhiteSmoke</Color>
+        <Color x:Key="LightSecondaryColor">Black</Color>
+
+        <!-- Dark colors -->
+        <Color x:Key="DarkPrimaryColor">Teal</Color>
+        <Color x:Key="DarkSecondaryColor">White</Color>
+        <Color x:Key="BackgroundDarkColor">#512BD4</Color>
+
+        <Style x:Key="LabelStyle" TargetType="Label">
+            <Setter Property="TextColor" 
+                    Value="{AppThemeBinding Light={StaticResource LightSecondaryColor}, Dark={StaticResource LightPrimaryColor}}" />
+        </Style>
+
+        <Style x:Key="HorizontalStackLayoutStyle" TargetType="HorizontalStackLayout">
+            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource LightPrimaryColor}, Dark={StaticResource BackgroundDarkColor}}"/>
+        </Style>
+
+    </ContentPage.Resources>
+
     <ScrollView Orientation="Vertical">
         <VerticalStackLayout>
 
@@ -22,7 +43,7 @@
                     <DataTemplate>
                         <!--Add border around-->
                         <Frame BorderColor="#8728B6" CornerRadius="5" Padding="5">
-                            <HorizontalStackLayout>
+                            <HorizontalStackLayout Style="{StaticResource HorizontalStackLayoutStyle}">
 
                                 <!--Exchange Logo-->
                                 <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Padding="5">
@@ -38,7 +59,7 @@
                                 <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="CenterAndExpand" Padding="5">
                                     <!--Coin ID-->
                                     <Label Text="{Binding CoinId, StringFormat='{0}'}" Margin="3" VerticalOptions="Center" HorizontalOptions="CenterAndExpand"
-                                           FontSize="Micro" FontAttributes="Bold">
+                                           FontSize="Micro" FontAttributes="Bold" Style="{StaticResource LabelStyle}">
                                         <Label.GestureRecognizers>
                                             <TapGestureRecognizer Tapped="OnCoinTapped" NumberOfTapsRequired="1" />
                                         </Label.GestureRecognizers>
@@ -46,19 +67,19 @@
 
                                     <!--Last Price-->
                                     <Label Text="{Binding Last, StringFormat='Last: {0}'}" VerticalOptions="Center" HorizontalOptions="CenterAndExpand" Margin="3"
-                                           FontSize="10"/>
+                                           FontSize="10" Style="{StaticResource LabelStyle}"/>
 
                                     <!--Volume-->
                                     <Label Text="{Binding Volume, StringFormat='Volume: {0}'}" VerticalOptions="Center" HorizontalOptions="CenterAndExpand" Margin="3"
-                                           FontSize="10"/>
+                                           FontSize="10" Style="{StaticResource LabelStyle}"/>
 
                                     <!--Trust Score-->
                                     <Label Text="{Binding TrustScore, StringFormat='Trust Score: {0}'}" VerticalOptions="Center" HorizontalOptions="CenterAndExpand" Margin="3"
-                                           FontSize="10"/>
+                                           FontSize="10" Style="{StaticResource LabelStyle}"/>
 
                                     <!--Trust Score-->
                                     <Label Text="{Binding BidAskSpreadPercentage, StringFormat='Bid-Ask Spread: {0:P2}'}" VerticalOptions="Center" HorizontalOptions="CenterAndExpand" Margin="3"
-                                           FontSize="10"/>
+                                           FontSize="10" Style="{StaticResource LabelStyle}"/>
                                 </VerticalStackLayout>
 
                                 <!--Details 2-->
@@ -66,27 +87,27 @@
                                     <!--Timestamp-->
                                     <Label Text="{Binding Timestamp, StringFormat='Timestamp: {0:HH:mm:ss}'}" 
                                            VerticalOptions="Center" HorizontalOptions="EndAndExpand" Margin="3"
-                                           FontSize="10"/>
+                                           FontSize="10" Style="{StaticResource LabelStyle}"/>
 
                                     <!--LastTradedAt-->
                                     <Label Text="{Binding LastTradedAt, StringFormat='Last Traded At: {0:HH:mm:ss}'}" 
                                            VerticalOptions="Center" HorizontalOptions="EndAndExpand" Margin="3"
-                                           FontSize="10"/>
+                                           FontSize="10" Style="{StaticResource LabelStyle}"/>
 
                                     <!--LastFetchAt-->
                                     <Label Text="{Binding LastFetchAt, StringFormat='Last Fetch At: {0:HH:mm:ss}'}" 
                                            VerticalOptions="Center" HorizontalOptions="EndAndExpand" Margin="3"
-                                           FontSize="10"/>
+                                           FontSize="10" Style="{StaticResource LabelStyle}"/>
 
                                     <!--IsAnomaly-->
                                     <Label Text="{Binding IsAnomaly, StringFormat='Anomaly? {0}'}" 
                                            VerticalOptions="Center" HorizontalOptions="EndAndExpand" Margin="3"
-                                           FontSize="10"/>
+                                           FontSize="10" Style="{StaticResource LabelStyle}"/>
 
                                     <!--IsStale-->
                                     <Label Text="{Binding IsStale, StringFormat='Stale? {0}'}" 
                                            VerticalOptions="Center" HorizontalOptions="EndAndExpand" Margin="3"
-                                           FontSize="10"/>
+                                           FontSize="10" Style="{StaticResource LabelStyle}"/>
                                 </VerticalStackLayout>
 
                             </HorizontalStackLayout>
@@ -96,7 +117,7 @@
 
                 <CollectionView.EmptyView>
                     <!-- What to Display when the Collection is Empty -->
-                    <Label Text="There are no Tickers."/>
+                    <Label Text="There are no Tickers." Style="{StaticResource LabelStyle}"/>
                 </CollectionView.EmptyView>
             </CollectionView>
             

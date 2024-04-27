@@ -35,7 +35,8 @@
             <HorizontalStackLayout Grid.Row="1" Grid.Column="1">
                 <!--Refresh Button to Fetch Quote Currencies from CoinGecko-->
                 <ImageButton x:Name="imagebtnRefreshQuoteCurrency" Source="refresh_button.png" VerticalOptions="Center" HorizontalOptions="End" Aspect="AspectFit" 
-                             Clicked="imagebtnRefreshQuoteCurrency_Clicked"/>
+                             Clicked="imagebtnRefreshQuoteCurrency_Clicked"
+                             MaximumWidthRequest="40" MaximumHeightRequest="40"/>
                 <Picker x:Name="pickerQuoteCurrency" VerticalOptions="Center" HorizontalOptions="End" 
                         Title="Quote Currency" SelectedIndexChanged="pickerQuoteCurrency_SelectedIndexChanged"/>
             </HorizontalStackLayout>
@@ -57,7 +58,7 @@
             <Label Text="Exchange ID" Grid.Row="2" Grid.Column="0" VerticalOptions="Center" HorizontalOptions="Start"/>
             <HorizontalStackLayout Grid.Row="2" Grid.Column="1">
                 <ImageButton x:Name="imagebtnRefreshExchangeIds" Source="refresh_button.png" VerticalOptions="Center" HorizontalOptions="End" Aspect="AspectFit" 
-                             Clicked="imagebtnRefreshExchangeIds_Clicked"/>
+                             Clicked="imagebtnRefreshExchangeIds_Clicked" MaximumWidthRequest="40" MaximumHeightRequest="40"/>
                 <Picker x:Name="pickerExchangeID" VerticalOptions="Center" HorizontalOptions="End" 
                         Title="Exchange ID" SelectedIndexChanged="pickerExchangeID_SelectedIndexChanged"/>
             </HorizontalStackLayout>
