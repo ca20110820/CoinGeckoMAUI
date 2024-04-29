@@ -9,6 +9,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace CoinGeckoApp.ViewModels
 {
@@ -51,29 +52,70 @@ namespace CoinGeckoApp.ViewModels
             }
         }
 
-
-        /* ======================== Constructors */
-        public ExchangeViewModel() { }
-        public ExchangeViewModel(ExchangePage exchangePage)
+        private string _exchangeId;
+        public string ExchangeId
         {
-            _view = exchangePage;
+            get => _exchangeId;
+            set
+            {
+                _exchangeId = value;
+                OnPropertyChanged(nameof(ExchangeId));
+
+                // Also Update the ExchangeModel object and notify listeners
+                Exchange = new ExchangeModel(value);
+            }
         }
 
 
+        /* ======================== Constructors */
+        public ExchangeViewModel()
+        {
+            InitCommands();
+        }
+        public ExchangeViewModel(ExchangePage exchangePage)
+        {
+            _view = exchangePage;
+            InitCommands();
+        }
+
+
+        /* ======================== Commands */
+        private void InitCommands()
+        {
+            ChangeExchangeIdCommand = new Command<string>(ExecChangeExchangeIdCommand);
+        }
+
+        public ICommand ChangeExchangeIdCommand { get; set; }
+        private async void ExecChangeExchangeIdCommand(string id)
+        {
+            try
+            {
+                await ShowTickers(id);
+            }
+            catch (HttpRequestException ex)
+            {
+                // Too many http request error
+                if (ex.StatusCode == System.Net.HttpStatusCode.TooManyRequests) return;
+
+                // TODO: Handle no internet connection
+            }
+        }
+
 
         /* ======================== Getters, Fetchers, Updaters, Refreshers */
-        public async Task RefreshTickers()
+        public async Task RefreshTickers(string? exchangeid = null)
         {
             /* The Process is too slow if the "Tickers" property is binded to CollectionView */
 
             // Set the Title based from Exchange ID User Preference
             TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
-            string exchangeId = Preferences.Get("exchangeid", "binance");
+            string exchangeId = exchangeid == null? Preferences.Get("exchangeid", "binance") : exchangeid;
             exchangeId = textInfo.ToTitleCase(exchangeId.ToLower());  // Warn: It capitalizes the first character
-            _view.labelExchangeId.Text = exchangeId;  // Set to binance if there is some error
+            //_view.labelExchangeId.Text = exchangeId;  // Set to binance if there is some error
+            SetExchangeId(exchangeId);
 
             // Re-instantiate the Exchange Service with the current state of "exchangeid"
-            Exchange = new ExchangeModel(Preferences.Get("exchangeid", "binance"));  // Update Exchange observable property
+            Exchange = new ExchangeModel(exchangeid == null ? Preferences.Get("exchangeid", "binance") : exchangeid);  // Update Exchange observable property
             exchangeService = new(Exchange);  // Get the exchange service based on current state of exchangeid
 
             var apiResponse = await Task.Run(() => exchangeService.FetchExchangeTickers());
@@ -88,10 +130,12 @@ namespace CoinGeckoApp.ViewModels
             }
         }
 
-        public async Task ShowTickers()
+        public async Task ShowTickers(string? exchangeid = null)
         {
             // Try to retreive tickers from local json file
-            Exchange = new ExchangeModel(Preferences.Get("exchangeid", "binance"));
+            string exchangeId = exchangeid == null ? Preferences.Get("exchangeid", "binance") : exchangeid;
+            Exchange = new ExchangeModel(exchangeId);
+            SetExchangeId(exchangeId);
             exchangeService = new(Exchange);  // Get the exchange service based on current state of exchangeid
             
             Ticker[] tempArr = await Task.Run(() => exchangeService.GetTickersFromJsonAsync());
@@ -99,15 +143,17 @@ namespace CoinGeckoApp.ViewModels
             // If not available, fetch from api and save
             if (tempArr.Length < 1)
             {
-                await RefreshTickers();
-                //tempArr = await Task.Run(() => exchangeService.GetTickersFromJsonAsync());
+                await RefreshTickers(exchangeId);
                 return;
             }
 
             Tickers = new(tempArr);
         }
 
-
+        public void SetExchangeId(string exchangeId)
+        {
+            ExchangeId = exchangeId;
+        }
 
 
 

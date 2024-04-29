@@ -24,8 +24,11 @@ public partial class ExchangePage : ContentPage
     {
         base.OnAppearing();
 
+        RetreiveExchangeIds();
+
         try
         {
+            // Always reset back to the default user preferences for the exchange id (when not arguments given to ShowTickers())
             await Task.Run(() => viewModel.ShowTickers());
         }
         catch (HttpRequestException ex)
@@ -34,6 +37,13 @@ public partial class ExchangePage : ContentPage
             await DisplayAlert("Warn", "No Internet Connection!", "Ok");
             await Shell.Current.GoToAsync("//MainPage");  // Route to Home Page
         }
+    }
+
+    private void RetreiveExchangeIds()
+    {
+        App theApp = (App)Application.Current;
+        pickerExchangeId.ItemsSource = null;
+        pickerExchangeId.ItemsSource = theApp.ExchangeIds;
     }
 
     protected override async void OnDisappearing()
