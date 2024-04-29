@@ -57,6 +57,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Resources\Images\crypto_maui_logo_transparent.png" />
 	  <None Remove="Resources\Images\refresh_button.svg" />
 	  <None Remove="Resources\Images\star_favourite.png" />
 	  <None Remove="Resources\Images\star_unfavourite.png" />

@@ -4,12 +4,36 @@
              x:Class="CoinGeckoApp.MainPage">
 
     <ScrollView>
-        <VerticalStackLayout
-            Padding="30,0"
-            Spacing="25">
-            
-            
-            
+        <VerticalStackLayout Padding="10">
+            <Frame MaximumWidthRequest="500"
+                   MaximumHeightRequest="500"
+                   CornerRadius="70"
+                   VerticalOptions="Center"
+                   HorizontalOptions="Center"
+                   IsClippedToBounds="True"
+                   BorderColor="Transparent"
+                   Padding="5"
+                   Margin="5"
+                   BackgroundColor="Transparent"
+                   >
+                <Image Source="crypto_maui_logo_transparent.png"
+                       BackgroundColor="Transparent"
+                       />
+            </Frame>
+
+            <Label Text="Ride the Crypto Wave with CryptoMAUI!"
+                   FontSize="20"
+                   TextColor="{AppThemeBinding Light=#1B35E0, Dark={StaticResource White}}"
+                   HorizontalOptions="Center"
+                   VerticalOptions="CenterAndExpand"
+                   Margin="20"
+                   FontAttributes="Bold"
+                   LineBreakMode="WordWrap"
+                   HorizontalTextAlignment="Center"
+                   VerticalTextAlignment="Center"
+                   />
+
+
         </VerticalStackLayout>
     </ScrollView>
 

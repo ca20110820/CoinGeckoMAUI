@@ -11,7 +11,7 @@
 
     <Shell.TitleView BackgroundColor="MediumPurple">
         <HorizontalStackLayout HorizontalOptions="FillAndExpand">
-            <Label Text="CoinGecko MAUI"
+            <Label Text="CryptoMAUI"
                    TextColor="White"
                    VerticalTextAlignment="Center"
                    VerticalOptions="Center"
