@@ -21,40 +21,29 @@ public partial class SettingsPage : ContentPage
     {
         base.OnAppearing();
 
-        //UserSettingModel userSetting = new();
-        //try
-        //{
-        //    settingViewModel.UserSetting = await userSetting.ReadAsync();
-        //}
-        //catch (KeyNotFoundException ex)
-        //{
-        //    await DisplayAlert("Error", ex.Message, "Ok");
-        //}
-
         // Get the Preference Values and Set them to the Widgets
-        //await RetreiveMaxFavourites();
-        await RetreiveDarkMode();
-        await RetreiveQuoteCurrency();
-        await RetreiveSupportedCurrencies();
+        RetreiveDarkMode();
+        RetreiveQuoteCurrency();
+        RetreiveSupportedCurrencies();
     }
 
-    private async Task RetreiveDarkMode()
+    private void RetreiveDarkMode()
     {
         switchDarkMode.IsToggled = Preferences.Get("darkmode", false);
     }
-    private async Task RetreiveQuoteCurrency()
+    private void RetreiveQuoteCurrency()
     {
         // Get the App Singleton
         App theApp = (App)Application.Current;
 
         // Load the Supported Currencies
         pickerQuoteCurrency.ItemsSource = null;
-        pickerQuoteCurrency.ItemsSource = theApp.SupportedCurrencies;
+        pickerQuoteCurrency.ItemsSource = theApp?.SupportedCurrencies ?? null;
 
         // Set the User Preference for Supported Currencies
         pickerQuoteCurrency.SelectedItem = Preferences.Get("quotecurrency", "usd");
     }
-    private async Task RetreiveSupportedCurrencies()
+    private void RetreiveSupportedCurrencies()
     {
 
         // Get the App Singleton
@@ -62,20 +51,19 @@ public partial class SettingsPage : ContentPage
 
         // Load the Exchange IDs
         pickerExchangeID.ItemsSource = null;
-        pickerExchangeID.ItemsSource = theApp.ExchangeIds;
+        pickerExchangeID.ItemsSource = theApp?.ExchangeIds ?? null;
         pickerExchangeID.SelectedItem = Preferences.Get("exchangeid", "binance");
     }
 
     private async void switchDarkMode_Toggled(object sender, ToggledEventArgs e)
     {
-        bool newValue = e.Value;
+        App theApp = (App)Application.Current;
 
         try
         {
             await userSetting.ReadAsync();
             await userSetting.SwitchDarkMode();
 
-            App theApp = (App)Application.Current;
             if (userSetting.DarkMode)
             {
                 theApp.UserAppTheme = AppTheme.Dark;
@@ -86,16 +74,13 @@ public partial class SettingsPage : ContentPage
             }
 
         }
-        catch (KeyNotFoundException ex)
+        catch (KeyNotFoundException)
         {
-            Trace.WriteLine(ex);
-            return;
+            // Set User Preference to default due to un-initialized user preferences when the app is installed
+            await userSetting.ResetSettingAsync();
+            await userSetting.ReadAsync();
+            await userSetting.SwitchDarkMode();
         }
-
-        //Trace.WriteLine($"Persistent DarkMode Value: {userSetting.DarkMode}");
-        //Trace.WriteLine($"Current DarkMode Value: {newValue}");
-
-        Trace.Assert(userSetting.DarkMode == newValue);
     }
 
     private async void pickerQuoteCurrency_SelectedIndexChanged(object sender, EventArgs e)
@@ -104,8 +89,15 @@ public partial class SettingsPage : ContentPage
         if (picker == null) return;
         string selectedCurrency = (string)picker.SelectedItem;
 
-        await userSetting.ReadAsync();
-        await userSetting.ChangeQuoteCurrencyTo(selectedCurrency);
+        try
+        {
+            await userSetting.ReadAsync();
+            await userSetting.ChangeQuoteCurrencyTo(selectedCurrency);
+        }
+        catch(KeyNotFoundException ex)
+        {
+            Trace.WriteLine(ex);
+        }
     }
 
     private async void imagebtnRefreshQuoteCurrency_Clicked(object sender, EventArgs e)
@@ -141,8 +133,15 @@ public partial class SettingsPage : ContentPage
         if (picker == null) return;
         string selectedExchangeId = (string)picker.SelectedItem;
 
-        await userSetting.ReadAsync();
-        await userSetting.ChangeExchangeIdTo(selectedExchangeId);
+        try
+        {
+            await userSetting.ReadAsync();
+            await userSetting.ChangeExchangeIdTo(selectedExchangeId);
+        }
+        catch(KeyNotFoundException ex)
+        {
+            Trace.WriteLine(ex);
+        }
     }
 
     private async void imagebtnRefreshExchangeIds_Clicked(object sender, EventArgs e)

@@ -43,17 +43,6 @@
 
             <BoxView BackgroundColor="Black" Grid.Row="1" Grid.ColumnSpan="2" HeightRequest="1" VerticalOptions="End" HorizontalOptions="FillAndExpand" />
 
-            <!--User Setting - Max Favourites-->
-            <!--<Label Text="Max. Favourites" Grid.Row="2" Grid.Column="0" VerticalOptions="Center" HorizontalOptions="Start"/>
-            <ContentView Grid.Row="2" Grid.Column="1" VerticalOptions="Center" HorizontalOptions="End" Padding="3">
-                <HorizontalStackLayout>
-                    <Button x:Name="btnMaxFavourites_Down" Text="-" Clicked="OnButtonClicked"/>
-                    <Label x:Name="labelMaxFavourites_Value" Margin="10,0" VerticalTextAlignment="Center"/>
-                    <Button x:Name="btnMaxFavourites_Up" Text="+" Clicked="OnButtonClicked"/>
-                </HorizontalStackLayout>
-            </ContentView>-->
-            <!--<BoxView BackgroundColor="Black" Grid.Row="2" Grid.ColumnSpan="2" HeightRequest="1" VerticalOptions="End" HorizontalOptions="FillAndExpand" />-->
-
             <!--User Setting - Exchange ID-->
             <Label Text="Exchange ID" Grid.Row="2" Grid.Column="0" VerticalOptions="Center" HorizontalOptions="Start"/>
             <HorizontalStackLayout Grid.Row="2" Grid.Column="1">

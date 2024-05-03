@@ -93,6 +93,11 @@ namespace CoinGeckoApp.Settings
 
         public override async Task ResetSettingAsync()
         {
+            Preferences.Default.Remove("darkmode");
+            Preferences.Default.Remove("quotecurrency");
+            Preferences.Default.Remove("exchangeid");
+            Preferences.Default.Remove("maxfavourites");
+
             DarkMode = false;
             QuoteCurrency = "usd";
             MaxFavourites = 15;

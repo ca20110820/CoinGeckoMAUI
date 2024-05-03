@@ -84,6 +84,16 @@ namespace CoinGeckoApp
 
             // Set the settings to Preferences
             userSetting.SetCurrentUserSettings();
+
+            // Set Light/Dark Mode on Application Startup
+            if (userSetting.DarkMode)
+            {
+                UserAppTheme = AppTheme.Dark;
+            }
+            else
+            {
+                UserAppTheme = AppTheme.Light;
+            }
         }
         private async Task InitSupportedCurrencies()
         {
