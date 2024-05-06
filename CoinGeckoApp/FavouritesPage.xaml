@@ -14,13 +14,26 @@
         <Color x:Key="DarkSecondaryColor">White</Color>
         <Color x:Key="BackgroundDarkColor">#e066ff</Color>
 
-        <Style x:Key="LabelStyle" TargetType="Label">
-            <Setter Property="TextColor" 
-                Value="{AppThemeBinding Light={StaticResource LightSecondaryColor}, Dark={StaticResource LightPrimaryColor}}" />
+        <Style x:Key="LabelStyle"
+               TargetType="Label">
+            <Setter Property="TextColor"
+                    Value="{AppThemeBinding Light={StaticResource LightSecondaryColor}, Dark={StaticResource LightPrimaryColor}}" />
         </Style>
 
-        <Style x:Key="HorizontalStackLayoutStyle" TargetType="HorizontalStackLayout">
-            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource LightPrimaryColor}, Dark={StaticResource BackgroundDarkColor}}"/>
+        <Style x:Key="ScrollViewStyle"
+               TargetType="ScrollView">
+            <Setter Property="BackgroundColor"
+                    Value="{AppThemeBinding Light={StaticResource LightPrimaryColor}, Dark={StaticResource BackgroundDarkColor}}" />
+            <Setter Property="HorizontalOptions"
+                    Value="FillAndExpand" />
+            <Setter Property="VerticalOptions"
+                    Value="FillAndExpand" />
+        </Style>
+
+        <Style x:Key="ItemContentViewStyle"
+               TargetType="ContentView">
+            <Setter Property="Margin"
+                    Value="5" />
         </Style>
     </ContentPage.Resources>
 
@@ -28,47 +41,95 @@
         <VerticalStackLayout>
 
             <!--CollectionView of Favourite Coins and some of their stats-->
-            <CollectionView ItemsSource="{Binding FavouriteCoins}" SelectionMode="Single" 
-                            VerticalOptions="Center" HorizontalOptions="CenterAndExpand" Margin="4,0">
+            <CollectionView ItemsSource="{Binding FavouriteCoins}"
+                            SelectionMode="Single"
+                            VerticalOptions="Center"
+                            HorizontalOptions="CenterAndExpand"
+                            Margin="4,0">
                 <CollectionView.ItemsLayout>
-                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="2" />
+                    <LinearItemsLayout Orientation="Vertical"
+                                       ItemSpacing="2" />
                 </CollectionView.ItemsLayout>
-                <CollectionView.ItemTemplate Padding="5" HorizontalOptions="CenterAndExpand">
+                <CollectionView.ItemTemplate Padding="5"
+                                             HorizontalOptions="CenterAndExpand">
                     <DataTemplate>
-                        <Frame BorderColor="#8728B6" CornerRadius="5" Margin="5">
-                            <HorizontalStackLayout Style="{StaticResource HorizontalStackLayoutStyle}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-                                <!--Coin Logo and Coin name-->
-                                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Start">
-                                    <ImageButton x:Name="imagebuttonCoinLogo" Source="{Binding ApiCoinsIdResponse.Images[large]}" 
-                                           MaximumWidthRequest="60" MaximumHeightRequest="60" Margin="3"
-                                           VerticalOptions="Center" HorizontalOptions="Start" Clicked="imagebuttonCoinLogo_Clicked"/>
+                        <Frame CornerRadius="5"
+                               HorizontalOptions="FillAndExpand"
+                               VerticalOptions="FillAndExpand"
+                               BorderColor="{AppThemeBinding Light=Black, Dark=Cyan}"
+                               Margin="5, 5, 5, 0"
+                               BackgroundColor="{AppThemeBinding Light={StaticResource LightPrimaryColor}, Dark={StaticResource BackgroundDarkColor}}">
+                            <ScrollView Orientation="Both">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
 
-                                    <Label Text="{Binding ApiCoinsIdResponse.Name}" Margin="3" 
-                                           VerticalOptions="Center" HorizontalOptions="Start"
-                                           FontSize="Micro" FontAttributes="Bold" 
-                                           LineBreakMode="WordWrap" MaxLines="3"
-                                           Style="{StaticResource LabelStyle}"/>
-                                </VerticalStackLayout>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="110" />
+                                        <ColumnDefinition Width="100" />
+                                    </Grid.ColumnDefinitions>
 
-                                <!--Sparkline-->
-                                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
-                                    <Image Source="{Binding SparklineImageSource}" 
-                                           MaximumWidthRequest="110" MaximumHeightRequest="60" Margin="3"
-                                           VerticalOptions="Center" HorizontalOptions="Center"/>
-                                </VerticalStackLayout>
+                                    <!--Coin Logo and Coin name-->
+                                    <ContentView Grid.Row="0"
+                                                 Grid.Column="0"
+                                                 Style="{StaticResource ItemContentViewStyle}"
+                                                 HorizontalOptions="Center">
+                                        <VerticalStackLayout>
+                                            <ImageButton x:Name="imagebuttonCoinLogo"
+                                                         Source="{Binding ApiCoinsIdResponse.Images[large]}"
+                                                         MaximumWidthRequest="60"
+                                                         MaximumHeightRequest="60"
+                                                         Margin="3"
+                                                         Clicked="imagebuttonCoinLogo_Clicked" />
 
-                                <!--Start Button for Unfavouriting the Favourite Coin-->
-                                <ImageButton x:Name="imagebtnStar" x:FieldModifier="public" Source="star_favourite.png"
-                                             VerticalOptions="Center" HorizontalOptions="EndAndExpand"
-                                             MaximumWidthRequest="30" MaximumHeightRequest="30" Margin="3"
-                                             Aspect="AspectFit" Clicked="imagebtnStar_Clicked"/>
-                            </HorizontalStackLayout>
+                                            <Label Text="{Binding ApiCoinsIdResponse.Name}"
+                                                   Margin="3"
+                                                   FontSize="Micro"
+                                                   FontAttributes="Bold"
+                                                   LineBreakMode="WordWrap"
+                                                   MaxLines="2"
+                                                   Style="{StaticResource LabelStyle}" />
+                                        </VerticalStackLayout>
+                                    </ContentView>
+
+                                    <!--Sparkline and Stats-->
+                                    <ContentView Grid.Row="0"
+                                                 Grid.Column="1"
+                                                 Style="{StaticResource ItemContentViewStyle}"
+                                                 HorizontalOptions="Center">
+                                        <VerticalStackLayout>
+                                            <Image Source="{Binding SparklineImageSource}"
+                                                   MaximumWidthRequest="200"
+                                                   MaximumHeightRequest="80"
+                                                   Margin="3" />
+                                        </VerticalStackLayout>
+                                    </ContentView>
+
+                                    <!--Start Button for Unfavouriting the Favourite Coin-->
+                                    <ContentView Grid.Row="0"
+                                                 Grid.Column="2"
+                                                 Style="{StaticResource ItemContentViewStyle}"
+                                                 HorizontalOptions="EndAndExpand">
+                                        <ImageButton x:Name="imagebtnStar"
+                                                     x:FieldModifier="public"
+                                                     Source="star_favourite.png"
+                                                     MaximumWidthRequest="30"
+                                                     MaximumHeightRequest="30"
+                                                     Margin="3"
+                                                     Aspect="AspectFit"
+                                                     Clicked="imagebtnStar_Clicked" />
+                                    </ContentView>
+                                </Grid>
+                            </ScrollView>
                         </Frame>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
                 <CollectionView.EmptyView>
                     <!-- What to Display when the Collection is Empty -->
-                    <Label Text="There are no favourite coins." Style="{StaticResource LabelStyle}"/>
+                    <Label Text="There are no favourite coins."
+                           Style="{StaticResource LabelStyle}" />
                 </CollectionView.EmptyView>
             </CollectionView>
 

@@ -1,80 +1,116 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:views="clr-namespace:CoinGeckoApp.Views;assembly=CoinGeckoApp"
              x:Class="CoinGeckoApp.CoinPage">
 
-    <ScrollView Orientation="Vertical">
+    <ScrollView x:Name="scrollviewRoot"
+                Orientation="Vertical">
         <VerticalStackLayout HorizontalOptions="Center">
-            <SearchBar x:Name="searchbarCoin" Placeholder="Search Coin by Id" 
+            <SearchBar x:Name="searchbarCoin"
+                       Placeholder="Search Coin by Id"
                        IsTextPredictionEnabled="True"
-                       VerticalTextAlignment="Center" HorizontalTextAlignment="Center"
-                       VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" 
+                       VerticalTextAlignment="Center"
+                       HorizontalTextAlignment="Center"
+                       VerticalOptions="CenterAndExpand"
+                       HorizontalOptions="CenterAndExpand"
                        PlaceholderColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
                        BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource SecondaryDarkText}}"
                        TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
-                       SearchButtonPressed="searchbarCoin_Pressed" TextChanged="searchbarCoin_TextChanged"
-                       >
+                       SearchButtonPressed="searchbarCoin_Pressed"
+                       TextChanged="searchbarCoin_TextChanged">
             </SearchBar>
             <ListView x:Name="searchResults"
-                      VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" />
+                      VerticalOptions="CenterAndExpand"
+                      HorizontalOptions="CenterAndExpand" />
             <!--Coin Name, Current Price, Data Refresh Button, and Price Change Indicator-->
-            <HorizontalStackLayout 
-                HorizontalOptions="FillAndExpand" VerticalOptions="Start"
-                Padding="5">
-                <VerticalStackLayout Spacing="10" HorizontalOptions="CenterAndExpand" VerticalOptions="Center" Margin="10">
+            <HorizontalStackLayout HorizontalOptions="FillAndExpand"
+                                   VerticalOptions="Start"
+                                   Padding="5">
+                <VerticalStackLayout Spacing="10"
+                                     HorizontalOptions="CenterAndExpand"
+                                     VerticalOptions="Center"
+                                     Margin="10">
                     <!--Coin name-->
-                    <Label x:Name="labelCoinName" Text="{Binding CoinsIdAPIResponse.Symbol, StringFormat='{0}', FallbackValue='-na-'}"
-                           VerticalOptions="Center" HorizontalOptions="CenterAndExpand"
-                           FontSize="30" FontAttributes="Bold"
-                           />
-                    
+                    <Label x:Name="labelCoinName"
+                           Text="{Binding CoinsIdAPIResponse.Symbol, StringFormat='{0}', FallbackValue='-na-'}"
+                           VerticalOptions="Center"
+                           HorizontalOptions="CenterAndExpand"
+                           FontSize="30"
+                           FontAttributes="Bold" />
+
                     <!--Current Price and Price Change Indicator-->
-                    <HorizontalStackLayout
-                        VerticalOptions="Center" HorizontalOptions="Center">
-                        
+                    <HorizontalStackLayout VerticalOptions="Center"
+                                           HorizontalOptions="Center">
+
                         <!--Current Price-->
-                        <Label x:Name="labelCurrentPrice"  
+                        <Label x:Name="labelCurrentPrice"
                                Text="{Binding CurrentPrice, StringFormat='{0:F5}', FallbackValue='-na-', TargetNullValue='-na-'}"
-                               VerticalOptions="Center" HorizontalOptions="Center"
-                               FontSize="30"/>
-                        
+                               VerticalOptions="Center"
+                               HorizontalOptions="Center"
+                               FontSize="30" />
+
                         <!--Price Change Indicator-->
-                        <Image x:Name="triangleIndicator" x:FieldModifier="public" Source="{Binding PriceChangeIndicator, FallbackValue='-na-', TargetNullValue='-na-'}"
-                               MaximumWidthRequest="30" MaximumHeightRequest="30" Margin="3"
-                               VerticalOptions="Center" HorizontalOptions="Center"/>
+                        <Image x:Name="triangleIndicator"
+                               x:FieldModifier="public"
+                               Source="{Binding PriceChangeIndicator, FallbackValue='-na-', TargetNullValue='-na-'}"
+                               MaximumWidthRequest="30"
+                               MaximumHeightRequest="30"
+                               Margin="3"
+                               VerticalOptions="Center"
+                               HorizontalOptions="Center" />
                     </HorizontalStackLayout>
                 </VerticalStackLayout>
 
-                <VerticalStackLayout Spacing="10" HorizontalOptions="Center" VerticalOptions="Center" Margin="10">
+                <VerticalStackLayout Spacing="10"
+                                     HorizontalOptions="Center"
+                                     VerticalOptions="Center"
+                                     Margin="10">
                     <!--Star Favourite Button-->
-                    <ImageButton x:Name="imagebtnStar" x:FieldModifier="public"
+                    <ImageButton x:Name="imagebtnStar"
+                                 x:FieldModifier="public"
                                  Source="{Binding IsFavouriteImage, FallbackValue='star_unfavourite.png', TargetNullValue='star_unfavourite.png'}"
-                                 VerticalOptions="Center" HorizontalOptions="Center"
-                                 MaximumWidthRequest="30" MaximumHeightRequest="30" Margin="3"
+                                 VerticalOptions="Center"
+                                 HorizontalOptions="Center"
+                                 MaximumWidthRequest="30"
+                                 MaximumHeightRequest="30"
+                                 Margin="3"
                                  Aspect="AspectFit"
                                  Clicked="imagebtnStar_Clicked">
                     </ImageButton>
 
                     <!--Data Refresh Image-->
-                    <ImageButton x:Name="imagebtnRefreshCoinData" Source="refresh_button.png"
-                                 VerticalOptions="Center" HorizontalOptions="End"
-                                 Aspect="AspectFit" Clicked="imagebtnRefreshCoinData_Clicked" 
-                                 MaximumWidthRequest="40" MaximumHeightRequest="40"/>
+                    <ImageButton x:Name="imagebtnRefreshCoinData"
+                                 Source="refresh_button.png"
+                                 VerticalOptions="Center"
+                                 HorizontalOptions="End"
+                                 Aspect="AspectFit"
+                                 Clicked="imagebtnRefreshCoinData_Clicked"
+                                 MaximumWidthRequest="40"
+                                 MaximumHeightRequest="40" />
                 </VerticalStackLayout>
             </HorizontalStackLayout>
-            
+
             <!--Candlestick Chart-->
-            <Image x:Name="imageCandlestickChart" x:FieldModifier="public" Source="{Binding CandlestickChartImageSource}"
-                   MaximumWidthRequest="800" MaximumHeightRequest="800" 
-                   VerticalOptions="Center" HorizontalOptions="Center" Margin="0,10"
-                   />
+            <Image x:Name="imageCandlestickChart"
+                   x:FieldModifier="public"
+                   Source="{Binding CandlestickChartImageSource}"
+                   MaximumWidthRequest="800"
+                   MaximumHeightRequest="800"
+                   VerticalOptions="Center"
+                   HorizontalOptions="Center"
+                   Margin="0,10" />
 
             <!--Key-Value Pairs of Current Data-->
-            <CollectionView x:Name="collectionviewCurrentData" x:FieldModifier="public"
+            <CollectionView x:Name="collectionviewCurrentData"
+                            x:FieldModifier="public"
                             ItemsSource="{Binding DataKeyValuePairs}"
-                            HorizontalOptions="CenterAndExpand" VerticalOptions="Center">
+                            HorizontalOptions="CenterAndExpand"
+                            VerticalOptions="Center">
                 <CollectionView.ItemsLayout>
-                    <LinearItemsLayout Orientation="Vertical" SnapPointsAlignment="Center" ItemSpacing="5" />
+                    <LinearItemsLayout Orientation="Vertical"
+                                       SnapPointsAlignment="Center"
+                                       ItemSpacing="5" />
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
@@ -88,33 +124,58 @@
                             </Grid.ColumnDefinitions>
 
                             <!-- Key -->
-                            <Label Text="{Binding Key}" 
-                                   Grid.Row="0" Grid.Column="0" HorizontalOptions="Center" VerticalOptions="Center" />
+                            <Label Text="{Binding Key}"
+                                   Grid.Row="0"
+                                   Grid.Column="0"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
 
                             <!-- Value -->
-                            <Label Text="{Binding Value}" 
-                                   Grid.Row="0" Grid.Column="1" HorizontalOptions="Center" VerticalOptions="Center" />
+                            <Label Text="{Binding Value}"
+                                   Grid.Row="0"
+                                   Grid.Column="1"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
                 <CollectionView.EmptyView>
-                    <Label Text="-na-"/>
+                    <Label Text="-na-" />
                 </CollectionView.EmptyView>
 
             </CollectionView>
 
-
             <!--Volume Chart-->
-            <Image x:Name="imageVolumeChart" x:FieldModifier="public" Source="{Binding VolumeChartImageSource}"
-                   MaximumWidthRequest="800" MaximumHeightRequest="800" 
-                   VerticalOptions="Center" HorizontalOptions="Center" Margin="0,10"
-                   />
+            <Frame HorizontalOptions="FillAndExpand"
+                   Margin="5"
+                   BorderColor="Purple">
+                <views:PinchToZoomContainer>
+                    <Image x:Name="imageVolumeChart"
+                           x:FieldModifier="public"
+                           Source="{Binding VolumeChartImageSource}"
+                           MaximumWidthRequest="800"
+                           MaximumHeightRequest="800"
+                           VerticalOptions="Center"
+                           HorizontalOptions="Center"
+                           Margin="0,10" />
+                </views:PinchToZoomContainer>
+            </Frame>
 
             <!--Bar Chart - Price Changes in different period-->
-            <Image x:Name="imagePriceChangesMultiPeriods" x:FieldModifier="public" Source="{Binding PriceChangesMultiPeriodImageSource}"
-                   MaximumWidthRequest="800" MaximumHeightRequest="800" 
-                   VerticalOptions="Center" HorizontalOptions="Center" Margin="0,10"
-                   />
+            <Frame HorizontalOptions="FillAndExpand"
+                   Margin="5"
+                   BorderColor="Purple">
+                <views:PinchToZoomContainer>
+                    <Image x:Name="imagePriceChangesMultiPeriods"
+                           x:FieldModifier="public"
+                           Source="{Binding PriceChangesMultiPeriodImageSource}"
+                           MaximumWidthRequest="800"
+                           MaximumHeightRequest="800"
+                           VerticalOptions="Center"
+                           HorizontalOptions="Center"
+                           Margin="0,10" />
+                </views:PinchToZoomContainer>
+            </Frame>
 
         </VerticalStackLayout>
     </ScrollView>
