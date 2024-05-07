@@ -2,64 +2,139 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="CoinGeckoApp.SettingsPage">
+
+    <ContentPage.Resources>
+        <Style x:Key="BoxViewStyle" TargetType="BoxView">
+            <Setter Property="BackgroundColor"
+                    Value="{AppThemeBinding Light=Black, Dark=Cyan}" />
+        </Style>
+    </ContentPage.Resources>
     
     <VerticalStackLayout>
-        <Label Text="User Preferences" TextType="Text" VerticalOptions="Start" HorizontalOptions="StartAndExpand"
-               FontSize="18" FontAttributes="Bold"
-               />
+        <Label Text="User Preferences"
+               TextType="Text"
+               VerticalOptions="Start"
+               HorizontalOptions="StartAndExpand"
+               FontSize="18"
+               FontAttributes="Bold"
+               Margin="5,0,0,0" />
 
-        <Grid VerticalOptions="Start" HorizontalOptions="FillAndExpand">
+        <Grid VerticalOptions="Start"
+              HorizontalOptions="FillAndExpand">
             <Grid.RowDefinitions>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
                 <!--<RowDefinition Height="1*"/>-->
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
 
-            <BoxView BackgroundColor="Black" Grid.Row="0" Grid.ColumnSpan="2" HeightRequest="1" VerticalOptions="Start" HorizontalOptions="FillAndExpand" />
+            <BoxView Style="{StaticResource BoxViewStyle}"
+                     Grid.Row="0"
+                     Grid.ColumnSpan="2"
+                     HeightRequest="1"
+                     VerticalOptions="Start"
+                     HorizontalOptions="FillAndExpand" />
 
             <!--User Setting - Dark Mode-->
-            <Label Text="Dark Mode" Grid.Row="0" Grid.Column="0" 
-                   VerticalOptions="Center" HorizontalOptions="Start"/>
-            <Switch x:Name="switchDarkMode" IsToggled="False" Grid.Row="0" Grid.Column="1" Toggled="switchDarkMode_Toggled"/>
+            <Label Text="Dark Mode"
+                   Grid.Row="0"
+                   Grid.Column="0"
+                   VerticalOptions="Center"
+                   HorizontalOptions="Start"
+                   Margin="5,0,0,0" />
+            <Switch x:Name="switchDarkMode"
+                    IsToggled="False"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Toggled="switchDarkMode_Toggled" />
 
-            <BoxView BackgroundColor="Black" Grid.Row="0" Grid.ColumnSpan="2" HeightRequest="1" VerticalOptions="End" HorizontalOptions="FillAndExpand" />
+            <BoxView Style="{StaticResource BoxViewStyle}"
+                     Grid.Row="0"
+                     Grid.ColumnSpan="2"
+                     HeightRequest="1"
+                     VerticalOptions="End"
+                     HorizontalOptions="FillAndExpand" />
 
             <!--User Setting - Quote Currencies -->
-            <Label Text="Quote Currency" Grid.Row="1" Grid.Column="0" VerticalOptions="Center" HorizontalOptions="Start"/>
-            <HorizontalStackLayout Grid.Row="1" Grid.Column="1">
+            <Label Text="Quote Currency"
+                   Grid.Row="1"
+                   Grid.Column="0"
+                   VerticalOptions="Center"
+                   HorizontalOptions="Start"
+                   Margin="5,0,0,0" />
+            <HorizontalStackLayout Grid.Row="1"
+                                   Grid.Column="1">
                 <!--Refresh Button to Fetch Quote Currencies from CoinGecko-->
-                <ImageButton x:Name="imagebtnRefreshQuoteCurrency" Source="refresh_button.png" VerticalOptions="Center" HorizontalOptions="End" Aspect="AspectFit" 
+                <ImageButton x:Name="imagebtnRefreshQuoteCurrency"
+                             Source="refresh_button.png"
+                             VerticalOptions="Center"
+                             HorizontalOptions="End"
+                             Aspect="AspectFit"
                              Clicked="imagebtnRefreshQuoteCurrency_Clicked"
-                             MaximumWidthRequest="40" MaximumHeightRequest="40"/>
-                <Picker x:Name="pickerQuoteCurrency" VerticalOptions="Center" HorizontalOptions="End" 
-                        Title="Quote Currency" SelectedIndexChanged="pickerQuoteCurrency_SelectedIndexChanged"/>
+                             MaximumWidthRequest="40"
+                             MaximumHeightRequest="40" />
+                <Picker x:Name="pickerQuoteCurrency"
+                        VerticalOptions="Center"
+                        HorizontalOptions="End"
+                        Title="Quote Currency"
+                        HorizontalTextAlignment="End"
+                        SelectedIndexChanged="pickerQuoteCurrency_SelectedIndexChanged" />
             </HorizontalStackLayout>
 
-            <BoxView BackgroundColor="Black" Grid.Row="1" Grid.ColumnSpan="2" HeightRequest="1" VerticalOptions="End" HorizontalOptions="FillAndExpand" />
+            <BoxView Style="{StaticResource BoxViewStyle}"
+                     Grid.Row="1"
+                     Grid.ColumnSpan="2"
+                     HeightRequest="1"
+                     VerticalOptions="End"
+                     HorizontalOptions="FillAndExpand" />
 
             <!--User Setting - Exchange ID-->
-            <Label Text="Exchange ID" Grid.Row="2" Grid.Column="0" VerticalOptions="Center" HorizontalOptions="Start"/>
-            <HorizontalStackLayout Grid.Row="2" Grid.Column="1">
-                <ImageButton x:Name="imagebtnRefreshExchangeIds" Source="refresh_button.png" VerticalOptions="Center" HorizontalOptions="End" Aspect="AspectFit" 
-                             Clicked="imagebtnRefreshExchangeIds_Clicked" MaximumWidthRequest="40" MaximumHeightRequest="40"/>
-                <Picker x:Name="pickerExchangeID" VerticalOptions="Center" HorizontalOptions="End" 
-                        Title="Exchange ID" SelectedIndexChanged="pickerExchangeID_SelectedIndexChanged"/>
+            <Label Text="Exchange ID"
+                   Grid.Row="2"
+                   Grid.Column="0"
+                   VerticalOptions="Center"
+                   HorizontalOptions="Start"
+                   Margin="5,0,0,0" />
+            <HorizontalStackLayout Grid.Row="2"
+                                   Grid.Column="1">
+                <ImageButton x:Name="imagebtnRefreshExchangeIds"
+                             Source="refresh_button.png"
+                             VerticalOptions="Center"
+                             HorizontalOptions="End"
+                             Aspect="AspectFit"
+                             Clicked="imagebtnRefreshExchangeIds_Clicked"
+                             MaximumWidthRequest="40"
+                             MaximumHeightRequest="40" />
+                <Picker x:Name="pickerExchangeID"
+                        VerticalOptions="Center"
+                        HorizontalOptions="End"
+                        HorizontalTextAlignment="End"
+                        Title="Exchange ID"
+                        SelectedIndexChanged="pickerExchangeID_SelectedIndexChanged" />
             </HorizontalStackLayout>
 
-            <BoxView BackgroundColor="Black" Grid.Row="2" Grid.ColumnSpan="2" HeightRequest="1" VerticalOptions="End" HorizontalOptions="FillAndExpand" />
+            <BoxView Style="{StaticResource BoxViewStyle}"
+                     Grid.Row="2"
+                     Grid.ColumnSpan="2"
+                     HeightRequest="1"
+                     VerticalOptions="End"
+                     HorizontalOptions="FillAndExpand" />
 
         </Grid>
-        
+
         <!--Reset Button for all User Settings-->
-        <Button x:Name="btnResetUserSettings" Text="Reset User Settings" 
-                HorizontalOptions="Center" VerticalOptions="Center" Margin="0,10" MaximumWidthRequest="300" 
-                Clicked="btnResetUserSettings_Clicked"/>
-        
+        <Button x:Name="btnResetUserSettings"
+                Text="Reset User Settings"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                Margin="0,10"
+                MaximumWidthRequest="300"
+                Clicked="btnResetUserSettings_Clicked" />
+
     </VerticalStackLayout>
 </ContentPage>
