@@ -98,12 +98,49 @@
                                     <ContentView Grid.Row="0"
                                                  Grid.Column="1"
                                                  Style="{StaticResource ItemContentViewStyle}"
-                                                 HorizontalOptions="Center">
+                                                 HorizontalOptions="CenterAndExpand">
                                         <VerticalStackLayout>
                                             <Image Source="{Binding SparklineImageSource}"
                                                    MaximumWidthRequest="200"
                                                    MaximumHeightRequest="80"
                                                    Margin="3" />
+
+                                            <ScrollView Orientation="Both">
+                                                <CollectionView ItemsSource="{Binding StatsKVP}"
+                                                                SelectionMode="Single">
+                                                    <CollectionView.ItemsLayout>
+                                                        <LinearItemsLayout Orientation="Vertical"
+                                                                           SnapPointsAlignment="Center"
+                                                                           ItemSpacing="0" />
+                                                    </CollectionView.ItemsLayout>
+                                                    <CollectionView.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Grid Padding="10">
+                                                                <Grid.RowDefinitions>
+                                                                    <RowDefinition Height="1*" />
+                                                                </Grid.RowDefinitions>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="Auto" />
+                                                                    <ColumnDefinition Width="Auto" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <!--Content-->
+                                                                <Label Grid.Row="0"
+                                                                       Grid.Column="0"
+                                                                       Text="{Binding Key, StringFormat='{0}: '}"
+                                                                       FontSize="7" />
+                                                                <Label Grid.Row="0"
+                                                                       Grid.Column="1"
+                                                                       Text="{Binding Value}"
+                                                                       FontSize="7" />
+                                                            </Grid>
+                                                        </DataTemplate>
+                                                    </CollectionView.ItemTemplate>
+                                                    <CollectionView.EmptyView>
+                                                        <Label Text="-na-" />
+                                                    </CollectionView.EmptyView>
+                                                </CollectionView>
+                                            </ScrollView>
+
                                         </VerticalStackLayout>
                                     </ContentView>
 

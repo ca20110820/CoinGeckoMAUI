@@ -103,6 +103,14 @@ namespace CoinGeckoApp.Models
 
             string? marketCapRank = ApiCoinsIdResponse.market_data?.market_cap_rank?.ToString() ?? string.Empty;
             outList.Add(new KeyValuePair<string, object?>("Market Cap Rank", marketCapRank));  // Append to List
+
+            double? totalVolume = ApiCoinsIdResponse.market_data?.total_volume?[$"{Preferences.Get("quotecurrency", "usd")}"];
+            outList.Add(new KeyValuePair<string, object?>($"Total Volume ({Preferences.Get("quotecurrency", "usd")})", totalVolume));  // Append to List
+
+            double? priceChg24h = ApiCoinsIdResponse.market_data?.price_change_24h ?? null;
+            outList.Add(new KeyValuePair<string, object?>($"Price Chg 24h ({Preferences.Get("quotecurrency", "usd")})", priceChg24h));  // Append to List
+
+            StatsKVP = outList;
         }
 
         public async Task SetSparklineImageSource()

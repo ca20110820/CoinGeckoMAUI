@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -50,7 +51,16 @@ namespace CoinGeckoApp.ViewModels
                     tempFavourites.Add(favourite);
                     
                     await favourite.LoadCoinData();
-                    //favourite.SetStatsKVP();
+                    
+                    try
+                    {
+                        favourite.SetStatsKVP();
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.WriteLine(ex);
+                    }
+
                     await favourite.SetSparklineImageSource();
 
                     FavouriteCoins = tempFavourites;
