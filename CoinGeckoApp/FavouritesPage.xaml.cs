@@ -17,9 +17,14 @@ public partial class FavouritesPage : ContentPage
 
     protected override async void OnAppearing()
     {
+        activityindivatorLoading.IsRunning = true;
+        activityindivatorLoading.IsVisible = true;
         base.OnAppearing();
 
         await viewModel.GetFavouriteCoins();
+
+        activityindivatorLoading.IsRunning = false;
+        activityindivatorLoading.IsVisible = false;
     }
 
     private async void imagebtnStar_Clicked(object sender, EventArgs e)

@@ -52,6 +52,13 @@
                    FontAttributes="Bold"
                    FontSize="20" />
 
+            <ActivityIndicator x:Name="activityindivatorLoading"
+                               IsRunning="False"
+                               IsVisible="False"
+                               VerticalOptions="Center"
+                               HorizontalOptions="CenterAndExpand"
+                               Color="{AppThemeBinding Light=#BF40BF, Dark=#f00c93}"/>
+
             <CollectionView x:Name="collectionviewTickers"
                             x:FieldModifier="public"
                             SelectionMode="Single"
@@ -75,6 +82,7 @@
                                         BackgroundColor="{AppThemeBinding Light={StaticResource LightPrimaryColor}, Dark={StaticResource BackgroundDarkColor}}">
                                 <HorizontalStackLayout Style="{StaticResource HorizontalStackLayoutStyle}"
                                                        HorizontalOptions="CenterAndExpand">
+
                                     <!--Exchange Logo-->
                                     <VerticalStackLayout VerticalOptions="Center"
                                                          HorizontalOptions="Center"

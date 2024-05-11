@@ -22,6 +22,8 @@ public partial class ExchangePage : ContentPage
 
     protected override async void OnAppearing()
     {
+        activityindivatorLoading.IsRunning = true;
+        activityindivatorLoading.IsVisible = true;
         base.OnAppearing();
 
         RetreiveExchangeIds();
@@ -37,6 +39,12 @@ public partial class ExchangePage : ContentPage
             await DisplayAlert("Warn", "No Internet Connection!", "Ok");
             await Shell.Current.GoToAsync("//MainPage");  // Route to Home Page
         }
+        finally
+        {
+            activityindivatorLoading.IsRunning = false;
+            activityindivatorLoading.IsVisible = false;
+        }
+
     }
 
     private void RetreiveExchangeIds()

@@ -40,6 +40,13 @@
     <ScrollView Orientation="Vertical">
         <VerticalStackLayout>
 
+            <ActivityIndicator x:Name="activityindivatorLoading"
+                               IsRunning="False"
+                               IsVisible="False"
+                               VerticalOptions="Center"
+                               HorizontalOptions="CenterAndExpand"
+                               Color="{AppThemeBinding Light=#BF40BF, Dark=#f00c93}"/>
+
             <!--CollectionView of Favourite Coins and some of their stats-->
             <CollectionView ItemsSource="{Binding FavouriteCoins}"
                             SelectionMode="Single"
