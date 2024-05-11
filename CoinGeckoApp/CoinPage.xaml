@@ -23,8 +23,16 @@
             <ListView x:Name="searchResults"
                       VerticalOptions="CenterAndExpand"
                       HorizontalOptions="CenterAndExpand" />
+
+            <Image Source="{Binding CoinsIdAPIResponse.Images[large]}"
+                   MaximumWidthRequest="60"
+                   MaximumHeightRequest="60"
+                   Margin="3"
+                   VerticalOptions="Center"
+                   HorizontalOptions="Center" />
+
             <!--Coin Name, Current Price, Data Refresh Button, and Price Change Indicator-->
-            <HorizontalStackLayout HorizontalOptions="FillAndExpand"
+            <HorizontalStackLayout HorizontalOptions="CenterAndExpand"
                                    VerticalOptions="Start"
                                    Padding="5">
                 <VerticalStackLayout Spacing="10"
@@ -62,8 +70,8 @@
                     </HorizontalStackLayout>
                 </VerticalStackLayout>
 
-                <VerticalStackLayout Spacing="10"
-                                     HorizontalOptions="Center"
+                <VerticalStackLayout Spacing="5"
+                                     HorizontalOptions="End"
                                      VerticalOptions="Center"
                                      Margin="10">
                     <!--Star Favourite Button-->
@@ -71,7 +79,7 @@
                                  x:FieldModifier="public"
                                  Source="{Binding IsFavouriteImage, FallbackValue='star_unfavourite.png', TargetNullValue='star_unfavourite.png'}"
                                  VerticalOptions="Center"
-                                 HorizontalOptions="Center"
+                                 HorizontalOptions="End"
                                  MaximumWidthRequest="30"
                                  MaximumHeightRequest="30"
                                  Margin="3"
@@ -105,7 +113,7 @@
             <CollectionView x:Name="collectionviewCurrentData"
                             x:FieldModifier="public"
                             ItemsSource="{Binding DataKeyValuePairs}"
-                            HorizontalOptions="CenterAndExpand"
+                            HorizontalOptions="Center"
                             VerticalOptions="Center">
                 <CollectionView.ItemsLayout>
                     <LinearItemsLayout Orientation="Vertical"
