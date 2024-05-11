@@ -135,6 +135,15 @@
                 Margin="0,10"
                 MaximumWidthRequest="300"
                 Clicked="btnResetUserSettings_Clicked" />
+        
+        <!--Button for Deleting the Devices App Data and Cache Data Directories.-->
+        <Button x:Name="btnCleanData"
+                Text="Clean Data"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                Margin="0,10"
+                MaximumWidthRequest="300"
+                Clicked="btnCleanData_Clicked" />
 
     </VerticalStackLayout>
 </ContentPage>

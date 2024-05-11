@@ -4,6 +4,7 @@ using CoinGeckoApp.ViewModels;
 using System.Diagnostics;
 using CoinGeckoApp.Responses.Exchanges;
 using CoinGeckoApp.Services;
+using CoinGeckoApp.Helpers;
 
 namespace CoinGeckoApp;
 
@@ -204,5 +205,20 @@ public partial class SettingsPage : ContentPage
         switchDarkMode.IsToggled = userSetting.DarkMode;
         pickerQuoteCurrency.SelectedItem = userSetting.QuoteCurrency;
         pickerExchangeID.SelectedItem = userSetting.ExchangeId;
+    }
+
+    private async void btnCleanData_Clicked(object sender, EventArgs e)
+    {
+        bool result = await DisplayAlert("Confirmation", "Are you sure you want to proceed?", "Yes", "No");
+
+        if (!result) return;
+
+        FileSystemHelper fsHelper = new();
+        try
+        {
+            Directory.Delete(fsHelper.AppDataDir, true);
+            Directory.Delete(fsHelper.CacheDir, true);
+        }
+        catch (DirectoryNotFoundException) {}
     }
 }
