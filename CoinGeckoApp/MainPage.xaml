@@ -35,6 +35,18 @@
                    HorizontalTextAlignment="Center"
                    VerticalTextAlignment="Center" />
 
+            <Border>
+                <ScrollView Orientation="Vertical"
+                            VerticalOptions="FillAndExpand"
+                            HorizontalOptions="Center"
+                            MaximumHeightRequest="300">
+                    <WebView x:Name="webviewCoinList"
+                             VerticalOptions="FillAndExpand"
+                             HorizontalOptions="Center"
+                             BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource Gray100}}"
+                             Margin="0,5"/>
+                </ScrollView>
+            </Border>
         </VerticalStackLayout>
     </ScrollView>
 

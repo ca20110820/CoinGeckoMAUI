@@ -108,7 +108,7 @@ public partial class CoinPage : ContentPage, IQueryAttributable
         }
         catch (NullReferenceException)
         {
-            await DisplayAlert("Error", "There is no selected coin!", "Ok");
+            //await DisplayAlert("Error", "There is no selected coin!", "Ok");
         }
         catch (HttpRequestException ex)
         {
@@ -129,7 +129,7 @@ public partial class CoinPage : ContentPage, IQueryAttributable
         {
             await DisplayAlert("Error", "There is no selected coin!", "Ok");
         }
-        catch(InvalidCastException invalidCast)
+        catch(InvalidCastException)
         {
         }
     }

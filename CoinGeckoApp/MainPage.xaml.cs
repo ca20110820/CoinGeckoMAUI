@@ -15,6 +15,11 @@ namespace CoinGeckoApp
             {
                 Html = WidgetHTML.GenerateHtmlPriceTickerWidget()
             };
+
+            webviewCoinList.Source = new HtmlWebViewSource
+            {
+                Html = WidgetHTML.GenerateHtmlCryptoListWidget(dataTop:100)
+            };
         }
     }
 }
