@@ -53,11 +53,19 @@ public partial class ExchangePage : ContentPage
             // Always reset back to the default user preferences for the exchange id (when not arguments given to ShowTickers())
             await Task.Run(() => viewModel.RefreshTickers());
         }
-        catch (HttpRequestException ex)
+        catch (HttpRequestException err)
         {
-            // No Internet Connection error
-            await DisplayAlert("Warn", "No Internet Connection!", "Ok");
-            await Shell.Current.GoToAsync("//MainPage");  // Route to Home Page
+            if (err.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+            {
+                // Too many HTTP Requests
+                await DisplayAlert("Warn", "Too many requests! Please wait for a moment.", "Ok");
+            }
+            else
+            {
+                // No Internet Connection error
+                await DisplayAlert("Warn", "No Internet Connection!", "Ok");
+                await Shell.Current.GoToAsync("//MainPage");  // Route to Home Page
+            }
         }
     }
 

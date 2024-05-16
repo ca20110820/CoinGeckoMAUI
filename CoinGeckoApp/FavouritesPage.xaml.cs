@@ -36,7 +36,26 @@ public partial class FavouritesPage : ContentPage
     private async Task RefreshUI()
     {
         refreshviewFavouritesPage.IsRefreshing = true;
-        await viewModel.GetFavouriteCoins();
+
+        try
+        {
+            await viewModel.GetFavouriteCoins();
+        }
+        catch (HttpRequestException err)
+        {
+            if (err.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+            {
+                // Too many HTTP Requests
+                await DisplayAlert("Warn", "Too many requests! Please wait for a moment.", "Ok");
+            }
+            else
+            {
+                // No Internet Connection error
+                await DisplayAlert("Warn", "No Internet Connection!", "Ok");
+                await Shell.Current.GoToAsync("//MainPage");  // Route to Home Page
+            }
+        }
+
         refreshviewFavouritesPage.IsRefreshing = false;
     }
 

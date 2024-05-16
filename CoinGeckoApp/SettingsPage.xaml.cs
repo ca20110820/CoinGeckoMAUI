@@ -27,7 +27,7 @@ public partial class SettingsPage : ContentPage
         refreshviewSettingsPage.IsRefreshing = false;
     }
 
-    public async void refreshviewSettingsPage_Refreshing(object sender, EventArgs e)
+    public void refreshviewSettingsPage_Refreshing(object sender, EventArgs e)
     {
         refreshviewSettingsPage.IsRefreshing = true;
         RetreiveAllSettings();
@@ -194,7 +194,15 @@ public partial class SettingsPage : ContentPage
         await button.ScaleTo(1, 100); // Scale back to normal size in 100 milliseconds
 
         // Reset User Settings back to Default
-        await ResetUserSettings();
+        try
+        {
+            await ResetUserSettings();
+        }
+        catch (Newtonsoft.Json.JsonReaderException err)
+        {
+            await Task.Delay(2000);
+            await DisplayAlert("Error", err.Message, "Ok");
+        }
     }
 
     private async Task ResetUserSettings()

@@ -7,7 +7,8 @@
         <VerticalStackLayout Padding="10">
             <WebView x:Name="webviewTopPrices"
                      HorizontalOptions="Center"
-                     Margin="0,0,0,15" />
+                     Margin="0,0,0,15"
+                     BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource Gray100}}" />
 
             <Frame MaximumWidthRequest="500"
                    MaximumHeightRequest="500"
