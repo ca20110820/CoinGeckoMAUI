@@ -28,187 +28,185 @@
 
     </ContentPage.Resources>
 
-    <ScrollView Orientation="Vertical">
-        <VerticalStackLayout>
+    <RefreshView x:Name="refreshviewExchangePage"
+                 Refreshing="refreshviewExchangePage_Refreshing"
+                 Margin="0,25,0,0">
+        
+        <ScrollView Orientation="Vertical">
+            <VerticalStackLayout>
 
-            <Picker x:Name="pickerExchangeId"
-                    Title="Exchange"
-                    SelectedItem="{Binding ExchangeId}"
-                    VerticalOptions="Start"
-                    HorizontalOptions="Center"
-                    VerticalTextAlignment="Center"
-                    HorizontalTextAlignment="Center">
-                <Picker.Behaviors>
-                    <toolkit:EventToCommandBehavior EventName="SelectedIndexChanged"
-                                                    Command="{Binding ChangeExchangeIdCommand}"
-                                                    CommandParameter="{Binding Source={x:Reference pickerExchangeId}, Path=SelectedItem}" />
-                </Picker.Behaviors>
-            </Picker>
+                <Picker x:Name="pickerExchangeId"
+                        Title="Exchange"
+                        SelectedItem="{Binding ExchangeId}"
+                        VerticalOptions="Start"
+                        HorizontalOptions="Center"
+                        VerticalTextAlignment="Center"
+                        HorizontalTextAlignment="Center">
+                    <Picker.Behaviors>
+                        <toolkit:EventToCommandBehavior EventName="SelectedIndexChanged"
+                                                        Command="{Binding ChangeExchangeIdCommand}"
+                                                        CommandParameter="{Binding Source={x:Reference pickerExchangeId}, Path=SelectedItem}" />
+                    </Picker.Behaviors>
+                </Picker>
 
-            <Label x:Name="labelExchangeId"
-                   Text="{Binding ExchangeId}"
-                   VerticalOptions="Start"
-                   HorizontalOptions="Center"
-                   FontAttributes="Bold"
-                   FontSize="20" />
+                <Label x:Name="labelExchangeId"
+                       Text="{Binding ExchangeId}"
+                       VerticalOptions="Start"
+                       HorizontalOptions="Center"
+                       FontAttributes="Bold"
+                       FontSize="20" />
 
-            <ActivityIndicator x:Name="activityindivatorLoading"
-                               IsRunning="False"
-                               IsVisible="False"
-                               VerticalOptions="Center"
-                               HorizontalOptions="CenterAndExpand"
-                               Color="{AppThemeBinding Light=#BF40BF, Dark=#f00c93}"/>
+                <CollectionView x:Name="collectionviewTickers"
+                                x:FieldModifier="public"
+                                SelectionMode="Single"
+                                ItemsSource="{Binding Tickers}"
+                                VerticalOptions="Center"
+                                HorizontalOptions="CenterAndExpand"
+                                Margin="4,0">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Vertical"
+                                           ItemSpacing="3" />
+                    </CollectionView.ItemsLayout>
 
-            <CollectionView x:Name="collectionviewTickers"
-                            x:FieldModifier="public"
-                            SelectionMode="Single"
-                            ItemsSource="{Binding Tickers}"
-                            VerticalOptions="Center"
-                            HorizontalOptions="CenterAndExpand"
-                            Margin="4,0">
-                <CollectionView.ItemsLayout>
-                    <LinearItemsLayout Orientation="Vertical"
-                                       ItemSpacing="3" />
-                </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate Padding="5"
+                                                 HorizontalOptions="FillAndExpand">
+                        <DataTemplate>
+                            <!--Add border around-->
+                            <Frame BorderColor="#8728B6"
+                                   CornerRadius="5"
+                                   Padding="5">
+                                <ScrollView Orientation="Both"
+                                            BackgroundColor="{AppThemeBinding Light={StaticResource LightPrimaryColor}, Dark={StaticResource BackgroundDarkColor}}">
+                                    <HorizontalStackLayout Style="{StaticResource HorizontalStackLayoutStyle}"
+                                                           HorizontalOptions="CenterAndExpand">
 
-                <CollectionView.ItemTemplate Padding="5"
-                                             HorizontalOptions="FillAndExpand">
-                    <DataTemplate>
-                        <!--Add border around-->
-                        <Frame BorderColor="#8728B6"
-                               CornerRadius="5"
-                               Padding="5">
-                            <ScrollView Orientation="Both"
-                                        BackgroundColor="{AppThemeBinding Light={StaticResource LightPrimaryColor}, Dark={StaticResource BackgroundDarkColor}}">
-                                <HorizontalStackLayout Style="{StaticResource HorizontalStackLayoutStyle}"
-                                                       HorizontalOptions="CenterAndExpand">
+                                        <!--Exchange Logo-->
+                                        <VerticalStackLayout VerticalOptions="Center"
+                                                             HorizontalOptions="Center"
+                                                             Padding="5">
+                                            <Image Source="{Binding Market.Logo}"
+                                                   MaximumWidthRequest="60"
+                                                   MaximumHeightRequest="60"
+                                                   Margin="3"
+                                                   VerticalOptions="Center"
+                                                   HorizontalOptions="CenterAndExpand">
+                                                <Image.GestureRecognizers>
+                                                    <TapGestureRecognizer Tapped="OnCoinTapped"
+                                                                          NumberOfTapsRequired="1" />
+                                                </Image.GestureRecognizers>
+                                            </Image>
+                                        </VerticalStackLayout>
 
-                                    <!--Exchange Logo-->
-                                    <VerticalStackLayout VerticalOptions="Center"
-                                                         HorizontalOptions="Center"
-                                                         Padding="5">
-                                        <Image Source="{Binding Market.Logo}"
-                                               MaximumWidthRequest="60"
-                                               MaximumHeightRequest="60"
-                                               Margin="3"
-                                               VerticalOptions="Center"
-                                               HorizontalOptions="CenterAndExpand">
-                                            <Image.GestureRecognizers>
-                                                <TapGestureRecognizer Tapped="OnCoinTapped"
-                                                                      NumberOfTapsRequired="1" />
-                                            </Image.GestureRecognizers>
-                                        </Image>
-                                    </VerticalStackLayout>
+                                        <!--Details 1-->
+                                        <VerticalStackLayout VerticalOptions="Center"
+                                                             HorizontalOptions="CenterAndExpand"
+                                                             Padding="5">
+                                            <!--Coin ID-->
+                                            <Label Text="{Binding CoinId, StringFormat='{0}'}"
+                                                   Margin="3"
+                                                   VerticalOptions="Center"
+                                                   HorizontalOptions="CenterAndExpand"
+                                                   FontSize="Micro"
+                                                   FontAttributes="Bold"
+                                                   Style="{StaticResource LabelStyle}">
+                                                <Label.GestureRecognizers>
+                                                    <TapGestureRecognizer Tapped="OnCoinTapped"
+                                                                          NumberOfTapsRequired="1" />
+                                                </Label.GestureRecognizers>
+                                            </Label>
 
-                                    <!--Details 1-->
-                                    <VerticalStackLayout VerticalOptions="Center"
-                                                         HorizontalOptions="CenterAndExpand"
-                                                         Padding="5">
-                                        <!--Coin ID-->
-                                        <Label Text="{Binding CoinId, StringFormat='{0}'}"
-                                               Margin="3"
-                                               VerticalOptions="Center"
-                                               HorizontalOptions="CenterAndExpand"
-                                               FontSize="Micro"
-                                               FontAttributes="Bold"
-                                               Style="{StaticResource LabelStyle}">
-                                            <Label.GestureRecognizers>
-                                                <TapGestureRecognizer Tapped="OnCoinTapped"
-                                                                      NumberOfTapsRequired="1" />
-                                            </Label.GestureRecognizers>
-                                        </Label>
+                                            <!--Last Price-->
+                                            <Label Text="{Binding Last, StringFormat='Last: {0}'}"
+                                                   VerticalOptions="Center"
+                                                   HorizontalOptions="CenterAndExpand"
+                                                   Margin="3"
+                                                   FontSize="10"
+                                                   Style="{StaticResource LabelStyle}" />
 
-                                        <!--Last Price-->
-                                        <Label Text="{Binding Last, StringFormat='Last: {0}'}"
-                                               VerticalOptions="Center"
-                                               HorizontalOptions="CenterAndExpand"
-                                               Margin="3"
-                                               FontSize="10"
-                                               Style="{StaticResource LabelStyle}" />
+                                            <!--Volume-->
+                                            <Label Text="{Binding Volume, StringFormat='Volume: {0}'}"
+                                                   VerticalOptions="Center"
+                                                   HorizontalOptions="CenterAndExpand"
+                                                   Margin="3"
+                                                   FontSize="10"
+                                                   Style="{StaticResource LabelStyle}" />
 
-                                        <!--Volume-->
-                                        <Label Text="{Binding Volume, StringFormat='Volume: {0}'}"
-                                               VerticalOptions="Center"
-                                               HorizontalOptions="CenterAndExpand"
-                                               Margin="3"
-                                               FontSize="10"
-                                               Style="{StaticResource LabelStyle}" />
+                                            <!--Trust Score-->
+                                            <Label Text="{Binding TrustScore, StringFormat='Trust Score: {0}'}"
+                                                   VerticalOptions="Center"
+                                                   HorizontalOptions="CenterAndExpand"
+                                                   Margin="3"
+                                                   FontSize="10"
+                                                   Style="{StaticResource LabelStyle}" />
 
-                                        <!--Trust Score-->
-                                        <Label Text="{Binding TrustScore, StringFormat='Trust Score: {0}'}"
-                                               VerticalOptions="Center"
-                                               HorizontalOptions="CenterAndExpand"
-                                               Margin="3"
-                                               FontSize="10"
-                                               Style="{StaticResource LabelStyle}" />
+                                            <!--Trust Score-->
+                                            <Label Text="{Binding BidAskSpreadPercentage, StringFormat='Bid-Ask Spread: {0:P2}'}"
+                                                   VerticalOptions="Center"
+                                                   HorizontalOptions="CenterAndExpand"
+                                                   Margin="3"
+                                                   FontSize="10"
+                                                   Style="{StaticResource LabelStyle}" />
+                                        </VerticalStackLayout>
 
-                                        <!--Trust Score-->
-                                        <Label Text="{Binding BidAskSpreadPercentage, StringFormat='Bid-Ask Spread: {0:P2}'}"
-                                               VerticalOptions="Center"
-                                               HorizontalOptions="CenterAndExpand"
-                                               Margin="3"
-                                               FontSize="10"
-                                               Style="{StaticResource LabelStyle}" />
-                                    </VerticalStackLayout>
+                                        <!--Details 2-->
+                                        <VerticalStackLayout VerticalOptions="Center"
+                                                             HorizontalOptions="EndAndExpand"
+                                                             Padding="5">
+                                            <!--Timestamp-->
+                                            <Label Text="{Binding Timestamp, StringFormat='Timestamp: {0:HH:mm:ss}'}"
+                                                   VerticalOptions="Center"
+                                                   HorizontalOptions="EndAndExpand"
+                                                   Margin="3"
+                                                   FontSize="10"
+                                                   Style="{StaticResource LabelStyle}" />
 
-                                    <!--Details 2-->
-                                    <VerticalStackLayout VerticalOptions="Center"
-                                                         HorizontalOptions="EndAndExpand"
-                                                         Padding="5">
-                                        <!--Timestamp-->
-                                        <Label Text="{Binding Timestamp, StringFormat='Timestamp: {0:HH:mm:ss}'}"
-                                               VerticalOptions="Center"
-                                               HorizontalOptions="EndAndExpand"
-                                               Margin="3"
-                                               FontSize="10"
-                                               Style="{StaticResource LabelStyle}" />
+                                            <!--LastTradedAt-->
+                                            <Label Text="{Binding LastTradedAt, StringFormat='Last Traded At: {0:HH:mm:ss}'}"
+                                                   VerticalOptions="Center"
+                                                   HorizontalOptions="EndAndExpand"
+                                                   Margin="3"
+                                                   FontSize="10"
+                                                   Style="{StaticResource LabelStyle}" />
 
-                                        <!--LastTradedAt-->
-                                        <Label Text="{Binding LastTradedAt, StringFormat='Last Traded At: {0:HH:mm:ss}'}"
-                                               VerticalOptions="Center"
-                                               HorizontalOptions="EndAndExpand"
-                                               Margin="3"
-                                               FontSize="10"
-                                               Style="{StaticResource LabelStyle}" />
+                                            <!--LastFetchAt-->
+                                            <Label Text="{Binding LastFetchAt, StringFormat='Last Fetch At: {0:HH:mm:ss}'}"
+                                                   VerticalOptions="Center"
+                                                   HorizontalOptions="EndAndExpand"
+                                                   Margin="3"
+                                                   FontSize="10"
+                                                   Style="{StaticResource LabelStyle}" />
 
-                                        <!--LastFetchAt-->
-                                        <Label Text="{Binding LastFetchAt, StringFormat='Last Fetch At: {0:HH:mm:ss}'}"
-                                               VerticalOptions="Center"
-                                               HorizontalOptions="EndAndExpand"
-                                               Margin="3"
-                                               FontSize="10"
-                                               Style="{StaticResource LabelStyle}" />
+                                            <!--IsAnomaly-->
+                                            <Label Text="{Binding IsAnomaly, StringFormat='Anomaly? {0}'}"
+                                                   VerticalOptions="Center"
+                                                   HorizontalOptions="EndAndExpand"
+                                                   Margin="3"
+                                                   FontSize="10"
+                                                   Style="{StaticResource LabelStyle}" />
 
-                                        <!--IsAnomaly-->
-                                        <Label Text="{Binding IsAnomaly, StringFormat='Anomaly? {0}'}"
-                                               VerticalOptions="Center"
-                                               HorizontalOptions="EndAndExpand"
-                                               Margin="3"
-                                               FontSize="10"
-                                               Style="{StaticResource LabelStyle}" />
+                                            <!--IsStale-->
+                                            <Label Text="{Binding IsStale, StringFormat='Stale? {0}'}"
+                                                   VerticalOptions="Center"
+                                                   HorizontalOptions="EndAndExpand"
+                                                   Margin="3"
+                                                   FontSize="10"
+                                                   Style="{StaticResource LabelStyle}" />
+                                        </VerticalStackLayout>
 
-                                        <!--IsStale-->
-                                        <Label Text="{Binding IsStale, StringFormat='Stale? {0}'}"
-                                               VerticalOptions="Center"
-                                               HorizontalOptions="EndAndExpand"
-                                               Margin="3"
-                                               FontSize="10"
-                                               Style="{StaticResource LabelStyle}" />
-                                    </VerticalStackLayout>
+                                    </HorizontalStackLayout>
+                                </ScrollView>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
 
-                                </HorizontalStackLayout>
-                            </ScrollView>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
+                    <CollectionView.EmptyView>
+                        <!-- What to Display when the Collection is Empty -->
+                        <Label Text="There are no Tickers."
+                               Style="{StaticResource LabelStyle}" />
+                    </CollectionView.EmptyView>
+                </CollectionView>
 
-                <CollectionView.EmptyView>
-                    <!-- What to Display when the Collection is Empty -->
-                    <Label Text="There are no Tickers."
-                           Style="{StaticResource LabelStyle}" />
-                </CollectionView.EmptyView>
-            </CollectionView>
-
-        </VerticalStackLayout>
-    </ScrollView>
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
 </ContentPage>

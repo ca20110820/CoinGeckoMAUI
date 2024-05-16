@@ -13,6 +13,8 @@ public partial class ExchangePage : ContentPage
     private ExchangeService exchangeService = new();
     private ExchangeViewModel viewModel;
 
+    bool isInitNavigated = false;
+
     public ExchangePage()
 	{
 		InitializeComponent();
@@ -22,16 +24,30 @@ public partial class ExchangePage : ContentPage
 
     protected override async void OnAppearing()
     {
-        activityindivatorLoading.IsRunning = true;
-        activityindivatorLoading.IsVisible = true;
         base.OnAppearing();
 
+        if (!isInitNavigated)
+        {
+            await RefreshUI();
+            isInitNavigated = true;
+        }
+    }
+
+    private async void refreshviewExchangePage_Refreshing(object sender, EventArgs e)
+    {
+        refreshviewExchangePage.IsRefreshing = true;
+        await RefreshUI();
+        refreshviewExchangePage.IsRefreshing = false;
+    }
+
+    private async Task RefreshUI()
+    {
         RetreiveExchangeIds();
 
         try
         {
             // Always reset back to the default user preferences for the exchange id (when not arguments given to ShowTickers())
-            await Task.Run(() => viewModel.ShowTickers());
+            await Task.Run(() => viewModel.RefreshTickers());
         }
         catch (HttpRequestException ex)
         {
@@ -39,12 +55,6 @@ public partial class ExchangePage : ContentPage
             await DisplayAlert("Warn", "No Internet Connection!", "Ok");
             await Shell.Current.GoToAsync("//MainPage");  // Route to Home Page
         }
-        finally
-        {
-            activityindivatorLoading.IsRunning = false;
-            activityindivatorLoading.IsVisible = false;
-        }
-
     }
 
     private void RetreiveExchangeIds()
