@@ -1,0 +1,73 @@
+﻿using CoinGeckoApp.Helpers;
+using System;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+
+namespace CoinGeckoApp.CoinLoreAPI.Core
+{
+    public class WidgetHTML
+    {
+        public WidgetHTML() { }
+
+        public static string GenerateHtmlCryptoListWidget(bool includeDataMcap = true, int dataTop = 10, string dataMcurrency = "usd")
+        {
+            int dataMcap = includeDataMcap ? 1 : 0;
+
+            string htmlCode = @"
+            <script type=""text/javascript"" src=""https://widget.coinlore.com/widgets/coinlore-list-widget.js""></script>
+            <div 
+                class=""coinlore-list-widget"" 
+                data-mcap=""{0}"" 
+                data-mcurrency=""{1}"" 
+                data-top=""{2}"" 
+                data-cwidth=""100%"" 
+                data-bcolor=""#fff"" 
+                data-coincolor=""#428bca"" 
+                data-pricecolor=""#4c4c4c"" 
+                style=""min-height: 382px; width: 100%;""
+            ></div>";
+
+            return string.Format(htmlCode, dataMcap, dataMcurrency, dataTop);
+        }
+
+        public static string GenerateHtmlCoinWidget(string dataId, string dataMcurrency = "usd")
+        {
+            string htmlCode = @"
+            <script type=""text/javascript"" src=""https://widget.coinlore.com/widgets/new-widget.js""></script>
+            <div 
+                class=""coinlore-coin-widget"" 
+                data-mcap=""1"" 
+                data-mcurrency=""{0}"" 
+                data-d7=""1"" 
+                data-cwidth="""" 
+                data-rank=""1"" 
+                data-vol=""1"" 
+                data-id=""{1}"" 
+                data-bcolor="""" 
+                data-tcolor=""#333"" 
+                data-ccolor=""#333"" 
+                data-pcolor="""" 
+                style=""height:189px""
+            ></div>";
+
+            return string.Format(htmlCode, dataMcurrency, dataId);
+        }
+
+        public static string GenerateHtmlPriceTickerWidget(string dataMcurrency = "usd")
+        {
+            string htmlCode = @"
+            <script type=""text/javascript"" src=""https://widget.coinlore.com/widgets/ticker-widget.js""></script>
+            <div 
+                class=""coinlore-priceticker-widget"" 
+                data-mcurrency=""{0}"" 
+                data-bcolor="""" 
+                data-scolor=""#333"" 
+                data-ccolor="""" 
+                data-pcolor=""#428bca""
+            ></div>";
+
+            return string.Format(htmlCode, dataMcurrency);
+        }
+    }
+}

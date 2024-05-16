@@ -5,6 +5,10 @@
 
     <ScrollView>
         <VerticalStackLayout Padding="10">
+            <WebView x:Name="webviewTopPrices"
+                     HorizontalOptions="Center"
+                     Margin="0,0,0,15" />
+
             <Frame MaximumWidthRequest="500"
                    MaximumHeightRequest="500"
                    CornerRadius="70"
@@ -14,11 +18,9 @@
                    BorderColor="Transparent"
                    Padding="5"
                    Margin="5"
-                   BackgroundColor="Transparent"
-                   >
+                   BackgroundColor="Transparent">
                 <Image Source="crypto_maui_logo_transparent.png"
-                       BackgroundColor="Transparent"
-                       />
+                       BackgroundColor="Transparent" />
             </Frame>
 
             <Label Text="Ride the Crypto Wave with CryptoMAUI!"
@@ -30,9 +32,7 @@
                    FontAttributes="Bold"
                    LineBreakMode="WordWrap"
                    HorizontalTextAlignment="Center"
-                   VerticalTextAlignment="Center"
-                   />
-
+                   VerticalTextAlignment="Center" />
 
         </VerticalStackLayout>
     </ScrollView>
