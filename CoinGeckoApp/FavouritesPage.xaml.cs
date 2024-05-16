@@ -6,8 +6,10 @@ namespace CoinGeckoApp;
 public partial class FavouritesPage : ContentPage
 {
 	private FavouritesViewModel viewModel;
+    
+    bool isInitNavigated = false;
 
-	public FavouritesPage()
+    public FavouritesPage()
 	{
 		InitializeComponent();
 		viewModel = new(this);
@@ -17,14 +19,25 @@ public partial class FavouritesPage : ContentPage
 
     protected override async void OnAppearing()
     {
-        activityindivatorLoading.IsRunning = true;
-        activityindivatorLoading.IsVisible = true;
         base.OnAppearing();
 
-        await viewModel.GetFavouriteCoins();
+        if (!isInitNavigated)
+        {
+            await RefreshUI();
+            isInitNavigated = true;
+        }
+    }
 
-        activityindivatorLoading.IsRunning = false;
-        activityindivatorLoading.IsVisible = false;
+    private async void refreshviewFavouritesPage_Refreshing(object sender, EventArgs e)
+    {
+        await RefreshUI();
+    }
+
+    private async Task RefreshUI()
+    {
+        refreshviewFavouritesPage.IsRefreshing = true;
+        await viewModel.GetFavouriteCoins();
+        refreshviewFavouritesPage.IsRefreshing = false;
     }
 
     private async void imagebtnStar_Clicked(object sender, EventArgs e)

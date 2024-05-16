@@ -22,12 +22,25 @@ public partial class SettingsPage : ContentPage
     {
         base.OnAppearing();
 
+        refreshviewSettingsPage.IsRefreshing = true;
+        RetreiveAllSettings();
+        refreshviewSettingsPage.IsRefreshing = false;
+    }
+
+    public async void refreshviewSettingsPage_Refreshing(object sender, EventArgs e)
+    {
+        refreshviewSettingsPage.IsRefreshing = true;
+        RetreiveAllSettings();
+        refreshviewSettingsPage.IsRefreshing = false;
+    }
+
+    private void RetreiveAllSettings()
+    {
         // Get the Preference Values and Set them to the Widgets
         RetreiveDarkMode();
         RetreiveQuoteCurrency();
         RetreiveSupportedCurrencies();
     }
-
     private void RetreiveDarkMode()
     {
         switchDarkMode.IsToggled = Preferences.Get("darkmode", false);

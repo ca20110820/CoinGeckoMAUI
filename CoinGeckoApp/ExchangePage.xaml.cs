@@ -26,11 +26,15 @@ public partial class ExchangePage : ContentPage
     {
         base.OnAppearing();
 
+        refreshviewExchangePage.IsRefreshing = true;
+
         if (!isInitNavigated)
         {
             await RefreshUI();
             isInitNavigated = true;
         }
+
+        refreshviewExchangePage.IsRefreshing = false;
     }
 
     private async void refreshviewExchangePage_Refreshing(object sender, EventArgs e)

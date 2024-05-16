@@ -37,146 +37,149 @@
         </Style>
     </ContentPage.Resources>
 
-    <ScrollView Orientation="Vertical">
-        <VerticalStackLayout>
-
-            <ActivityIndicator x:Name="activityindivatorLoading"
-                               IsRunning="False"
-                               IsVisible="False"
-                               VerticalOptions="Center"
-                               HorizontalOptions="CenterAndExpand"
-                               Color="{AppThemeBinding Light=#BF40BF, Dark=#f00c93}"/>
-
-            <!--CollectionView of Favourite Coins and some of their stats-->
-            <CollectionView ItemsSource="{Binding FavouriteCoins}"
-                            SelectionMode="Single"
-                            VerticalOptions="Center"
-                            HorizontalOptions="CenterAndExpand"
-                            Margin="4,0">
-                <CollectionView.ItemsLayout>
-                    <LinearItemsLayout Orientation="Vertical"
-                                       ItemSpacing="2" />
-                </CollectionView.ItemsLayout>
-                <CollectionView.ItemTemplate Padding="5"
-                                             HorizontalOptions="CenterAndExpand">
-                    <DataTemplate>
-                        <Frame CornerRadius="5"
-                               HorizontalOptions="FillAndExpand"
-                               VerticalOptions="FillAndExpand"
-                               BorderColor="{AppThemeBinding Light=Black, Dark=Cyan}"
-                               Margin="5, 5, 5, 0"
-                               BackgroundColor="{AppThemeBinding Light={StaticResource LightPrimaryColor}, Dark={StaticResource BackgroundDarkColor}}">
-                            <ScrollView Orientation="Both">
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                    </Grid.RowDefinitions>
-
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="100" />
-                                        <ColumnDefinition Width="110" />
-                                        <ColumnDefinition Width="100" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <!--Coin Logo and Coin name-->
-                                    <ContentView Grid.Row="0"
-                                                 Grid.Column="0"
-                                                 Style="{StaticResource ItemContentViewStyle}"
-                                                 HorizontalOptions="Center">
-                                        <VerticalStackLayout>
-                                            <ImageButton x:Name="imagebuttonCoinLogo"
-                                                         Source="{Binding ApiCoinsIdResponse.Images[large]}"
-                                                         MaximumWidthRequest="60"
-                                                         MaximumHeightRequest="60"
-                                                         Margin="3"
-                                                         Clicked="imagebuttonCoinLogo_Clicked" />
-
-                                            <Label Text="{Binding ApiCoinsIdResponse.Name}"
-                                                   Margin="3"
-                                                   FontSize="Micro"
-                                                   FontAttributes="Bold"
-                                                   LineBreakMode="WordWrap"
-                                                   MaxLines="2"
-                                                   Style="{StaticResource LabelStyle}" />
-                                        </VerticalStackLayout>
-                                    </ContentView>
-
-                                    <!--Sparkline and Stats-->
-                                    <ContentView Grid.Row="0"
-                                                 Grid.Column="1"
-                                                 Style="{StaticResource ItemContentViewStyle}"
+    <RefreshView x:Name="refreshviewFavouritesPage"
+                 Refreshing="refreshviewFavouritesPage_Refreshing"
+                 Margin="0,25,0,0"
+                 RefreshColor="{AppThemeBinding Light=#BF40BF, Dark=#f00c93}">
+        
+        <ScrollView Orientation="Vertical">
+            <VerticalStackLayout>
+   
+                <!--CollectionView of Favourite Coins and some of their stats-->
+                <CollectionView ItemsSource="{Binding FavouriteCoins}"
+                                SelectionMode="Single"
+                                VerticalOptions="Center"
+                                HorizontalOptions="CenterAndExpand"
+                                Margin="4,0">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Vertical"
+                                           ItemSpacing="2" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate Padding="5"
                                                  HorizontalOptions="CenterAndExpand">
-                                        <VerticalStackLayout>
-                                            <Image Source="{Binding SparklineImageSource}"
-                                                   MaximumWidthRequest="200"
-                                                   MaximumHeightRequest="80"
-                                                   Margin="3" />
+                        <DataTemplate>
+                            <Frame CornerRadius="5"
+                                   HorizontalOptions="FillAndExpand"
+                                   VerticalOptions="FillAndExpand"
+                                   BorderColor="{AppThemeBinding Light=Black, Dark=Cyan}"
+                                   Margin="5, 5, 5, 0"
+                                   BackgroundColor="{AppThemeBinding Light={StaticResource LightPrimaryColor}, Dark={StaticResource BackgroundDarkColor}}">
+                                <ScrollView Orientation="Both">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
 
-                                            <ScrollView Orientation="Both">
-                                                <CollectionView ItemsSource="{Binding StatsKVP}"
-                                                                SelectionMode="Single">
-                                                    <CollectionView.ItemsLayout>
-                                                        <LinearItemsLayout Orientation="Vertical"
-                                                                           SnapPointsAlignment="Center"
-                                                                           ItemSpacing="0" />
-                                                    </CollectionView.ItemsLayout>
-                                                    <CollectionView.ItemTemplate>
-                                                        <DataTemplate>
-                                                            <Grid Padding="10">
-                                                                <Grid.RowDefinitions>
-                                                                    <RowDefinition Height="1*" />
-                                                                </Grid.RowDefinitions>
-                                                                <Grid.ColumnDefinitions>
-                                                                    <ColumnDefinition Width="Auto" />
-                                                                    <ColumnDefinition Width="Auto" />
-                                                                </Grid.ColumnDefinitions>
-                                                                <!--Content-->
-                                                                <Label Grid.Row="0"
-                                                                       Grid.Column="0"
-                                                                       Text="{Binding Key, StringFormat='{0}: '}"
-                                                                       FontSize="7" />
-                                                                <Label Grid.Row="0"
-                                                                       Grid.Column="1"
-                                                                       Text="{Binding Value}"
-                                                                       FontSize="7" />
-                                                            </Grid>
-                                                        </DataTemplate>
-                                                    </CollectionView.ItemTemplate>
-                                                    <CollectionView.EmptyView>
-                                                        <Label Text="-na-" />
-                                                    </CollectionView.EmptyView>
-                                                </CollectionView>
-                                            </ScrollView>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="100" />
+                                            <ColumnDefinition Width="110" />
+                                            <ColumnDefinition Width="100" />
+                                        </Grid.ColumnDefinitions>
 
-                                        </VerticalStackLayout>
-                                    </ContentView>
+                                        <!--Coin Logo and Coin name-->
+                                        <ContentView Grid.Row="0"
+                                                     Grid.Column="0"
+                                                     Style="{StaticResource ItemContentViewStyle}"
+                                                     HorizontalOptions="Center">
+                                            <VerticalStackLayout>
+                                                <ImageButton x:Name="imagebuttonCoinLogo"
+                                                             Source="{Binding ApiCoinsIdResponse.Images[large]}"
+                                                             MaximumWidthRequest="60"
+                                                             MaximumHeightRequest="60"
+                                                             Margin="3"
+                                                             Clicked="imagebuttonCoinLogo_Clicked" />
 
-                                    <!--Start Button for Unfavouriting the Favourite Coin-->
-                                    <ContentView Grid.Row="0"
-                                                 Grid.Column="2"
-                                                 Style="{StaticResource ItemContentViewStyle}"
-                                                 HorizontalOptions="EndAndExpand">
-                                        <ImageButton x:Name="imagebtnStar"
-                                                     x:FieldModifier="public"
-                                                     Source="star_favourite.png"
-                                                     MaximumWidthRequest="30"
-                                                     MaximumHeightRequest="30"
-                                                     Margin="3"
-                                                     Aspect="AspectFit"
-                                                     Clicked="imagebtnStar_Clicked" />
-                                    </ContentView>
-                                </Grid>
-                            </ScrollView>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-                <CollectionView.EmptyView>
-                    <!-- What to Display when the Collection is Empty -->
-                    <Label Text="There are no favourite coins."
-                           Style="{StaticResource LabelStyle}" />
-                </CollectionView.EmptyView>
-            </CollectionView>
+                                                <Label Text="{Binding ApiCoinsIdResponse.Name}"
+                                                       Margin="3"
+                                                       FontSize="Micro"
+                                                       FontAttributes="Bold"
+                                                       LineBreakMode="WordWrap"
+                                                       MaxLines="2"
+                                                       Style="{StaticResource LabelStyle}" />
+                                            </VerticalStackLayout>
+                                        </ContentView>
 
-        </VerticalStackLayout>
-    </ScrollView>
+                                        <!--Sparkline and Stats-->
+                                        <ContentView Grid.Row="0"
+                                                     Grid.Column="1"
+                                                     Style="{StaticResource ItemContentViewStyle}"
+                                                     HorizontalOptions="CenterAndExpand">
+                                            <VerticalStackLayout>
+                                                <Image Source="{Binding SparklineImageSource}"
+                                                       MaximumWidthRequest="200"
+                                                       MaximumHeightRequest="80"
+                                                       Margin="3" />
+
+                                                <ScrollView Orientation="Both">
+                                                    <CollectionView ItemsSource="{Binding StatsKVP}"
+                                                                    SelectionMode="Single">
+                                                        <CollectionView.ItemsLayout>
+                                                            <LinearItemsLayout Orientation="Vertical"
+                                                                               SnapPointsAlignment="Center"
+                                                                               ItemSpacing="0" />
+                                                        </CollectionView.ItemsLayout>
+                                                        <CollectionView.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <Grid Padding="10">
+                                                                    <Grid.RowDefinitions>
+                                                                        <RowDefinition Height="1*" />
+                                                                    </Grid.RowDefinitions>
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="Auto" />
+                                                                        <ColumnDefinition Width="Auto" />
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <!--Content-->
+                                                                    <Label Grid.Row="0"
+                                                                           Grid.Column="0"
+                                                                           Text="{Binding Key, StringFormat='{0}: '}"
+                                                                           FontSize="7" />
+                                                                    <Label Grid.Row="0"
+                                                                           Grid.Column="1"
+                                                                           Text="{Binding Value}"
+                                                                           FontSize="7" />
+                                                                </Grid>
+                                                            </DataTemplate>
+                                                        </CollectionView.ItemTemplate>
+                                                        <CollectionView.EmptyView>
+                                                            <Label Text="-na-" />
+                                                        </CollectionView.EmptyView>
+                                                    </CollectionView>
+                                                </ScrollView>
+
+                                            </VerticalStackLayout>
+                                        </ContentView>
+
+                                        <!--Start Button for Unfavouriting the Favourite Coin-->
+                                        <ContentView Grid.Row="0"
+                                                     Grid.Column="2"
+                                                     Style="{StaticResource ItemContentViewStyle}"
+                                                     HorizontalOptions="EndAndExpand">
+                                            <ImageButton x:Name="imagebtnStar"
+                                                         x:FieldModifier="public"
+                                                         Source="star_favourite.png"
+                                                         MaximumWidthRequest="30"
+                                                         MaximumHeightRequest="30"
+                                                         Margin="3"
+                                                         Aspect="AspectFit"
+                                                         Clicked="imagebtnStar_Clicked" />
+                                        </ContentView>
+                                    </Grid>
+                                </ScrollView>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                    <CollectionView.EmptyView>
+                        <!-- What to Display when the Collection is Empty -->
+                        <Label Text="There are no Tickers."
+                               Style="{StaticResource LabelStyle}"
+                               HorizontalTextAlignment="Center"
+                               HorizontalOptions="Center"
+                               VerticalTextAlignment="Center"
+                               VerticalOptions="Center" />
+                    </CollectionView.EmptyView>
+                </CollectionView>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
 </ContentPage>

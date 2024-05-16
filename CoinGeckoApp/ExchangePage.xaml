@@ -30,8 +30,9 @@
 
     <RefreshView x:Name="refreshviewExchangePage"
                  Refreshing="refreshviewExchangePage_Refreshing"
-                 Margin="0,25,0,0">
-        
+                 Margin="0,25,0,0"
+                 RefreshColor="{AppThemeBinding Light=#BF40BF, Dark=#f00c93}">
+
         <ScrollView Orientation="Vertical">
             <VerticalStackLayout>
 
@@ -202,7 +203,11 @@
                     <CollectionView.EmptyView>
                         <!-- What to Display when the Collection is Empty -->
                         <Label Text="There are no Tickers."
-                               Style="{StaticResource LabelStyle}" />
+                               Style="{StaticResource LabelStyle}"
+                               HorizontalTextAlignment="Center"
+                               HorizontalOptions="Center"
+                               VerticalTextAlignment="Center"
+                               VerticalOptions="Center" />
                     </CollectionView.EmptyView>
                 </CollectionView>
 

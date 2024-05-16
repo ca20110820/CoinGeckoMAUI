@@ -171,7 +171,7 @@ namespace CoinGeckoApp.ViewModels
             SparkLine = CoinsIdAPIResponse != null ? CoinService.GetSparkLine(CoinsIdAPIResponse) : null;
 
             // Set the CurrentPrice Property
-            CurrentPrice = CoinsIdAPIResponse.market_data.current_price[Preferences.Get("quotecurrency", "usd")];
+            CurrentPrice = CoinsIdAPIResponse?.market_data?.current_price?[Preferences.Get("quotecurrency", "usd")] ?? null;
 
             // Set IsFavouriteImage Property
             SetIsFavouriteImage();

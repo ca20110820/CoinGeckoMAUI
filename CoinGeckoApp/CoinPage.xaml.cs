@@ -9,26 +9,19 @@ public partial class CoinPage : ContentPage, IQueryAttributable
     private CoinViewModel viewModel = new();
     public string ParamCoinId {  get; set; }
 
-	public CoinPage()
+    public CoinPage()
 	{
 		InitializeComponent();
         BindingContext = viewModel;
     }
+
     protected override async void OnAppearing()
     {
         base.OnAppearing();
 
+        refreshviewCoinPage.IsRefreshing = true;
         await UpdateWhenTabNavigation();
-    }
-    protected override async void OnNavigatedFrom(NavigatedFromEventArgs args)
-    {
-        // When this ContentPage is the Source
-        base.OnNavigatedFrom(args);
-    }
-    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
-    {
-        // When this ContentPage is the Target
-        base.OnNavigatedTo(args);
+        refreshviewCoinPage.IsRefreshing = false;
     }
 
     private async Task UpdateWhenTabNavigation()
@@ -60,14 +53,41 @@ public partial class CoinPage : ContentPage, IQueryAttributable
         {
             // Set the selected CoinModel in CoinViewModel
             await Task.Run(() => viewModel.SetCoin(coin));
-
+            viewModel.SetIsFavouriteImage();  // Update Star Image for Favourite State
             await RefreshQuickCharts();  // Update QuickCharts UI
         }
-        catch (HttpRequestException tooManyRequestError)
+        catch (HttpRequestException err)
         {
-            await DisplayAlert("Warn", "Too many requests! Please wait for few seconds!", "Ok");
-            viewModel.ResetProperties();
+            if (err.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+            {
+                await DisplayAlert("Warn", "Too many requests! Please wait for few seconds!", "Ok");
+                viewModel.ResetProperties();
+            }
         }
+    }
+
+    private async void refreshviewCoinPage_Refreshing(object sender, EventArgs e)
+    {
+        refreshviewCoinPage.IsRefreshing = true;
+
+        try
+        {
+            await viewModel.SetCoin(viewModel.Coin);  // Re-set the current Coin to fetch the latest data
+            await UpdateWhenTabNavigation();
+        }
+        catch(NullReferenceException)
+        {
+            await DisplayAlert("Error", "There is no selected coin!", "Ok");
+        }
+        catch (HttpRequestException err)
+        {
+            if (err.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+            {
+                await DisplayAlert("Warn", "Too many requests! Please wait for few seconds!", "Ok");
+            }
+        }
+
+        refreshviewCoinPage.IsRefreshing = false;
     }
 
     private async void imagebtnRefreshCoinData_Clicked(object sender, EventArgs e)
@@ -76,7 +96,7 @@ public partial class CoinPage : ContentPage, IQueryAttributable
         await imagebtnRefreshCoinData.RotateTo(360, 1000); // Rotate to 360 degrees in 1 second
         imagebtnRefreshCoinData.Rotation = 0; // Reset rotation
 
-        await RefreshQuickCharts();
+        await RefreshQuickCharts();  // Update QuickCharts UI
     }
 
     private async Task RefreshQuickCharts()
@@ -85,7 +105,6 @@ public partial class CoinPage : ContentPage, IQueryAttributable
         try
         {
             await viewModel.SetImages();  // Load QuickCharts
-
         }
         catch (NullReferenceException)
         {
