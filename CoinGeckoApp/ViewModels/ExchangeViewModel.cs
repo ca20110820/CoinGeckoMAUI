@@ -13,6 +13,9 @@ using System.Windows.Input;
 
 namespace CoinGeckoApp.ViewModels
 {
+    /// <summary>
+    /// ViewModel for managing exchange data including tickers.
+    /// </summary>
     public class ExchangeViewModel : INotifyPropertyChanged
     {
         private ExchangeService exchangeService = new();
@@ -80,12 +83,22 @@ namespace CoinGeckoApp.ViewModels
 
 
         /* ======================== Commands */
+        /// <summary>
+        /// Initializes the commands for the ViewModel.
+        /// </summary>
         private void InitCommands()
         {
             ChangeExchangeIdCommand = new Command<string>(ExecChangeExchangeIdCommand);
         }
 
+        /// <summary>
+        /// Gets or sets the command to change the exchange ID.
+        /// </summary>
         public ICommand ChangeExchangeIdCommand { get; set; }
+        /// <summary>
+        /// Executes the command to change the exchange ID and show tickers.
+        /// </summary>
+        /// <param name="id">The new exchange ID.</param>
         private async void ExecChangeExchangeIdCommand(string id)
         {
             try
@@ -103,6 +116,10 @@ namespace CoinGeckoApp.ViewModels
 
 
         /* ======================== Getters, Fetchers, Updaters, Refreshers */
+        /// <summary>
+        /// Refreshes the tickers for the specified exchange ID.
+        /// </summary>
+        /// <param name="exchangeid">The exchange ID.</param>
         public async Task RefreshTickers(string? exchangeid = null)
         {
             /* The Process is too slow if the "Tickers" property is binded to CollectionView */
@@ -130,6 +147,10 @@ namespace CoinGeckoApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Shows the tickers for the specified exchange ID.
+        /// </summary>
+        /// <param name="exchangeid">The exchange ID.</param>
         public async Task ShowTickers(string? exchangeid = null)
         {
             // Try to retreive tickers from local json file
@@ -150,13 +171,14 @@ namespace CoinGeckoApp.ViewModels
             Tickers = new(tempArr);
         }
 
+        /// <summary>
+        /// Sets the exchange ID and updates the ViewModel.
+        /// </summary>
+        /// <param name="exchangeId">The new exchange ID.</param>
         public void SetExchangeId(string exchangeId)
         {
             ExchangeId = exchangeId;
         }
-
-
-
 
 
 

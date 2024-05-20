@@ -8,6 +8,9 @@ using System.Web;
 
 namespace CoinGeckoApp.DataVisuals
 {
+    /// <summary>
+    /// Class for generating URLs for QuickChart visualizations.
+    /// </summary>
     public class QuickChartVisuals
     {
         public int Width { get; set; }
@@ -15,6 +18,13 @@ namespace CoinGeckoApp.DataVisuals
         public string Version { get; set; }
         public string BackgroundColor { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QuickChartVisuals"/> class with default values.
+        /// </summary>
+        /// <param name="width">The width of the chart.</param>
+        /// <param name="height">The height of the chart.</param>
+        /// <param name="version">The version of QuickChart.</param>
+        /// <param name="backgroundColor">The background color of the chart.</param>
         public QuickChartVisuals(int width = 800, int height = 500, string version = "2.9.4", string backgroundColor = "#ffffff")
         {
             Width = width;
@@ -23,6 +33,13 @@ namespace CoinGeckoApp.DataVisuals
             BackgroundColor = backgroundColor;
         }
 
+        /// <summary>
+        /// Creates a URL for a sparkline chart visualization.
+        /// </summary>
+        /// <param name="data">The array of data points for the sparkline.</param>
+        /// <param name="borderColor">The color of the sparkline.</param>
+        /// <param name="backgroundColor">The background color of the chart.</param>
+        /// <returns>The URL for the sparkline chart visualization.</returns>
         public string CreateSparkLineURL(double[] data, string borderColor = "black", string? backgroundColor = null)
         {
             string visualType = "sparkline";
@@ -53,6 +70,14 @@ namespace CoinGeckoApp.DataVisuals
             return qc.GetUrl();
         }
 
+        /// <summary>
+        /// Creates a URL for a line chart visualization.
+        /// </summary>
+        /// <param name="dates">The array of date values for the x-axis.</param>
+        /// <param name="data">The array of data points for the y-axis.</param>
+        /// <param name="chartLabel">The label for the chart.</param>
+        /// <param name="yAxisLabel">The label for the y-axis.</param>
+        /// <returns>The URL for the line chart visualization.</returns>
         public string CreateLineChartURL(DateTime[] dates, double[] data, string chartLabel, string yAxisLabel)
         {
             if (dates.Length != data.Length) throw new ArgumentException("The lengths of dates and data are not equal!");
@@ -110,6 +135,13 @@ namespace CoinGeckoApp.DataVisuals
             return qc.GetUrl();
         }
 
+        /// <summary>
+        /// Creates a URL for a horizontal bar chart visualization.
+        /// </summary>
+        /// <param name="labelsAndData">The dictionary containing labels and corresponding data values.</param>
+        /// <param name="title">The title of the chart.</param>
+        /// <param name="datasetLabel">The label for the dataset.</param>
+        /// <returns>The URL for the horizontal bar chart visualization.</returns>
         public string CreateHorizontalBarChartURL(Dictionary<string, double> labelsAndData, string title, string datasetLabel)
         {
             string visualType = "horizontalBar";
@@ -158,6 +190,14 @@ namespace CoinGeckoApp.DataVisuals
             return qc.GetUrl();
         }
 
+        /// <summary>
+        /// Creates a URL for a candlestick chart visualization.
+        /// </summary>
+        /// <param name="dataset">The list of key-value pairs representing date and OHLCV data.</param>
+        /// <param name="tickerSymbol">The ticker symbol of the asset.</param>
+        /// <param name="fontSize">The font size of the chart title.</param>
+        /// <param name="timezone">The timezone for displaying dates.</param>
+        /// <returns>The URL for the candlestick chart visualization.</returns>
         public string CreateCandleStickChartURL(
             List<KeyValuePair<DateTime, Tuple<double, double, double, double>>> dataset,
             string tickerSymbol,
@@ -224,6 +264,11 @@ namespace CoinGeckoApp.DataVisuals
             return qc.GetUrl();
         }
 
+        /// <summary>
+        /// Converts a list of key-value pairs representing date and OHLCV data into a string representation.
+        /// </summary>
+        /// <param name="dataset">The list of key-value pairs containing date and OHLCV data.</param>
+        /// <returns>A string representation of the date and OHLCV data.</returns>
         private static string ConvertListKVP2String(List<KeyValuePair<DateTime, Tuple<double, double, double, double>>> dataset)
         {
             string outString = "[";

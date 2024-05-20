@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 
 namespace CoinGeckoApp.Models
 {
+    /// <summary>
+    /// Represents a Cryptocurrency Coin.
+    /// </summary>
     public class CoinModel
     {
         /* Public Properties */
@@ -41,12 +44,20 @@ namespace CoinGeckoApp.Models
 
 
         /* ==================== Methods ==================== */
+        /// <summary>
+        /// Gets the path of the JSON file storing favorite coins.
+        /// </summary>
+        /// <returns>The path of the JSON file.</returns>
         private static string GetJsonPath()
         {
             FileSystemHelper fsHelper = new();
             return Path.Combine(fsHelper.AppDataDir, "Databases", "favourites.json");
         }
 
+        /// <summary>
+        /// Checks whether the cryptocurrency is marked as a favorite asynchronously.
+        /// </summary>
+        /// <returns>The task result contains a value indicating whether the cryptocurrency is marked as a favorite.</returns>
         public async Task<bool> IsFavouriteAsync()
         {
             try
@@ -66,6 +77,9 @@ namespace CoinGeckoApp.Models
             }
         }
 
+        /// <summary>
+        /// Adds the cryptocurrency to favorites asynchronously.
+        /// </summary>
         public async Task AddToFavouritesAsync()
         {
             using (var store = new DataStore(GetJsonPath()))
@@ -75,6 +89,10 @@ namespace CoinGeckoApp.Models
             }
         }
 
+        /// <summary>
+        /// Removes the cryptocurrency from favorites asynchronously.
+        /// </summary>
+        /// <returns>The task result contains a value indicating whether the removal was successful.</returns>
         public async Task<bool> RemoveFromFavouritesAsync()
         {
             using (var store = new DataStore(GetJsonPath()))
@@ -85,7 +103,9 @@ namespace CoinGeckoApp.Models
         }
     }
 
-
+    /// <summary>
+    /// Represents an exception that occurs in the <see cref="CoinModel"/> class.
+    /// </summary>
     public class CoinException : Exception
     {
         // Constructor
@@ -98,6 +118,9 @@ namespace CoinGeckoApp.Models
         public CoinException(string message, Exception innerException) : base(message, innerException) { }
     }
 
+    /// <summary>
+    /// Represents an exception that occurs when a cryptocurrency coin is not marked as a favorite.
+    /// </summary>
     public class CoinNotFavouriteException : CoinException
     {
         // Constructor

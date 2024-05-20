@@ -12,6 +12,9 @@ using System.Threading.Tasks;
 
 namespace CoinGeckoApp.ViewModels
 {
+    /// <summary>
+    /// ViewModel for managing the list of favorite coins.
+    /// </summary>
     public class FavouritesViewModel : INotifyPropertyChanged
     {
         private List<FavouriteCoinModel> favouriteCoins;
@@ -34,6 +37,9 @@ namespace CoinGeckoApp.ViewModels
             this.view = view;
         }
 
+        /// <summary>
+        /// Retrieves the list of favorite coins from the local storage.
+        /// </summary>
         public async Task GetFavouriteCoins()
         {
             FileSystemHelper fsHelper = new();
@@ -68,6 +74,10 @@ namespace CoinGeckoApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Removes a coin from the list of favorites.
+        /// </summary>
+        /// <param name="coinId">The ID of the coin to be removed.</param>
         public async Task RemoveCoinFromFavourites(string coinId)
         {
             CoinModel coin = new(coinId);

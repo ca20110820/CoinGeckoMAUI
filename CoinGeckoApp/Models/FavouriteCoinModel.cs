@@ -11,6 +11,9 @@ using System.Threading.Tasks;
 
 namespace CoinGeckoApp.Models
 {
+    /// <summary>
+    /// Represents a model for a favorite coin.
+    /// </summary>
     public class FavouriteCoinModel : INotifyPropertyChanged
     {
         private CoinModel _coinModel;
@@ -74,7 +77,9 @@ namespace CoinGeckoApp.Models
             coinService = new(coin);
         }
 
-
+        /// <summary>
+        /// Loads coin data asynchronously.
+        /// </summary>
         public async Task LoadCoinData()
         {
             // Get tje CoinResponses from CoinResponses/coin_response.json from AppData
@@ -85,6 +90,9 @@ namespace CoinGeckoApp.Models
                 ApiCoinsIdResponse = coinResponses.ApiCoinIdResponse;
         }
 
+        /// <summary>
+        /// Sets the statistics key-value pair.
+        /// </summary>
         public void SetStatsKVP()
         {
             if (ApiCoinsIdResponse == null) return;
@@ -113,6 +121,9 @@ namespace CoinGeckoApp.Models
             StatsKVP = outList;
         }
 
+        /// <summary>
+        /// Sets the sparkline image source asynchronously.
+        /// </summary>
         public async Task SetSparklineImageSource()
         {
             Dictionary<string, List<double>?>? sparklineDict = ApiCoinsIdResponse?.market_data?.sparkline_7d ?? null;
@@ -141,7 +152,6 @@ namespace CoinGeckoApp.Models
                 }
             }
         }
-
 
 
 

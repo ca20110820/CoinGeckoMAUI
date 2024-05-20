@@ -12,6 +12,9 @@ using JsonFlatFileDataStore;
 
 namespace CoinGeckoApp.Services
 {
+    /// <summary>
+    /// Service class for handling operations related to cryptocurrency exchanges.
+    /// </summary>
     public class ExchangeService
     {
         // API Fields
@@ -39,25 +42,43 @@ namespace CoinGeckoApp.Services
             InitJsonDB();
             //InitSQlite();
         }
+
+        /// <summary>
+        /// Initializes the JSON database.
+        /// </summary>
         private void InitJsonDB()
         {
             string jsonFilePath = Path.Combine(fsHelper.AppDataDir, "Caches", "exchange_tickers.json");
             jsonHelper = new(jsonFilePath);
             jsonDbHelper = new(jsonFilePath);
         }
+
+        /// <summary>
+        /// Initializes the SQLite database.
+        /// <para>Deprecated.</para>
+        /// </summary>
         private void InitSQlite()
         {
             sqliteFilePath = Path.Combine(fsHelper.AppDataDir, "Caches", "exchange_tickers.db");
             sqlHelper = new(sqliteFilePath);
         }
 
-
+        /// <summary>
+        /// Fetches the exchange details by ID asynchronously.
+        /// </summary>
+        /// <returns>The exchange details response.</returns>
         public async Task<APIExchangesIdResponse?> FetchExchangeIdResponseAsync()
         {
             // Example: https://api.coingecko.com/api/v3/exchanges/binance
             string uri = $"https://api.coingecko.com/api/v3/exchanges/{Exchange.Id}";
             return await APIHelper.FetchAndJsonDeserializeAsync<APIExchangesIdResponse>(uri);
         }
+        
+        /// <summary>
+        /// Fetches the exchange tickers asynchronously.
+        /// </summary>
+        /// <param name="page">The page number to fetch.</param>
+        /// <returns>The exchange tickers response.</returns>
         public async Task<APIExchangeIdTickersResponse?> FetchExchangeTickers(int page = 1)
         {
             // Example: https://api.coingecko.com/api/v3/exchanges/<id>/tickers?include_exchange_logo=true&page=<page-num>&depth=true&order=trust_score_desc
@@ -65,6 +86,10 @@ namespace CoinGeckoApp.Services
             return await APIHelper.FetchAndJsonDeserializeAsync<APIExchangeIdTickersResponse>(uri);
         }
 
+        /// <summary>
+        /// Retrieves a list of coin IDs from the exchange tickers asynchronously.
+        /// </summary>
+        /// <returns>A list of coin IDs.</returns>
         public async Task<List<string>> GetCoinIdsAsync()
         {
             List<string> outList = new();
@@ -222,6 +247,11 @@ namespace CoinGeckoApp.Services
          * Notes:
          * - Faster than
          */
+
+        /// <summary>
+        /// Inserts tickers into the JSON database asynchronously.
+        /// </summary>
+        /// <param name="tickers">The array of tickers to insert.</param>
         public async Task InsertTickersToJsonAsync(Ticker[] tickers)
         {
             using (DataStore store = await Task.Run(() => new DataStore(jsonHelper.JsonFilePath)))
@@ -236,6 +266,10 @@ namespace CoinGeckoApp.Services
             }
         }
 
+        /// <summary>
+        /// Retrieves tickers from the JSON database asynchronously.
+        /// </summary>
+        /// <returns>An array of tickers.</returns>
         public async Task<Ticker[]> GetTickersFromJsonAsync()
         {
             using (var store = await Task.Run(() => new DataStore(jsonHelper.JsonFilePath)))

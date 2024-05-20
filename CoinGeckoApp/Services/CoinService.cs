@@ -15,6 +15,9 @@ using System.Threading.Tasks;
 
 namespace CoinGeckoApp.Services
 {
+    /// <summary>
+    /// Provides methods for retrieving and processing data related to cryptocurrencies from the CoinGecko API.
+    /// </summary>
     public class CoinService
     {
         private URIHelper uriHelper = new("https://api.coingecko.com");
@@ -48,6 +51,10 @@ namespace CoinGeckoApp.Services
 
 
         /* ==================== Data Getters ==================== */
+        /// <summary>
+        /// Fetches detailed information about a specific coin asynchronously.
+        /// </summary>
+        /// <returns>The API response containing information about the coin.</returns>
         public async Task<APICoinsIdResponse?> FetchCoinIdResponseAsync()
         {
             string endpoint = _endpoint + $"/{Coin.Id}";  // "/api/v3/coins/<coin-id>"
@@ -56,6 +63,12 @@ namespace CoinGeckoApp.Services
             return await APIHelper.FetchAndJsonDeserializeAsync<APICoinsIdResponse>(uri);
         }
 
+        /// <summary>
+        /// Fetches historical market chart data of a specific coin asynchronously.
+        /// </summary>
+        /// <param name="vsCurrency">The currency in which the market data is displayed.</param>
+        /// <param name="days">The number of days of historical data to retrieve.</param>
+        /// <returns>The API response containing the market chart data.</returns>
         public async Task<APICoinsMarketChartResponse?> FetchFreeMarketChartAsync(string vsCurrency, int days)
         {
             // "Free" meaning max allowed historical data for Market Chart is 365
@@ -67,6 +80,12 @@ namespace CoinGeckoApp.Services
             return await APIHelper.FetchAndJsonDeserializeAsync<APICoinsMarketChartResponse>(uri);
         }
 
+        /// <summary>
+        /// Fetches the open, high, low, close (OHLC) values of a specific coin asynchronously.
+        /// </summary>
+        /// <param name="vsCurrency">The currency in which the values are displayed.</param>
+        /// <param name="days">The number of days of historical data to retrieve.</param>
+        /// <returns>The list of OHLC values.</returns>
         public async Task<List<List<double>>?> FetchOhlcAsync(string vsCurrency, int days)
         {
             /* Notes:
@@ -84,12 +103,11 @@ namespace CoinGeckoApp.Services
         }
 
         /// <summary>
-        /// Returns the Market Chart Data of a Coin with given Quote Currency and Number of Days.
-        /// <para>For the free API, the maximum number of days is 365.</para>
+        /// Returns the market chart data of a coin with given quote currency and number of days.
         /// </summary>
-        /// <param name="vsCurrency"></param>
-        /// <param name="days"></param>
-        /// <returns></returns>
+        /// <param name="vsCurrency">The currency in which the market data is displayed.</param>
+        /// <param name="days">The number of days of historical data to retrieve.</param>
+        /// <returns>The market chart data in the form of a dictionary.</returns>
         public async Task<Dictionary<string, List<KeyValuePair<DateTime, double>>?>?> GetMarketChartAsync(string vsCurrency, int days)
         {
             /* Notes:
@@ -122,6 +140,12 @@ namespace CoinGeckoApp.Services
             return marketChart;
         }
 
+        /// <summary>
+        /// Gets the OHLC data of a coin asynchronously.
+        /// </summary>
+        /// <param name="vsCurrency">The currency in which the data is displayed.</param>
+        /// <param name="days">The number of days of historical data to retrieve.</param>
+        /// <returns>The OHLC data of the coin.</returns>
         public async Task<List<KeyValuePair<DateTime, Tuple<double, double, double, double>>>?> GetOHLCAsync(string vsCurrency, int days)
         {
             /* Notes:
@@ -135,12 +159,22 @@ namespace CoinGeckoApp.Services
             return await Task.Run(() => apiResponse.Select(xList => Convert5ListToKVP(xList)).OrderBy(kvp => kvp.Key).ToList());
         }
 
+        /// <summary>
+        /// Retrieves images associated with a coin from the API response.
+        /// </summary>
+        /// <param name="apiResponse">The API response containing coin information.</param>
+        /// <returns>A dictionary of image URLs.</returns>
         public static Dictionary<string, string?>? GetImages(APICoinsIdResponse apiResponse)
         {
             if (apiResponse.Images == null) return null;
             return apiResponse.Images;
         }
 
+        /// <summary>
+        /// Retrieves the sparkline data of a coin from the API response.
+        /// </summary>
+        /// <param name="apiResponse">The API response containing coin information.</param>
+        /// <returns>A list of sparkline data.</returns>
         public static List<double>? GetSparkLine(APICoinsIdResponse apiResponse)
         {
             if (apiResponse.market_data == null) return null;
@@ -150,6 +184,12 @@ namespace CoinGeckoApp.Services
             return apiResponse.market_data.sparkline_7d["price"];
         }
 
+        /// <summary>
+        /// Retrieves current data of a coin from the API response.
+        /// </summary>
+        /// <param name="apiResponse">The API response containing coin information.</param>
+        /// <param name="quoteCurrency">The currency in which the data is displayed.</param>
+        /// <returns>A dictionary of current data.</returns>
         public static Dictionary<string, dynamic?>? GetCurrentData(APICoinsIdResponse apiResponse, string quoteCurrency)
         {
             // User of this method should convert the key's value outside.
@@ -193,6 +233,12 @@ namespace CoinGeckoApp.Services
         }
 
         /* ==================== QuickChart Methods ==================== */
+        /// <summary>
+        /// Generates an image source for a volume chart based on the API response.
+        /// </summary>
+        /// <param name="apiResponse">The API response containing volume data.</param>
+        /// <param name="chartLabel">The label for the chart.</param>
+        /// <returns>An image source for the volume chart.</returns>
         public async Task<ImageSource> GetVolumeChartImageSource(APICoinsMarketChartResponse apiResponse, string chartLabel = "Volume")
         {
             List<List<double>> volumes = apiResponse.Volumes;  // List of 2-Lists
@@ -225,6 +271,11 @@ namespace CoinGeckoApp.Services
             return await VisualUtility.GetImageSourceAsync(url);
         }
 
+        /// <summary>
+        /// Generates an image source for a multi-period price changes chart based on the API response.
+        /// </summary>
+        /// <param name="apiResponse">The API response containing price change data.</param>
+        /// <returns>An image source for the multi-period price changes chart.</returns>
         public async Task<ImageSource> GetPriceChangesMultiPeriodImageSource(APICoinsIdResponse apiResponse)
         {
             Dictionary<string, double> priceChanges = new();
@@ -261,6 +312,11 @@ namespace CoinGeckoApp.Services
             return await VisualUtility.GetImageSourceAsync(url);
         }
 
+        /// <summary>
+        /// Generates an image source for a candlestick chart based on the API response.
+        /// </summary>
+        /// <param name="dohlc">The list of OHLC data.</param>
+        /// <returns>An image source for the candlestick chart.</returns>
         public async Task<ImageSource> GetCandlestickChartImageSource(List<List<double>> dohlc)
         {
             // List<KeyValuePair<DateTime, Tuple<double, double, double, double>>>
@@ -280,6 +336,11 @@ namespace CoinGeckoApp.Services
             return await VisualUtility.GetImageSourceAsync(url);
         }
 
+        /// <summary>
+        /// Retrieves key-value pairs of specific data about a coin from the API response.
+        /// </summary>
+        /// <param name="apiResponse">The API response containing coin information.</param>
+        /// <returns>A list of key-value pairs of data.</returns>
         public List<KeyValuePair<string, object?>> GetDataKeyValuePairs(APICoinsIdResponse apiResponse)
         {
             List<KeyValuePair<string, object?>> outList = new();
@@ -316,6 +377,10 @@ namespace CoinGeckoApp.Services
             return Path.Combine(fsHelper.AppDataDir, "CoinResponses", "coin_response.json");
         }
 
+        /// <summary>
+        /// Retrieves coin responses from the JSON file.
+        /// </summary>
+        /// <returns>The coin responses retrieved from the JSON file.</returns>
         public async Task<CoinResponses?> GetCoinResponsesFromJson()
         {
             try
@@ -331,6 +396,11 @@ namespace CoinGeckoApp.Services
             }
         }
 
+        /// <summary>
+        /// Saves coin responses to the JSON file.
+        /// </summary>
+        /// <param name="apiCoinsIdResponse">The API response containing coin ID data.</param>
+        /// <param name="apiCoinsMarketChartResponse">The API response containing market chart data.</param>
         public async Task SaveCoinResponsesToJson(APICoinsIdResponse apiCoinsIdResponse, APICoinsMarketChartResponse apiCoinsMarketChartResponse)
         {
             CoinResponses coinResponses = new CoinResponses
@@ -350,13 +420,11 @@ namespace CoinGeckoApp.Services
         /* ==================== Data Cleaner Methods ==================== */
 
         /// <summary>
-        /// Transform a 2-List<double> into a KeyValuePair where the Key is converted from double (Unix TimeStamp)
-        /// into DateTime.
-        /// <para>This will be useful for cleaning data fetched from Market Chart.</para>
+        /// Converts a 2-list of double values into a key-value pair where the key is converted from a Unix timestamp to DateTime.
         /// </summary>
-        /// <param name="inputList"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
+        /// <param name="inputList">The input list containing timestamp and value.</param>
+        /// <returns>A key-value pair representing timestamp as DateTime and value as double.</returns>
+        /// <exception cref="ArgumentException">Thrown when the input list does not contain exactly two elements.</exception>
         public static KeyValuePair<DateTime, double> Convert2ListToKVP(List<double> inputList)
         {
             // [double, double] -> KeyValuePair<DateTime, double>
@@ -372,6 +440,13 @@ namespace CoinGeckoApp.Services
             return new KeyValuePair<DateTime, double>(dateTime, value);
         }
 
+        /// <summary>
+        /// Converts a 5-list of double values into a key-value pair where the key is converted from a Unix timestamp to DateTime,
+        /// and the value is a tuple of open, high, low, and close values.
+        /// </summary>
+        /// <param name="inputList">The input list containing timestamp, open, high, low, and close values.</param>
+        /// <returns>A key-value pair representing timestamp as DateTime and value as a tuple of open, high, low, and close values.</returns>
+        /// <exception cref="ArgumentException">Thrown when the input list does not contain exactly five elements.</exception>
         public static KeyValuePair<DateTime, Tuple<double, double, double, double>> Convert5ListToKVP(List<double> inputList)
         {
             if (inputList == null || inputList.Count != 5)
@@ -388,6 +463,9 @@ namespace CoinGeckoApp.Services
         }
     }
 
+    /// <summary>
+    /// Represents coin responses containing API responses for coin ID and market chart data.
+    /// </summary>
     public class CoinResponses
     {
         public APICoinsIdResponse? ApiCoinIdResponse { get; set; }

@@ -151,6 +151,9 @@ namespace CoinGeckoApp.ViewModels
 
 
         /* =========== Setters */
+        /// <summary>
+        /// Sets the coin model and updates related properties.
+        /// </summary>
         public async Task SetCoin(CoinModel newCoin)
         {
             Coin = newCoin;
@@ -186,6 +189,9 @@ namespace CoinGeckoApp.ViewModels
             await SetImages();
         }
 
+        /// <summary>
+        /// Sets the image indicating whether the coin is a favourite.
+        /// </summary>
         public void SetIsFavouriteImage()
         {
             if (Coin.Favourite)
@@ -198,6 +204,9 @@ namespace CoinGeckoApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Sets the image indicating the price change.
+        /// </summary>
         private void SetPriceChangeIndicator()
         {
             if (MarketChart == null) return;
@@ -219,6 +228,9 @@ namespace CoinGeckoApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Sets the images for various charts.
+        /// </summary>
         public async Task SetImages()
         {
             //// Set CandlestickChartImageSource
@@ -239,6 +251,9 @@ namespace CoinGeckoApp.ViewModels
          */
 
         /* =========== Actions and Commands */
+        /// <summary>
+        /// Changes the favourite state of the coin.
+        /// </summary>
         public async Task ChangeFavouriteState()
         {
             CoinModel updatedCoin = new CoinModel(Coin.Id, Coin.Favourite);
@@ -257,8 +272,6 @@ namespace CoinGeckoApp.ViewModels
             // Set the path to star image, depending on favourite status
             SetIsFavouriteImage();
         }
-
-
 
 
         /* =========== Helpers */
@@ -282,11 +295,16 @@ namespace CoinGeckoApp.ViewModels
                 }
             }
         }
+
+        /// <summary>
+        /// Gets the default value for a given type.
+        /// </summary>
+        /// <param name="type">The type for which to get the default value.</param>
+        /// <returns>The default value for the specified type.</returns>
         private object GetDefaultValue(Type type)
         {
             return type.IsValueType ? Activator.CreateInstance(type) : null;
         }
-
 
 
 

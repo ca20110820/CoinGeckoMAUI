@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace CoinGeckoApp.Helpers
 {
+    /// <summary>
+    /// Provides methods for reading from and writing to JSON files.
+    /// </summary>
     public class JsonHelper
     {
         public string JsonFilePath { get; set; }  // Full Path to the Json File
@@ -20,10 +23,10 @@ namespace CoinGeckoApp.Helpers
         }
 
         /// <summary>
-        /// Reads content from the Json file and returns the deserialized object.
+        /// Reads content from the JSON file and returns the deserialized object asynchronously.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
+        /// <typeparam name="T">The type of object to deserialize into.</typeparam>
+        /// <returns>The deserialized object.</returns>
         public async Task<T?> ReadFromFileAsync<T>()
         {
             /* Example: 
@@ -37,11 +40,10 @@ namespace CoinGeckoApp.Helpers
         }
 
         /// <summary>
-        /// Writes the given data to the Json file asynchronously.
+        /// Writes the given data to the JSON file asynchronously.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="data"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">The type of data to write.</typeparam>
+        /// <param name="data">The data to write.</param>
         public async Task WriteToFileAsync<T>(T data)
         {
             /* Notes:
@@ -58,16 +60,32 @@ namespace CoinGeckoApp.Helpers
             }
         }
 
+        /// <summary>
+        /// Deserializes the JSON string asynchronously into an object of the specified type.
+        /// </summary>
+        /// <typeparam name="T">The type of object to deserialize into.</typeparam>
+        /// <param name="jsonString">The JSON string to deserialize.</param>
+        /// <returns>The deserialized object.</returns>
         public static async Task<T?> DeserializeStringAsync<T>(string jsonString)
         {
             return await Task.Run(() => JsonConvert.DeserializeObject<T>(jsonString));
         }
 
+        /// <summary>
+        /// Serializes the specified object asynchronously into a JSON string.
+        /// </summary>
+        /// <typeparam name="T">The type of object to serialize.</typeparam>
+        /// <param name="obj">The object to serialize.</param>
+        /// <returns>The serialized JSON string.</returns>
         public static async Task<string> SerializeObjectAsync<T>(T obj)
         {
             return await Task.Run(() => JsonConvert.SerializeObject(obj));
         }
 
+        /// <summary>
+        /// Creates an empty JSON file at the specified path if it does not exist.
+        /// </summary>
+        /// <param name="jsonPath">The path to the JSON file.</param>
         public static void CreateEmptyJson(string jsonPath)
         {
             string? parentDir = Path.GetDirectoryName(jsonPath);
@@ -96,13 +114,7 @@ namespace CoinGeckoApp.Helpers
     }
 
     /// <summary>
-    /// Service class for performing CRUD operations on a Json Flat File as a Database. This class depends on JsonFlatFileDataStore package.
-    /// It focuses on performing CRUD operations on individual item in the Json File.
-    /// <para>The Json Flat File as a DB would have the following structure: 
-    /// <code>{"key": {...}, "key": {...}, ...}</code>
-    /// </para>
-    /// <para>Use-cases: Storing different set of configurations, storing properties of special objects, etc.
-    /// </para>
+    /// Service class for performing CRUD operations on individual items in a JSON flat file database.
     /// </summary>
     public class JsonItemDBHelper
     {
@@ -115,6 +127,12 @@ namespace CoinGeckoApp.Helpers
             JsonHelper.CreateEmptyJson(JsonFilePath);  // Create a Json File with empty dictionary content, if file does not exist
         }
 
+        /// <summary>
+        /// Retrieves an object asynchronously from the JSON database by its key.
+        /// </summary>
+        /// <typeparam name="T">The type of object to retrieve.</typeparam>
+        /// <param name="key">The key of the object to retrieve.</param>
+        /// <returns>The retrieved object.</returns>
         public async Task<T> GetObjAsync<T>(string key)
         {
             using (var store = await Task.Run(() => new DataStore(JsonFilePath)))
@@ -123,6 +141,11 @@ namespace CoinGeckoApp.Helpers
             }
         }
 
+        /// <summary>
+        /// Retrieves all items from the JSON database as a dictionary asynchronously.
+        /// </summary>
+        /// <typeparam name="T">The type of items to retrieve.</typeparam>
+        /// <returns>A dictionary containing all items in the JSON database.</returns>
         public async Task<Dictionary<string, T>?> GetItemsAsDictAsync<T>()
         {
             /*
@@ -140,6 +163,12 @@ namespace CoinGeckoApp.Helpers
             }
         }
 
+        /// <summary>
+        /// Inserts an object asynchronously into the JSON database with the specified key.
+        /// </summary>
+        /// <typeparam name="T">The type of object to insert.</typeparam>
+        /// <param name="key">The key of the object to insert.</param>
+        /// <param name="obj">The object to insert.</param>
         public async Task InsertObjAsync<T>(string key, T obj)
         {
             using (var store = await Task.Run(() => new DataStore(JsonFilePath)))
@@ -148,6 +177,12 @@ namespace CoinGeckoApp.Helpers
             }
         }
 
+        /// <summary>
+        /// Replaces an object asynchronously in the JSON database with the specified key.
+        /// </summary>
+        /// <typeparam name="T">The type of object to replace.</typeparam>
+        /// <param name="keyToBeReplaced">The key of the object to be replaced.</param>
+        /// <param name="newObj">The new object to replace the existing one.</param>
         public async Task ReplaceObjAsync<T>(string keyToBeReplaced, T newObj)
         {
             using (var store = await Task.Run(() => new DataStore(JsonFilePath)))
@@ -156,6 +191,14 @@ namespace CoinGeckoApp.Helpers
             }
         }
 
+        /// <summary>
+        /// Updates an object asynchronously in the JSON database with additional properties.
+        /// </summary>
+        /// <param name="key">The key of the object to update.</param>
+        /// <param name="anonymousObjProperties">An anonymous object containing additional properties to add.</param>
+        /// <remarks>
+        /// This method is used to add new properties to a JSON object. It should not be used to modify an existing object.
+        /// </remarks>
         public async Task UpdateObjAsync(string key, object anonymousObjProperties)
         {
             // TODO: Implement this as a method to add new properties to a json object.
@@ -170,6 +213,10 @@ namespace CoinGeckoApp.Helpers
             }
         }
 
+        /// <summary>
+        /// Deletes an object asynchronously from the JSON database by its key.
+        /// </summary>
+        /// <param name="key">The key of the object to delete.</param>
         public async Task DeleteObjAsync(string key)
         {
             using (var store = await Task.Run(() => new DataStore(JsonFilePath)))
@@ -179,6 +226,9 @@ namespace CoinGeckoApp.Helpers
         }
     }
 
+    /// <summary>
+    /// Service class for performing CRUD operations on collections of items in a JSON flat file database.
+    /// </summary>
     public class JsonCollectionDBHelper
     {
         public string JsonFilePath { get; set; }
@@ -191,6 +241,12 @@ namespace CoinGeckoApp.Helpers
             JsonHelper.CreateEmptyJson(jsonFilePath);
         }
 
+        /// <summary>
+        /// Queries items in the collection asynchronously based on the specified filter.
+        /// </summary>
+        /// <typeparam name="T">The type of items to query.</typeparam>
+        /// <param name="filter">The filter function.</param>
+        /// <returns>A list of items that match the filter.</returns>
         public async Task<List<T>?> QueryItems<T>(Func<dynamic, bool> filter)
         {
             using (var store = await Task.Run(() => new DataStore(JsonFilePath)))
@@ -201,6 +257,13 @@ namespace CoinGeckoApp.Helpers
             }
         }
 
+        /// <summary>
+        /// Finds items in the collection asynchronously based on the specified pattern.
+        /// </summary>
+        /// <typeparam name="T">The type of items to find.</typeparam>
+        /// <param name="pattern">The pattern to search for.</param>
+        /// <param name="useCaseSensitive">Specifies whether the search should be case-sensitive.</param>
+        /// <returns>A list of items that match the pattern.</returns>
         public async Task<List<T>> FindItemsFromPatternAsync<T>(string pattern, bool useCaseSensitive = false)
         {
             using (var store = await Task.Run(() => new DataStore(JsonFilePath)))
@@ -214,6 +277,11 @@ namespace CoinGeckoApp.Helpers
             }
         }
 
+        /// <summary>
+        /// Inserts a single item into the collection asynchronously.
+        /// </summary>
+        /// <typeparam name="T">The type of item to insert.</typeparam>
+        /// <param name="newItem">The item to insert.</param>
         public async Task InsertOneItemAsync<T>(T newItem)
         {
             using (var store = await Task.Run(() => new DataStore(JsonFilePath)))
@@ -227,6 +295,11 @@ namespace CoinGeckoApp.Helpers
             }
         }
 
+        /// <summary>
+        /// Inserts multiple items into the collection asynchronously.
+        /// </summary>
+        /// <typeparam name="T">The type of items to insert.</typeparam>
+        /// <param name="newItems">The items to insert.</param>
         public async Task InsertManyItemsAsync<T>(IEnumerable<T> newItems)
         {
             using (var store = await Task.Run(() => new DataStore(JsonFilePath)))
@@ -237,6 +310,12 @@ namespace CoinGeckoApp.Helpers
             }
         }
 
+        /// <summary>
+        /// Replaces an item in the collection asynchronously based on the specified filter.
+        /// </summary>
+        /// <typeparam name="T">The type of item to replace.</typeparam>
+        /// <param name="filter">The filter to apply.</param>
+        /// <param name="newItem">The new item to replace the existing one.</param>
         public async Task ReplaceItemAsync<T>(Predicate<dynamic> filter, T newItem)
         {
             // Note: `key` could be a string or integer, or any hashable object.
@@ -249,6 +328,12 @@ namespace CoinGeckoApp.Helpers
             }
         }
 
+        /// <summary>
+        /// Replaces items in the collection asynchronously based on the specified filter and new properties.
+        /// </summary>
+        /// <typeparam name="T">The type of items to replace.</typeparam>
+        /// <param name="filter">The filter to apply.</param>
+        /// <param name="newProperties">The new properties to replace with.</param>
         public async Task ReplaceItemsByConditionAsync<T>(Predicate<dynamic> filter, dynamic newProperties)
         {
             // Reference: https://ttu.github.io/json-flatfile-datastore/#/2.4.2/?id=replace
@@ -260,6 +345,10 @@ namespace CoinGeckoApp.Helpers
             }
         }
 
+        /// <summary>
+        /// Deletes a single item from the collection asynchronously based on the specified filter.
+        /// </summary>
+        /// <param name="filter">The filter to apply.</param>
         public async Task DeleteItemAsync(Predicate<dynamic> filter)
         {
             // Reference: https://ttu.github.io/json-flatfile-datastore/#/2.4.2/?id=delete
@@ -271,6 +360,10 @@ namespace CoinGeckoApp.Helpers
             }
         }
 
+        /// <summary>
+        /// Deletes multiple items from the collection asynchronously based on the specified filter.
+        /// </summary>
+        /// <param name="filter">The filter to apply.</param>
         public async Task DeleteItemsAsync(Predicate<dynamic> filter)
         {
             // Reference: https://ttu.github.io/json-flatfile-datastore/#/2.4.2/?id=delete

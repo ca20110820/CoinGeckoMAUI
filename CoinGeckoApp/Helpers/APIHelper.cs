@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace CoinGeckoApp.Helpers
 {
+    /// <summary>
+    /// Provides helper methods for making API requests and handling responses.
+    /// </summary>
     public class APIHelper
     {
         private const string baseUrl = "https://api.coingecko.com/api/v3/";
@@ -50,12 +53,11 @@ namespace CoinGeckoApp.Helpers
         }
 
         /// <summary>
-        /// Fetch and Deserialize the Json string with the given type.
-        /// <para>This is one approach to optimize deserializing large json strings.</para>
+        /// Fetches and deserializes the JSON string asynchronously with the specified type.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="url"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">The type to deserialize into.</typeparam>
+        /// <param name="url">The URL to fetch data from.</param>
+        /// <returns>The deserialized object.</returns>
         public async static Task<T?> FetchAndJsonDeserializeAsync<T>(string url)
         {
             using (HttpClient client = new HttpClient())
@@ -78,6 +80,9 @@ namespace CoinGeckoApp.Helpers
         }
     }
 
+    /// <summary>
+    /// Provides helper methods for constructing URIs and query strings.
+    /// </summary>
     public class URIHelper
     {
         public string RootURI {  get; set; }
@@ -87,11 +92,20 @@ namespace CoinGeckoApp.Helpers
             RootURI = rootURI;  // e.g. "https://api.coingecko.com"
         }
 
+        /// <summary>
+        /// Gets a new instance of UriBuilder using the root URI.
+        /// </summary>
+        /// <returns>A new UriBuilder instance.</returns>
         public UriBuilder GetNewBuilder()
         {
             return new UriBuilder(RootURI);
         }
 
+        /// <summary>
+        /// Combines the specified endpoints to form a complete endpoint.
+        /// </summary>
+        /// <param name="endpoints">The endpoints to combine.</param>
+        /// <returns>The complete endpoint.</returns>
         public static string MakeEndpoint(params string[] endpoints)
         {
             // e.g. Input: ["api", "v3", "some_endpoint"] ==> "/api/v3/some_endpoint"
@@ -104,6 +118,11 @@ namespace CoinGeckoApp.Helpers
             return outResult;
         }
 
+        /// <summary>
+        /// Creates a query string from the specified key-value tuples.
+        /// </summary>
+        /// <param name="parameterTuples">The key-value tuples.</param>
+        /// <returns>The query string.</returns>
         public static string MakeQueryFromTuples(params Tuple<string, string>[] parameterTuples)
         {
             /* Example:
@@ -124,7 +143,13 @@ namespace CoinGeckoApp.Helpers
 
             return queryBuilder.ToString();
         }
-        
+
+        /// <summary>
+        /// Constructs a URI with the specified endpoint and query strings.
+        /// </summary>
+        /// <param name="endpoint">The endpoint.</param>
+        /// <param name="query">The query strings.</param>
+        /// <returns>The constructed URI.</returns>
         public string MakeURI(string endpoint, params string[] query)
         {
             /* Example:
@@ -137,6 +162,13 @@ namespace CoinGeckoApp.Helpers
             builder.Query = string.Join('&', query);  // Append the key-value pair queries
             return builder.Uri.ToString();
         }
+
+        /// <summary>
+        /// Constructs a URI with the specified endpoint and query string.
+        /// </summary>
+        /// <param name="endpoint">The endpoint.</param>
+        /// <param name="query">The query string.</param>
+        /// <returns>The constructed URI.</returns>
         public string MakeURI(string endpoint, string query)
         {
             // Overload where query is a string "k1=v1&k2=v2"

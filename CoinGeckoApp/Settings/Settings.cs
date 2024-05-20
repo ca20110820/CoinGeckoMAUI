@@ -9,7 +9,9 @@ using CoinGeckoApp.Helpers;
 
 namespace CoinGeckoApp.Settings
 {
-
+    /// <summary>
+    /// Abstract base class for handling application settings.
+    /// </summary>
     public abstract class SettingBase
     {
         protected FileSystemHelper fsHelper = new();
@@ -17,12 +19,32 @@ namespace CoinGeckoApp.Settings
 
         protected static string configFileName = "config.json";
 
+        /// <summary>
+        /// Resets the setting asynchronously.
+        /// </summary>
         public abstract Task ResetSettingAsync();
+
+        /// <summary>
+        /// Reads the setting asynchronously.
+        /// </summary>
         public abstract Task ReadAsync();
+
+        /// <summary>
+        /// Writes the setting asynchronously.
+        /// </summary>
         public abstract Task WriteAsync();
+
+        /// <summary>
+        /// Updates the setting asynchronously.
+        /// </summary>
         public abstract Task UpdateAsync();
 
-
+        /// <summary>
+        /// Writes a setting to the configuration file asynchronously.
+        /// </summary>
+        /// <typeparam name="SettingT">The type of the setting object.</typeparam>
+        /// <param name="settingKey">The key of the setting.</param>
+        /// <param name="settingObj">The setting object.</param>
         public static async Task WriteSettingAsync<SettingT>(string settingKey, SettingT settingObj)
         {
             FileSystemHelper fsHelper = new();
@@ -35,6 +57,12 @@ namespace CoinGeckoApp.Settings
             await jsonItemDBHelper.InsertObjAsync(settingKey, settingObj);
         }
 
+        /// <summary>
+        /// Updates a setting in the configuration file asynchronously.
+        /// </summary>
+        /// <typeparam name="SettingT">The type of the setting object.</typeparam>
+        /// <param name="settingKey">The key of the setting.</param>
+        /// <param name="settingObj">The setting object.</param>
         public static async Task WriteUpdateSettingAsync<SettingT>(string settingKey, SettingT settingObj)
         {
             FileSystemHelper fsHelper = new();
@@ -47,6 +75,12 @@ namespace CoinGeckoApp.Settings
             await jsonItemDBHelper.ReplaceObjAsync(settingKey, settingObj);  // Use Replace to completely overwrite the object
         }
 
+        /// <summary>
+        /// Reads a setting from the configuration file asynchronously.
+        /// </summary>
+        /// <typeparam name="SettingT">The type of the setting object.</typeparam>
+        /// <param name="settingKey">The key of the setting.</param>
+        /// <returns>The setting object.</returns>
         public static async Task<SettingT> ReadSettingAsync<SettingT>(string settingKey)
         {
             FileSystemHelper fsHelper = new();
@@ -60,6 +94,10 @@ namespace CoinGeckoApp.Settings
             return await jsonItemDBHelper.GetObjAsync<SettingT>(settingKey);
         }
 
+        /// <summary>
+        /// Fetches the list of supported currencies from CoinGecko asynchronously.
+        /// </summary>
+        /// <returns>A list of supported currencies.</returns>
         public static async Task<List<string>?> FetchSupportedCurrenciesAsync()
         {
             // Fetch the List of Supported Currencies from CoinGecko
@@ -68,6 +106,9 @@ namespace CoinGeckoApp.Settings
         }
     }
 
+    /// <summary>
+    /// Represents the user settings model.
+    /// </summary>
     public class UserSettingModel : SettingBase
     {
         public bool DarkMode { get; set; }
@@ -78,6 +119,13 @@ namespace CoinGeckoApp.Settings
 
         private string settingKey = "user_setting";
 
+        /// <summary>
+        /// Sets the user preferences.
+        /// </summary>
+        /// <param name="darkMode">The dark mode setting.</param>
+        /// <param name="quoteCurrency">The quote currency.</param>
+        /// <param name="maxFavourites">The maximum number of favourites.</param>
+        /// <param name="exchangeId">The exchange ID.</param>
         public static void SetPreferences(bool darkMode, string quoteCurrency, int maxFavourites, string exchangeId)
         {
             Preferences.Set("darkmode", darkMode);
@@ -86,11 +134,17 @@ namespace CoinGeckoApp.Settings
             Preferences.Set("exchangeid", exchangeId);
         }
 
+        /// <summary>
+        /// Sets the current user settings based on the preferences.
+        /// </summary>
         public void SetCurrentUserSettings()
         {
             SetPreferences(DarkMode, QuoteCurrency, MaxFavourites, ExchangeId);
         }
 
+        /// <summary>
+        /// Resets the user settings to their default values asynchronously.
+        /// </summary>
         public override async Task ResetSettingAsync()
         {
             Preferences.Default.Remove("darkmode");
@@ -108,21 +162,34 @@ namespace CoinGeckoApp.Settings
             await WriteAsync();  // Write immediately
         }
 
+        /// <summary>
+        /// Reads the user settings asynchronously.
+        /// </summary>
+        /// <returns>The user setting model.</returns>
         public override async Task<UserSettingModel> ReadAsync()
         {
             return await ReadSettingAsync<UserSettingModel>(settingKey);
         }
 
+        /// <summary>
+        /// Writes the user settings asynchronously.
+        /// </summary>
         public override async Task WriteAsync()
         {
             await WriteSettingAsync(settingKey, this);
         }
 
+        /// <summary>
+        /// Updates the user settings asynchronously.
+        /// </summary>
         public override async Task UpdateAsync()
         {
             await WriteUpdateSettingAsync(settingKey, this);
         }
 
+        /// <summary>
+        /// Toggles the dark mode setting and updates the preferences asynchronously.
+        /// </summary>
         public async Task SwitchDarkMode()
         {
             DarkMode = !DarkMode;
@@ -130,6 +197,10 @@ namespace CoinGeckoApp.Settings
             await UpdateAsync();
         }
 
+        /// <summary>
+        /// Changes the quote currency and updates the preferences asynchronously.
+        /// </summary>
+        /// <param name="newQuoteCurrency">The new quote currency.</param>
         public async Task ChangeQuoteCurrencyTo(string newQuoteCurrency)
         {
             // TODO: Validate from Web Server.
@@ -138,6 +209,10 @@ namespace CoinGeckoApp.Settings
             await UpdateAsync();
         }
 
+        /// <summary>
+        /// Changes the exchange ID and updates the preferences asynchronously.
+        /// </summary>
+        /// <param name="newExchangeId">The new exchange ID.</param>
         public async Task ChangeExchangeIdTo(string newExhangeId)
         {
             ExchangeId = newExhangeId;
