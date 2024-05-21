@@ -19,9 +19,15 @@ public partial class CoinPage : ContentPage, IQueryAttributable
     {
         base.OnAppearing();
 
-        refreshviewCoinPage.IsRefreshing = true;
-        await UpdateWhenTabNavigation();
-        refreshviewCoinPage.IsRefreshing = false;
+        try
+        {
+            refreshviewCoinPage.IsRefreshing = true;
+            await UpdateWhenTabNavigation();
+        }
+        finally
+        {
+            refreshviewCoinPage.IsRefreshing = false;
+        }
     }
 
     private async Task UpdateWhenTabNavigation()

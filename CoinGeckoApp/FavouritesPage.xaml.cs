@@ -23,8 +23,12 @@ public partial class FavouritesPage : ContentPage
 
         if (!isInitNavigated)
         {
+            refreshviewFavouritesPage.IsRefreshing = true;
+
             await RefreshUI();
             isInitNavigated = true;
+
+            refreshviewFavouritesPage.IsRefreshing = false;
         }
     }
 
